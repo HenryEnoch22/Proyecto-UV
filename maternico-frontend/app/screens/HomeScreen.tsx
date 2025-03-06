@@ -12,7 +12,7 @@ const HomeScreen = () => {
             const token = await AsyncStorage.getItem("token");
             if (token) {
                 try {
-                    const response = await fetch("http://IP:8000/api/user", {
+                    const response = await fetch("http://192.168.100.27:8000/api/user", {
                         method: "GET",
                         headers: {
                             "Authorization": `Bearer ${token}`,

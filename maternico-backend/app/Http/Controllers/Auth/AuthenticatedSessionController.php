@@ -25,7 +25,7 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials)){
             return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
 
