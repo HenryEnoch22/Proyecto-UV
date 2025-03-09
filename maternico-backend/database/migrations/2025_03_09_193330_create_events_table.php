@@ -15,10 +15,10 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
                 $table->string('event_title', 255);
-                $table->string('description', 65)->nullable();
                 $table->string('type', 45);
                 $table->date('date');
                 $table->string('time', 6);
+                $table->string('notifiable', 1);
                 $table->timestamps();
                 $table->softDeletes();
         });
