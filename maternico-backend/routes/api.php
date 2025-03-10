@@ -1,13 +1,13 @@
 <?php
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ForumController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 //Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //    return $request->user();
 //});
-
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/user', function (Request $request) {
@@ -23,9 +23,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('/events/{eventId}', [EventController::class, 'update']);
     Route::delete('/events/{eventId}', [EventController::class, 'destroy']);
 
+    Route::apiResource('forums', ForumController::class);
+
+    Route::get('/health-centers', function (){
+        return response()->json([
+            'success' => true,
+            'message' => 'Centros de salud obtenidos correctamente',
+            'data' => \App\Models\Health\HealthCenter::all(),
+        ]);
+    });
+
 });
-
-
-
 
 require __DIR__.'/auth.php';

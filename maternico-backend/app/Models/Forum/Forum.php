@@ -11,8 +11,9 @@ class Forum extends Model
     public $timestamps = true;
     protected $table = 'forums';
     protected $fillable = [
+        'user_id',
         'title',
-        'description',
+        'text',
         'created_at',
         'updated_at',
         'deleted_at',
