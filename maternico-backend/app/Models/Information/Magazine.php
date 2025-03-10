@@ -1,21 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Information;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BabyEvent extends Model
+class Magazine extends Model
 {
     use softDeletes;
     public $timestamps = true;
-    protected $table = 'baby_events';
-    protected $fillable = [
-        'baby_id',
-        'event_title',
-        'description',
-        'date',
-        'photo_path',
+    protected $table = 'magazines';
+    public $fillable = [
+        'title',
+        'magazine_path',
         'created_at',
         'updated_at',
         'deleted_at',
