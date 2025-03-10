@@ -5,6 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 import HomeScreen from "./(tabs)/home";
 import { getProfile } from "@/services/api";
 import BottomNavbar from "@/components/ui/BottomNavbar";
+import { UserResponse } from "../services/api";
 
 export default function Index() {
   const { user, setUser } = useAuth();
@@ -13,15 +14,20 @@ export default function Index() {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const userData = await getProfile();
-        
-        if (userData) {
+        const userData: UserResponse | null = await getProfile();
+
+        if (userData?.user) {
+          console.log("Usuario autenticado:", userData.user);
+          const { user } = userData;
+          console.log("Usuario", user);
           setUser({
-            id: userData.id.toString(),
-            name: userData.name,
-            email: userData.email,
-            last_name: userData.last_name,
-            mother_last_name: userData.mother_last_name,
+            id: user.id.toString(),
+            name: user.name,
+            email: user.email,
+            last_name: user.last_name,
+            mother_last_name: user.mother_last_name,
+            birth_date: user.birth_date,
+            profile_photo: user.profile_photo,
           });
         } else {
           setUser(null);

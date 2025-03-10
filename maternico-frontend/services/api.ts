@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://192.168.1.69:8000/api'; 
+const API_URL = 'http://192.168.100.6:8000/api'; 
 
 export const register = async (name: string, lastName: string, motherLastName: string, email: string, password: string) => {
     try {
@@ -11,7 +11,7 @@ export const register = async (name: string, lastName: string, motherLastName: s
         const response = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, password }),
+            body: JSON.stringify({ name, lastName, motherLastName, email, password }),
             signal: controller.signal,
         });
 
@@ -53,7 +53,7 @@ export const login = async (email: string, password: string) => {
 
 
 // 🔹 Función para obtener el perfil del usuario autenticado
-type UserResponse = {
+type User = {
   id: number;
   name: string;
   email: string;
@@ -62,6 +62,12 @@ type UserResponse = {
   birth_date: string;
   profile_photo: string;
 };
+
+export type UserResponse = {
+  success: boolean;
+  user: User;
+};
+
 export const getProfile = async (): Promise<UserResponse | null> => {
     try {
         const token = await AsyncStorage.getItem('token');
@@ -76,7 +82,9 @@ export const getProfile = async (): Promise<UserResponse | null> => {
         });
 
         if (!response.ok) return null;
-        return await response.json() as UserResponse;
+        const data = response.json();
+        console.log('data:', data);
+        return await data as UserResponse;
     } catch (error) {
         console.error('Error obteniendo el perfil:', error);
         return null;
@@ -137,5 +145,26 @@ export const getVideo = async (videoID: string): Promise<{ video: Video }> => {
     } catch (error) {
         console.error('Error obteniendo video:', error);
         return { video: { id: '', title: '', video_path: '' } };
+    }
+}
+
+export const getEvents = async (userID: number, year: number, month: number) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) return;
+        
+        const response = await fetch(`${API_URL}/get-events`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userID, year, month }),
+        });
+        if (!response.ok) throw new Error('Error al obtener los eventos');
+    
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo eventos:', error);
+        return [];
     }
 }

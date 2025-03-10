@@ -8,6 +8,9 @@ import CustomCalendarHeader from "../../components/CustomCalendarHeader";
 import Agenda from "../../components/Agenda";
 import AddEventModal from "../../components/AddEventModal";
 import EventModal from "../../components/EventModal";
+import { getEvents } from "@/services/api";
+// Agrega un useEffect para manejar la llamada a la API
+import { useEffect } from "react";
 
 const CalendarScreen = () => {
 	const [selectedDate, setSelectedDate] = useState("");
@@ -17,7 +20,22 @@ const CalendarScreen = () => {
 	const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth() + 1);
 	const [showModal, setShowModal] = useState(false);
 
-	const [exampleEvents, setExampleEvents] = useState([
+
+	// Dentro de tu componente
+	useEffect(() => {
+	const fetchEvents = async () => {
+		try {
+		const eventos = await getEvents(1, 2025, 3);
+		console.log("Eventos obtenidos:", eventos.data);
+		} catch (error) {
+		console.error("Error obteniendo eventos:", error);
+		}
+	};
+
+	fetchEvents();
+	}, []);
+
+	const [events, setEvents] = useState([
 		{
 			id: 1,
 			title: "Vacuna influenza",
@@ -109,14 +127,14 @@ const CalendarScreen = () => {
         notify: boolean;
     }) => {
         const newEvent = {
-            id: exampleEvents.length + 1,
+            id: events.length + 1,
             title: eventData.name,
             date: eventData.date.toISOString().split("T")[0],
             time: eventData.time,
             isNotifiable: eventData.notify,
         };
         
-        setExampleEvents(prev => [...prev, newEvent]); // Actualiza el estado
+        setEvents(prev => [...prev, newEvent]); // Actualiza el estado
         setShowModal(false);
     };
 	return (
@@ -237,7 +255,7 @@ const CalendarScreen = () => {
 			/>
 
 			<ScrollView style={{ marginTop: 24 }}>
-				<Agenda events={exampleEvents.filter((item) => {
+				<Agenda events={events.filter((item) => {
 					const date = new Date(item.date);
 					return date.getMonth() + 1 === calendarMonth;
 				})} />

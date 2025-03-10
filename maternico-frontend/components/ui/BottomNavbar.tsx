@@ -1,7 +1,7 @@
 // app/components/ui/BottomNavbar.tsx
 import { View, StyleSheet, Pressable } from "react-native";
 import { useRouter } from "expo-router";
-import { HomeIcon, CalendarIcon, ChatBubbleBottomCenterIcon, InformationCircleIcon } from "react-native-heroicons/outline";
+import { HomeIcon, CalendarIcon, InformationCircleIcon, ChatBubbleBottomCenterTextIcon } from "react-native-heroicons/outline";
 
 const BottomNavbar = () => {
   const router = useRouter();
@@ -21,7 +21,7 @@ const BottomNavbar = () => {
       </Pressable>
       
       <Pressable onPress={() => router.push("/forum")} style={styles.navItem}>
-        <ChatBubbleBottomCenterIcon size={24} color="#F392BE" />
+        <ChatBubbleBottomCenterTextIcon size={24} color="#F392BE" />
       </Pressable>
     </View>
   );
