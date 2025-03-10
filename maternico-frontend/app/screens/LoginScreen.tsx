@@ -1,58 +1,179 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable, Text, Image } from "react-native";
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login } from '../../services/api';
+import FormTextField from "../../components/FormTextField";
+import PrimaryButton from "../../components/PrimaryButton";
+import { Alert } from 'react-native';
+import logo from "../../assets/images/logo/MaternicoLogo.png";
 
 const LoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errors, setErrors] = useState<{ email?: string[]; password?: string[] }>({});
     const router = useRouter();
 
     const handleLogin = async () => {
         try {
+            // Limpiar errores previos
+            setErrors({});
+            
             const userData = await login(email, password);
-            console.log("Token recibido:", userData.token); // Verifica el token en la consola
+            
             await AsyncStorage.setItem("token", userData.token);
-            const savedToken = await AsyncStorage.getItem("token");
-            console.log("Token guardado en AsyncStorage:", savedToken); // Verifica si se guardó
             router.replace('/home');
-        } catch (error) {
+        } catch (error: Error | any) {
             console.error("Error en login:", error);
-            Alert.alert("Error", "No se pudo iniciar sesión");
+            if (error.response?.status === 422) {
+                setErrors(error.response.data.errors);
+            } else {
+                Alert.alert("Error", "No se pudo iniciar sesión");
+            }
         }
     };
-    
 
     return (
-        <View style={styles.container}>
-            <Text style={{ fontSize: 20, marginBottom: 10 }}>Iniciar Sesión</Text>
-            <TextInput
-                placeholder="Correo electrónico"
-                value={email}
-                onChangeText={setEmail}
-                style={{ borderBottomWidth: 1, marginBottom: 10, padding: 8 }}
-                keyboardType="email-address"
-            />
-            <TextInput
-                placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
-                style={{ borderBottomWidth: 1, marginBottom: 10, padding: 8 }}
-                secureTextEntry
-            />
-            <Button title="Iniciar Sesión" onPress={handleLogin} />
+        <View style={styles.mainContainer}>
+            {/* Sección superior */}
+            <View style={styles.topSection}>
+                <Text style={styles.greet}>Hola!</Text>
+                <Text style={styles.greetFoot}>Bienvenida a MaterniCo</Text>
+            </View>
+
+            {/* Sección inferior */}
+            <View style={styles.bottomSection}>
+                <View style={styles.logoContainer}>
+                    <Image
+                        style={styles.logo}
+                        source={logo}
+                    />
+                </View>
+
+                <Text style={styles.title}>Iniciar sesión</Text>
+
+                <View style={styles.formContainer}>
+                    <FormTextField
+                        label="Correo Electrónico"
+                        placeholder="ejemplo@correo.com"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        errors={errors.email || []}
+                        style={styles.customInput}
+                    />
+
+                    <FormTextField
+                        label="Contraseña"
+                        placeholder="********"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry
+                        errors={errors.password || []}
+                        style={styles.customInput}
+                    />
+
+                    <Pressable onPress={() => alert("Este servicio no está disponible por el momento, intenta mas tarde.")}>
+                        <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
+                    </Pressable>
+
+                    <PrimaryButton 
+                        onPress={handleLogin} 
+                        text='Iniciar sesión' 
+                    />
+
+                    <View style={styles.registerContainer}>
+                        <Text style={styles.registerText}>¿No tienes una cuenta? </Text>
+                        <Pressable onPress={() => router.push('/register')}>
+                            <Text style={styles.registerLink}>Regístrate!</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    mainContainer: {
         flex: 1,
-        backgroundColor: 'white',
-        padding: 20,
-        justifyContent: 'center',
+        backgroundColor: "#F283B5",
     },
+    topSection: {
+        height: "40%",
+        paddingHorizontal: 30,
+        paddingTop: 60,
+        position: "relative",
+    },
+    greet: {
+        color: "white",
+        fontWeight: "bold",
+        fontSize: 52,
+        marginBottom: 4,
+    },
+    greetFoot: {
+        color: "white",
+        fontSize: 24,
+        marginBottom: 20,
+    },
+    logoContainer: {
+        position: "absolute",
+        right: 30,
+        top: -40,
+        zIndex: 10000,
+    },
+    logo: {
+        width: 90,
+        height: 90,
+        zIndex: 10000,
+        objectFit: "scale-down",
+    },
+    bottomSection: {
+        flex: 1,
+        backgroundColor: "white",
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        paddingHorizontal: 30,
+        paddingTop: 40,
+    },
+    title: {
+        fontSize: 22,
+        fontWeight: "bold",
+        marginBottom: 24,
+    },
+    formContainer: {
+        paddingTop: 10,
+    },
+    customInput: {
+        padding: 16,
+        backgroundColor: "#FFFFFF",
+        borderColor: "#E5E5E5",
+        borderWidth: 1,
+        borderRadius: 8,
+        fontSize: 16,
+        marginVertical: 8,
+    },
+    forgotPassword: {
+        textAlign: "right",
+        color: "#666666",
+        marginTop: 4,
+        marginBottom: 30,
+    },
+    registerContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 24,
+        paddingBottom: 30,
+    },
+    registerText: {
+        color: "#666666",
+        fontSize: 15,
+    },
+    registerLink: {
+        color: "#F283B5",
+        fontWeight: "bold",
+        fontSize: 15,
+    }
 });
 
 export default LoginScreen;
