@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Baby;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Event extends Model
+class BabyEvent extends Model
 {
     use softDeletes;
     public $timestamps = true;
