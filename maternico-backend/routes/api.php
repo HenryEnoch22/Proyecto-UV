@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ForumController;
 use Illuminate\Http\Request;
@@ -24,6 +25,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/events/{eventId}', [EventController::class, 'destroy']);
 
     Route::apiResource('forums', ForumController::class);
+    Route::get('/forums/{forumId}/comments', [ForumController::class, 'comments']);
+
+    Route::post('/comments', [CommentController::class, 'store']);
+    Route::delete('/comments/{commentId}', [CommentController::class, 'destroy']);
 
     Route::get('/health-centers', function (){
         return response()->json([

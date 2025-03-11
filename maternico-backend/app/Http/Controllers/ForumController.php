@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Forum\StoreForumRequest;
 use App\Http\Requests\Forum\UpdateForumRequest;
+use App\Models\Forum\Comment;
 use App\Models\Forum\Forum;
 use Exception;
 use Illuminate\Http\Request;
@@ -79,6 +80,23 @@ class ForumController extends Controller
             'success' => true,
             'message' => 'Foro actualizado correctamente',
             'data' => $forum,
+        ], 200);
+    }
+
+    public function comments($forumId)
+    {
+        try{
+            $comments = Comment::where('forum_id', $forumId)->get();
+        }catch (Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => 'Foro no encontrado',
+            ], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Comentarios obtenidos correctamente',
+            'data' => $comments,
         ], 200);
     }
 
