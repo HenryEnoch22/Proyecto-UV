@@ -141,21 +141,12 @@ const CalendarScreen = () => {
 		date: Date;
 		time: string;
 		notify: boolean;
+		type: number;
 	  }) => {
 		try {
 		  if (!user) return;
 	  
 		  const formattedDate = eventData.date.toISOString().split("T")[0];
-
-		  const eventToCreate= {
-			userID: user.id,
-			eventTitle: eventData.name,
-			date: formattedDate,
-			time: eventData.time,
-			notifiable: eventData.notify,
-			type: 'Vacunación'
-		  }
-		  console.log('Evento a crear', eventToCreate)
 		  // Crear el evento en el servidor
 		  await createEvent(
 			Number(user.id),
@@ -163,7 +154,7 @@ const CalendarScreen = () => {
 			formattedDate,
 			eventData.time,
 			eventData.notify,
-			'Vacunación'
+			eventData.type
 		  );
 	  
 		  // Recargar los eventos actualizados

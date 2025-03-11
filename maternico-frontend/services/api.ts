@@ -1,21 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://148.226.202.216:8000/api'; 
+const API_URL = 'http://192.168.100.6:8000/api'; 
 
 export const register = async (name: string, lastName: string, motherLastName: string, email: string, password: string) => {
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
 
         const response = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, lastName, motherLastName, email, password }),
-            signal: controller.signal,
+            body: JSON.stringify({ name, last_name: lastName, mother_last_name: motherLastName, email, password }),
         });
-
-        clearTimeout(timeoutId);
 
         if (!response.ok) throw new Error('Error en el registro');
 
@@ -167,17 +162,25 @@ export const getEvents = async (userID: number, year: number, month: number) => 
     }
 }
 
-export const createEvent = async (userID: number, eventTitle: string, date: string, time: string, notifiable: boolean, type: string) => {
+export const createEvent = async (userID: number, eventTitle: string, date: string, time: string, notifiable: boolean, type: number) => {
     try {
         const token = await AsyncStorage.getItem('token');
         if (!token) return;
+
+        const types = {
+            1: 'Vacunación',
+            2: 'Alimentación',
+            3: 'Desarrollo',
+            4: 'Cita médica',
+            5: 'Cumpleaños'
+        };
         
         const response = await fetch(`${API_URL}/events`, {
             method: 'POST',
             headers: { 
                 'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
                 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userID, event_title: eventTitle, date: date, time: time, notifiable: notifiable, type: type }),
+            body: JSON.stringify({ user_id: userID, event_title: eventTitle, date: date, time: time, notifiable: notifiable, type: types[type] }),
         });
         if (!response.ok) throw new Error('Error al crear evento');
     
@@ -204,6 +207,87 @@ export const deleteEvent = async (eventID: number) => {
         return await response.json();
     } catch (error) {
         console.error('Error eliminando evento:', error);
+        return [];
+    }
+}
+
+export const getForum = async (forumID: string) => {
+    try {
+        const response = await fetch(`${API_URL}/forums/${forumID}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Error al obtener el foro');
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo foro:', error);
+        return { forum: { id: '', title: '', text: '' } };
+    }
+}
+
+export const getForums = async () => {
+    try {
+        const response = await fetch(`${API_URL}/forums`, {
+            method: 'GET',
+            headers: { 
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json' },
+        });
+        if (!response.ok) throw new Error('Error al obtener los foros');
+
+        const data = await response.json();
+        console.log('Foros:', data);
+
+        return data;
+    } catch (error) {
+        console.error('Error obteniendo foros apits:', error);
+        return [];
+    }
+}
+
+export const createComment = async (userID: number, forumID: number, comment: string) => {
+    try {
+        const response = await fetch(`${API_URL}/comments`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 'user_id': userID , 'forum_id': forumID, 'text': comment }),
+        });
+        if (!response.ok) throw new Error('Error al crear el comentario');
+
+        const data = await response.json();
+        console.log('Comentario creado:', data);
+
+        return data;
+    } catch (error) {
+        console.error('Error creando comentario:', error);
+        return [];
+    }
+}
+
+export const getForumComments = async (forumID: number) => {
+    try {
+        
+        const response = await fetch(`${API_URL}/forums/${forumID}/comments`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Error al obtener los comentarios');
+
+        const data = await response.json();
+        console.log('Comentarios:', data);
+        return data;
+    } catch (error) {
+        console.error('Error obteniendo comentarios:', error);
         return [];
     }
 }

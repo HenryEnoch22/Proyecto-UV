@@ -11,9 +11,15 @@ class Comment extends Model
     public $timestamps = true;
     protected $table = 'comments';
     protected $fillable = [
+        'user_id',
         'forum_id',
         'text',
         'created_at',
         'deleted_at',
     ];
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

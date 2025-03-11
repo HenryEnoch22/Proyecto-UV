@@ -43,7 +43,7 @@ export default function RegisterScreen() {
             );
 
             const user = await getProfile();
-            setUser(user);
+            setUser(user?.user);
             Alert.alert("¡Bienvenida a MaterniCo!", "Tu cuenta ha sido creada con éxito.");
             router.push("/(tabs)/home");
         } catch (e: any) {

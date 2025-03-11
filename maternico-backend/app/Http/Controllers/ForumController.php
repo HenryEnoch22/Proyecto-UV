@@ -17,11 +17,13 @@ class ForumController extends Controller
     public function index()
     {
         $forums =  Forum::all();
+        $forums->load('owner');
+        $forums->load('comments');
 
         return response()->json([
             'success' => true,
             'message' => 'Foros obtenidos correctamente',
-            'data' => $forums,
+            'forums' => $forums,
         ], 200);
     }
 
@@ -45,6 +47,9 @@ class ForumController extends Controller
     {
         try{
             $forum = Forum::findOrFail($forumId);
+            $forum->load('owner');
+            $forum->load('comments');
+            
         }catch (Exception $e){
             return response()->json([
                 'success' => false,
@@ -87,10 +92,11 @@ class ForumController extends Controller
     {
         try{
             $comments = Comment::where('forum_id', $forumId)->get();
+            $comments->load('owner');
         }catch (Exception $e){
             return response()->json([
                 'success' => false,
-                'message' => 'Foro no encontrado',
+                'message' => 'Foro no encontrado: ' . $e->getMessage(),
             ], 404);
         }
         return response()->json([

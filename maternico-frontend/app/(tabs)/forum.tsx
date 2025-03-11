@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { View, Text, Pressable, Modal, ScrollView, StyleSheet } from "react-native";
+import { useState, useEffect } from "react";
+import { View, Text, Pressable, Modal, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import FormTextField from "../../components/FormTextField";
 import PrimaryButton from "@/components/PrimaryButton";
+import { getForums } from "@/services/api"; // Asegúrate de importar tu función
+import { router } from "expo-router";
 
 interface Forum {
   id: number;
@@ -14,34 +16,70 @@ const Forum = () => {
   const [inputText, setInputText] = useState("");
   const [showTitleModal, setShowTitleModal] = useState(false);
   const [forumTitle, setForumTitle] = useState("");
-  
-  // Datos de ejemplo (mientras conectas con tu backend)
-  const mockForums: Forum[] = [
-    {
-      id: 1,
-      user_id: 1,
-      title: "¿Cómo meser al bebé?",
-      text: "Estoy teniendo problemas con..."
-    },
-    {
-      id: 2,
-      user_id: 2,
-      title: "Consejos para cuidado al dormir",
-      text: "Quisiera compartir algunas técnicas..."
-    }
-  ];
+  const [forums, setForums] = useState<Forum[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Obtener foros al montar el componente
+  useEffect(() => {
+    const fetchForums = async () => {
+      try {
+        const data = await getForums();
+        setForums(data.forums);
+      } catch (err) {
+        setError("Error al cargar los foros");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchForums();
+  }, []);
 
   const handleCreateForum = () => {
     setShowTitleModal(true);
   };
 
-  const handleSubmitForum = () => {
-    // Lógica para enviar a tu backend
-    console.log("Creando foro:", { title: forumTitle, text: inputText });
-    setInputText("");
-    setForumTitle("");
-    setShowTitleModal(false);
+  const handleSubmitForum = async () => {
+    try {
+      // Aquí deberías implementar tu función createForum
+      console.log("Creando foro:", { title: forumTitle, text: inputText });
+      
+      // Simulación de actualización temporal
+      const newForum: Forum = {
+        id: forums.length + 1,
+        user_id: 1, // ID del usuario actual
+        title: forumTitle,
+        text: inputText
+      };
+      
+      setForums(prev => [newForum, ...prev]);
+      
+      setInputText("");
+      setForumTitle("");
+      setShowTitleModal(false);
+    } catch (err) {
+      console.error("Error al crear foro:", err);
+      setError("Error al publicar el foro");
+    }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#F392BE" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -53,43 +91,47 @@ const Forum = () => {
       {/* Campo de texto principal */}
       <View style={styles.inputContainer}>
         <FormTextField
-            placeholder="¿Qué quieres contar hoy?"
-            multiline
-            numberOfLines={4}
-            value={inputText}
-            onChangeText={setInputText}
-            style={styles.mainInput}
+          placeholder="¿Qué quieres contar hoy?"
+          multiline
+          numberOfLines={4}
+          value={inputText}
+          onChangeText={setInputText}
+          style={styles.mainInput}
         />
 
         {/* Botón flotante cuando hay texto */}
         {inputText.length > 0 && (
-            <PrimaryButton 
+          <PrimaryButton 
             style={styles.floatingButton}
             onPress={handleCreateForum}
             text="Agregar foro"
-            />
+          />
         )}
       </View>
 
       {/* Listado de foros existentes */}
       <ScrollView style={styles.forumList}>
-        {mockForums.map((forum) => (
-          <Pressable 
-            key={forum.id}
-            style={styles.forumCard}
-            onPress={() => console.log("Navegar a detalle", forum.id)}
-          >
-            <Text style={styles.forumTitle}>{forum.title}</Text>
-            <Text 
-              style={styles.forumText}
-              numberOfLines={2}
-              ellipsizeMode="tail"
+        {forums.length === 0 ? (
+          <Text style={styles.emptyText}>No hay foros disponibles</Text>
+        ) : (
+          forums.map((forum) => (
+            <Pressable 
+              key={forum.id}
+              style={styles.forumCard}
+              onPress={() => router.push(`/forumDetail/${forum.id}`)}
             >
-              {forum.text}
-            </Text>
-            <Text style={styles.responses}>3 respuestas</Text>
-          </Pressable>
-        ))}
+              <Text style={styles.forumTitle}>{forum.title}</Text>
+              <Text 
+                style={styles.forumText}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {forum.text}
+              </Text>
+              <Text style={styles.responses}>{forum.comments.length} respuestas</Text>
+            </Pressable>
+          ))
+        )}
       </ScrollView>
 
       {/* Modal para título */}
@@ -249,6 +291,28 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     fontWeight: '500',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: '#e74c3c',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#666',
+    marginTop: 20,
+    fontSize: 16,
   },
 });
 

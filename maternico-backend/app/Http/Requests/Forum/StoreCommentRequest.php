@@ -24,6 +24,7 @@ class StoreCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => ['required', 'exists:users,id'],
             'forum_id' => ['required', 'exists:forums,id'],
             'text'     => ['required', 'string', 'max:255'],
         ];
@@ -32,6 +33,7 @@ class StoreCommentRequest extends FormRequest
     public function messages()
     {
         return [
+            'user_id.required' => 'El campo user_id es obligatorio.',
             'forum_id.required' => 'El campo forum_id es obligatorio.',
             'forum_id.exists'   => 'El foro no existe en la base de datos.',
             'text.required'     => 'El texto del comentario es obligatorio.',

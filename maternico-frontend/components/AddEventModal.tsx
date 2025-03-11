@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet, Pressable, Switch, TextInput } from 'react-native';
 import { XCircleIcon } from 'react-native-heroicons/solid';
 import { Calendar } from 'react-native-calendars';
+import { Picker } from '@react-native-picker/picker';
 
 interface AddEventModalProps {
     visible: boolean;
@@ -11,8 +12,18 @@ interface AddEventModalProps {
         date: Date;
         time: string;
         notify: boolean;
+        type: number; // Nueva propiedad
     }) => void;
 }
+
+// Dentro del componente AddEventModal
+const types = {
+    1: 'Vacunación',
+    2: 'Alimentación',
+    3: 'Desarrollo',
+    4: 'Cita médica',
+    5: 'Cumpleaños'
+};
 
 const AddEventModal = ({ visible, onClose, onSubmit }: AddEventModalProps) => {
     const [eventName, setEventName] = useState('');
@@ -20,6 +31,7 @@ const AddEventModal = ({ visible, onClose, onSubmit }: AddEventModalProps) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [time, setTime] = useState('');
     const [notify, setNotify] = useState(true);
+    const [type, setType] = useState<number>(1);
 
     const handleSubmit = () => {
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
@@ -42,8 +54,9 @@ const AddEventModal = ({ visible, onClose, onSubmit }: AddEventModalProps) => {
         onSubmit({
             name: eventName,
             date: finalDate,
-            time: time,
-            notify
+            time,
+            notify,
+            type: type
         });
         
         resetForm();
@@ -153,6 +166,23 @@ const AddEventModal = ({ visible, onClose, onSubmit }: AddEventModalProps) => {
                                 onValueChange={setNotify}
                             />
                         </View>
+                        
+                        <View style={styles.pickerContainer}>
+                            <Picker
+                                selectedValue={type}
+                                onValueChange={(itemValue) => setType(itemValue)}
+                                style={styles.picker}
+                                dropdownIconColor="#9061F9"
+                            >
+                                {Object.entries(types).map(([key, value]) => (
+                                    <Picker.Item 
+                                        key={key} 
+                                        label={value} 
+                                        value={parseInt(key)} 
+                                    />
+                                ))}
+                            </Picker>
+                        </View>
                     </View>
 
                     <TouchableOpacity
@@ -248,7 +278,19 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         borderRadius: 12,
         overflow: 'hidden',
-    }
+    },
+    pickerContainer: {
+        borderColor: '#E2E8F0',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 16,
+        backgroundColor: '#F8FAFC',
+    },
+    picker: {
+        height: 52,
+        color: '#4A5568',
+
+    },
 });
 
 export default AddEventModal;

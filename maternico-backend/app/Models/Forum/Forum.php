@@ -4,6 +4,7 @@ namespace App\Models\Forum;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
 
 class Forum extends Model
 {
@@ -18,4 +19,14 @@ class Forum extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'forum_id');
+    }
 }

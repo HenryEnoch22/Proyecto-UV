@@ -1,12 +1,17 @@
 import { deleteEvent } from "@/services/api";
+import { router } from "expo-router";
 import { useMemo } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import {
     BellAlertIcon,
     CalendarDaysIcon,
     ClockIcon,
+    CakeIcon,
+    ShoppingCartIcon,
+    AcademicCapIcon,
+    PlusCircleIcon,
+    ShieldCheckIcon 
 } from "react-native-heroicons/outline";
-
 interface Event {
     id: number;
     event_title: string;
@@ -42,31 +47,70 @@ const Agenda = ({ events }: AgendaProps) => {
             .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime());
     }, [events]);
 
-    const renderEvent = (event: Event) => (
-        <Pressable 
-            style={styles.eventCard}
-            key={event.id}
-        >
-            <View style={styles.eventCardHeader}>
-                <Text style={styles.eventTitle}>{event.event_title}</Text>
-                {event.notifiable && <BellAlertIcon color="#E74C3C" size={20} />}
-            </View>
+    const renderEvent = (event: Event & { type: 1 | 2 | 3 | 4 | 5 }) => {
+        const typeConfig = {
+            1: { // Vacunación
+                icon: ShieldCheckIcon,
+                color: "#2ECC71", // Verde
+                label: "Vacunación"
+            },
+            2: { // Alimentación
+                icon: ShoppingCartIcon,
+                color: "#E67E22", // Naranja
+                label: "Alimentación"
+            },
+            3: { // Desarrollo
+                icon: AcademicCapIcon,
+                color: "#3498DB", // Azul
+                label: "Desarrollo"
+            },
+            4: { // Cita médica
+                icon: PlusCircleIcon,
+                color: "#E74C3C", // Rojo
+                label: "Cita Médica"
+            },
+            5: { // Cumpleaños
+                icon: CakeIcon,
+                color: "#F392BE", // Rosa
+                label: "Cumpleaños"
+            }
+        };
 
-            <View style={styles.eventCardDetails}>
-                <View style={styles.eventDetailRow}>
-                    <CalendarDaysIcon color="#8E44AD" size={20} />
-                    <Text style={styles.eventDetailText}>Fecha: {event.date}</Text>
+        // Buscar la configuración basada en el label
+    const eventTypeConfig = Object.values(typeConfig).find(item => item.label === event.type.toString()) || typeConfig[1];
+    const IconComponent = eventTypeConfig.icon;
+
+        return (
+            <Pressable 
+                style={styles.eventCard}
+                key={event.id}
+                onPress={() => deleteEvent(event.id)}
+            >
+                <View style={styles.eventCardHeader}>
+                    <Text style={styles.eventTitle}>{event.event_title}</Text>
+                    {event.notifiable === Boolean(1) && <BellAlertIcon color="#E74C3C" size={20} />}
                 </View>
-                
-                {event.time && (
+    
+                <View style={styles.eventCardDetails}>
                     <View style={styles.eventDetailRow}>
-                        <ClockIcon color="#3498DB" size={20} />
-                        <Text style={styles.eventDetailText}>Hora: {event.time}</Text>
+                        <CalendarDaysIcon color="#8E44AD" size={20} />
+                        <Text style={styles.eventDetailText}>Fecha: {event.date}</Text>
                     </View>
-                )}
-            </View>
-        </Pressable>
-    );
+                    <View style={styles.eventDetailRow}>
+                        <IconComponent color={eventTypeConfig.color} size={20}/>
+                        <Text style={styles.eventDetailText}>Tipo: {event.type} {event.notifiable}</Text>
+                    </View>
+                    
+                    {event.time && (
+                        <View style={styles.eventDetailRow}>
+                            <ClockIcon color="#3498DB" size={20} />
+                            <Text style={styles.eventDetailText}>Hora: {event.time}</Text>
+                        </View>
+                    )}
+                </View>
+            </Pressable>
+        )
+    };
 
     if (!events.length) {
         return (

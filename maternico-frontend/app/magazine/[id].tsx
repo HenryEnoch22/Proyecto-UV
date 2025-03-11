@@ -8,7 +8,7 @@ const MagazineView = () => {
     const { id } = useLocalSearchParams();
     const [magazine, setMagazine] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMagazine = async () => {
