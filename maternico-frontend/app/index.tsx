@@ -17,9 +17,7 @@ export default function Index() {
         const userData: UserResponse | null = await getProfile();
 
         if (userData?.user) {
-          console.log("Usuario autenticado:", userData.user);
           const { user } = userData;
-          console.log("Usuario", user);
           setUser({
             id: user.id.toString(),
             name: user.name,

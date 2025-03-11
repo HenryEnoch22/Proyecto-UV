@@ -7,71 +7,80 @@ import { useNavigation } from "@react-navigation/native";
 import CustomCalendarHeader from "../../components/CustomCalendarHeader";
 import Agenda from "../../components/Agenda";
 import AddEventModal from "../../components/AddEventModal";
-import EventModal from "../../components/EventModal";
-import { getEvents } from "@/services/api";
+import { createEvent, getEvents, getProfile } from "@/services/api";
 // Agrega un useEffect para manejar la llamada a la API
 import { useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import EventModal from "../../components/EventModal";
 
 const CalendarScreen = () => {
-	const [selectedDate, setSelectedDate] = useState("");
-	const [showEvent, setShowEvent] = useState(false);
-	const [addEvent, setAddEvent] = useState(false);
+	interface Event {
+		id: number;
+		title: string;
+		date: string;
+		time?: string;
+		isNotifiable: boolean;
+	}
+
 	const currentDate = new Date().toISOString().split("T")[0];
 	const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth() + 1);
+	const [calendarYear, setCalendarYear] = useState(new Date().getMonth() + 1);
 	const [showModal, setShowModal] = useState(false);
+	const {user, setUser} = useAuth();
+	const [events, setEvents] = useState<Event[]>([]);
+	const [selectedDate, setSelectedDate] = useState("");
+	const [showEvent, setShowEvent] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState('');
 
-
-	// Dentro de tu componente
-	useEffect(() => {
-	const fetchEvents = async () => {
-		try {
-		const eventos = await getEvents(1, 2025, 3);
-		console.log("Eventos obtenidos:", eventos.data);
-		} catch (error) {
+	const loadEvents = async (year: number, month: number) => {
+	try {
+		setLoading(true);
+		setError('');
+		
+		if (!user) return;
+		
+		const eventos = await getEvents(Number(user.id), year, month);
+		setEvents(eventos.data || []);
+		
+	} catch (error) {
 		console.error("Error obteniendo eventos:", error);
-		}
+		setError('Error cargando eventos');
+		setEvents([]);
+	} finally {
+		setLoading(false);
+	}
 	};
 
-	fetchEvents();
-	}, []);
+    useEffect(() => {
+		const initializeData = async () => {
+		  try {
+			if (!user) {
+			  const userData = await getProfile();
+			  setUser(userData?.user);
+			}
+			
+			const currentDate = new Date();
+			const initialYear = currentDate.getFullYear();
+			const initialMonth = currentDate.getMonth() + 1;
+			
+			setCalendarYear(initialYear);
+			setCalendarMonth(initialMonth);
+			
+			await loadEvents(initialYear, initialMonth);
+		  } catch (error) {
+			console.error("Error inicializando datos:", error);
+		  }
+		};
+	  
+		initializeData();
+	  }, []);
 
-	const [events, setEvents] = useState([
-		{
-			id: 1,
-			title: "Vacuna influenza",
-			date: "2024-03-15",
-			time: "10:00",
-			isNotifiable: true,
-		},
-		{
-			id: 2,
-			title: "Vacuna Hepalitofitus",
-			date: "2024-03-20",
-			isNotifiable: false,
-		},
-		{
-			id: 3,
-			title: "Cita con el pediatra",
-			date: "2024-03-25",
-			time: "16:45",
-			isNotifiable: true,
-		},
-		{
-			id: 4,
-			title: "Revisión de 6 meses",
-			date: "2024-04-02",
-			time: "09:15",
-			isNotifiable: false,
-		},
-		{
-			id: 5,
-			title: "Cita médica",
-			date: "2024-04-10",
-			time: "13:00",
-			isNotifiable: true,
-		},
-	]);
-
+    useEffect(() => {
+        if (calendarYear && calendarMonth) {
+            loadEvents(calendarYear, calendarMonth);
+        }
+    }, [calendarMonth, calendarYear]);
 
 	LocaleConfig.locales["es"] = {
 		monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
@@ -86,57 +95,87 @@ const CalendarScreen = () => {
 	const today = new Date();
 	const date = today.toLocaleString("es-MX", { timeZone: "America/Mexico_City", timeStyle: "long" });
 
-	const mamaEvents = {
-		[currentDate]: {
+	const getMarkedDates = () => {
+		const markedDates: { [key: string]: any } = {
+		  [currentDate]: {
 			selected: true,
 			marked: true,
 			selectedColor: "#F9A8D4",
 			description: "Hoy",
-		},
-		"2025-03-05": {
+		  }
+		};
+	  
+		// Crear un Set con fechas únicas
+		const uniqueDates = new Set(events.map(event => event.date.split('T')[0]));
+		
+		// Iterar sobre las fechas únicas
+		uniqueDates.forEach(date => {
+		  markedDates[date] = {
 			marked: true,
 			dotColor: "#60A5FA",
-			description: "Vacuna del bebé",
-		},
-		"2025-03-12": {
-			marked: true,
-			dotColor: "#34D399",
-			description: "Control prenatal",
-		},
-		"2025-03-20": {
-			marked: true,
-			dotColor: "#F87171",
-			description: "Clase prenatal",
-		},
-	};
-
-	const handleDayPress = (day: { dateString: string }) => {
+			description: "Eventos programados",
+		  };
+		});
+	  
+		return markedDates;
+	  };
+	  
+	  // Actualiza handleDayPress para usar los eventos reales
+	  const handleDayPress = (day: { dateString: string }) => {
 		setSelectedDate(day.dateString);
-
-		if (mamaEvents[day.dateString]) {
-			setShowEvent(true);
+		
+		// Verificar si hay eventos en la fecha seleccionada
+		const hasEvents = events.some(event => 
+		  event.date.split('T')[0] === day.dateString
+		);
+		
+		if (hasEvents) {
+		  setShowEvent(true);
 		}
-	};
+	  };
 
 	const navigation = useNavigation();
 
-	const handleSubmit = (eventData: {
-        name: string;
-        date: Date;
-        time: string;
-        notify: boolean;
-    }) => {
-        const newEvent = {
-            id: events.length + 1,
-            title: eventData.name,
-            date: eventData.date.toISOString().split("T")[0],
-            time: eventData.time,
-            isNotifiable: eventData.notify,
-        };
-        
-        setEvents(prev => [...prev, newEvent]); // Actualiza el estado
-        setShowModal(false);
-    };
+	const handleSubmit = async (eventData: {
+		name: string;
+		date: Date;
+		time: string;
+		notify: boolean;
+	  }) => {
+		try {
+		  if (!user) return;
+	  
+		  const formattedDate = eventData.date.toISOString().split("T")[0];
+
+		  const eventToCreate= {
+			userID: user.id,
+			eventTitle: eventData.name,
+			date: formattedDate,
+			time: eventData.time,
+			notifiable: eventData.notify,
+			type: 'Vacunación'
+		  }
+		  console.log('Evento a crear', eventToCreate)
+		  // Crear el evento en el servidor
+		  await createEvent(
+			Number(user.id),
+			eventData.name,
+			formattedDate,
+			eventData.time,
+			eventData.notify,
+			'Vacunación'
+		  );
+	  
+		  // Recargar los eventos actualizados
+		  await loadEvents(calendarYear, calendarMonth);
+		  
+		  setShowModal(false);
+		} catch (error) {
+		  console.error("Error al crear evento:", error);
+		  // Puedes agregar un mensaje de error al usuario aquí
+		}
+	  };
+
 	return (
 		<ScrollView style={styles.container}>
 			<View style={styles.header}>
@@ -173,7 +212,7 @@ const CalendarScreen = () => {
                     style={styles.calendar}
                     current={currentDate}
                     onDayPress={handleDayPress}
-                    markedDates={mamaEvents}
+                    markedDates={getMarkedDates()}
                     theme={{
                         calendarBackground: "#FEFEFE",
                         textSectionTitleColor: "#343434",
@@ -186,7 +225,10 @@ const CalendarScreen = () => {
                         selectedDotColor: "#FEFEFE",
                         textMonthFontWeight: "600",
                     }}
-                    onMonthChange={(month: { month: number }) => setCalendarMonth(month.month)}
+                    onMonthChange={(month: { month: number }) => {
+						setCalendarYear(month.dateString.split('-')[0])
+						setCalendarMonth(month.month)
+					}}
                     customHeader={(props: any) => {
 						const date = new Date(props.month);
 						const month = date.toLocaleString("es-MX", { month: "long" });
@@ -202,35 +244,35 @@ const CalendarScreen = () => {
 						);
 					}}
                     dayComponent={({ date, state }: { date: { dateString: string; day: number }, state: string }) => {
-						const isSelected =
-						date.dateString === "2025-03-05" ||
-						date.dateString === "2025-03-10";
-
-						return (
-							<View
-								style={{
-									width: 30,
-									height: 30,
-									justifyContent: "center",
-									alignItems: "center",
-									backgroundColor: isSelected ? "#F392BE" : "transparent",
-									borderRadius: 5,
-								}}
-							>
-								<Text
-									style={{
-										color: isSelected
-											? "#FEFEFE"
-											: state === "disabled"
-											? "#CBD5E0"
-											: "#343434",
-									}}
-								>
-									{date.day}
-								</Text>
-							</View>
+						const hasEvents = events.some(event => 
+						  event.date.split('T')[0] === date.dateString
 						);
-					}}
+					  
+						return (
+						  <View
+							style={{
+							  width: 30,
+							  height: 30,
+							  justifyContent: "center",
+							  alignItems: "center",
+							  backgroundColor: hasEvents ? "#F392BE" : "transparent",
+							  borderRadius: 5,
+							}}
+						  >
+							<Text
+							  style={{
+								color: hasEvents
+								  ? "#FEFEFE"
+								  : state === "disabled"
+								  ? "#CBD5E0"
+								  : "#343434",
+							  }}
+							>
+							  {date.day}
+							</Text>
+						  </View>
+						);
+					  }}
 				/>
 
                 <PrimaryButton
@@ -244,7 +286,9 @@ const CalendarScreen = () => {
 			<EventModal
 				visible={showEvent}
 				onClose={() => setShowEvent(false)}
-				event={selectedDate ? mamaEvents[selectedDate] : null}
+				events={events.filter(event => 
+					event.date.split('T')[0] === selectedDate
+				)}
 				selectedDate={selectedDate}
 			/>
 
@@ -255,10 +299,16 @@ const CalendarScreen = () => {
 			/>
 
 			<ScrollView style={{ marginTop: 24 }}>
+			{loading ? (
+				<Text>Cargando eventos...</Text>
+			) : error ? (
+				<Text style={{ color: 'red' }}>{error}</Text>
+			) : (
 				<Agenda events={events.filter((item) => {
-					const date = new Date(item.date);
-					return date.getMonth() + 1 === calendarMonth;
+				const date = new Date(item.date);
+				return date.getMonth() + 1 === calendarMonth;
 				})} />
+			)}
 			</ScrollView>
 		</ScrollView>
 	);

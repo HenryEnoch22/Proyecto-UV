@@ -9,6 +9,7 @@ interface AddEventModalProps {
     onSubmit: (data: {
         name: string;
         date: Date;
+        time: string;
         notify: boolean;
     }) => void;
 }
@@ -37,16 +38,11 @@ const AddEventModal = ({ visible, onClose, onSubmit }: AddEventModalProps) => {
         const finalDate = new Date(selectedDate);
         finalDate.setHours(hours);
         finalDate.setMinutes(minutes);
-
-        console.log({
-            name: eventName,
-            date: finalDate,
-            notify
-        })
         
         onSubmit({
             name: eventName,
             date: finalDate,
+            time: time,
             notify
         });
         

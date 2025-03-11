@@ -1,17 +1,18 @@
+import { deleteEvent } from "@/services/api";
 import { useMemo } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import {
     BellAlertIcon,
     CalendarDaysIcon,
     ClockIcon,
-} from "react-native-heroicons/solid";
+} from "react-native-heroicons/outline";
 
 interface Event {
     id: number;
-    title: string;
+    event_title: string;
     date: string;
     isDone: boolean;
-    isNotifiable: boolean;
+    notifiable: boolean;
     time?: string;
 }
 
@@ -47,8 +48,8 @@ const Agenda = ({ events }: AgendaProps) => {
             key={event.id}
         >
             <View style={styles.eventCardHeader}>
-                <Text style={styles.eventTitle}>{event.title}</Text>
-                {event.isNotifiable && <BellAlertIcon color="#E74C3C" size={20} />}
+                <Text style={styles.eventTitle}>{event.event_title}</Text>
+                {event.notifiable && <BellAlertIcon color="#E74C3C" size={20} />}
             </View>
 
             <View style={styles.eventCardDetails}>

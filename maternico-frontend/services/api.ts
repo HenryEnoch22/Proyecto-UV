@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://192.168.100.6:8000/api'; 
+const API_URL = 'http://148.226.202.216:8000/api'; 
 
 export const register = async (name: string, lastName: string, motherLastName: string, email: string, password: string) => {
     try {
@@ -83,7 +83,6 @@ export const getProfile = async (): Promise<UserResponse | null> => {
 
         if (!response.ok) return null;
         const data = response.json();
-        console.log('data:', data);
         return await data as UserResponse;
     } catch (error) {
         console.error('Error obteniendo el perfil:', error);
@@ -137,7 +136,6 @@ interface Video {
 
 export const getVideo = async (videoID: string): Promise<{ video: Video }> => {
     try {
-        console.log('videoID:', videoID);
         const response = await fetch(`${API_URL}/video/${videoID}`);
         if (!response.ok) throw new Error('Error al obtener el video');
 
@@ -165,6 +163,47 @@ export const getEvents = async (userID: number, year: number, month: number) => 
         return await response.json();
     } catch (error) {
         console.error('Error obteniendo eventos:', error);
+        return [];
+    }
+}
+
+export const createEvent = async (userID: number, eventTitle: string, date: string, time: string, notifiable: boolean, type: string) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) return;
+        
+        const response = await fetch(`${API_URL}/events`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userID, event_title: eventTitle, date: date, time: time, notifiable: notifiable, type: type }),
+        });
+        if (!response.ok) throw new Error('Error al crear evento');
+    
+        return await response.json();
+    } catch (error) {
+        console.error('Error creando evento:', error);
+        return [];
+    }
+}
+
+export const deleteEvent = async (eventID: number) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) return;
+        
+        const response = await fetch(`${API_URL}/events/${eventID}`, {
+            method: 'DELETE',
+            headers: { 
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json' },
+        });
+        if (!response.ok) throw new Error('Error al eliminar el evento');
+    
+        return await response.json();
+    } catch (error) {
+        console.error('Error eliminando evento:', error);
         return [];
     }
 }

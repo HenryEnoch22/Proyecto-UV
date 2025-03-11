@@ -3,6 +3,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLongLeftIcon, PencilIcon } from "react-native-heroicons/solid";
 import { useRouter } from "expo-router";
+import PrimaryButton from "../../components/PrimaryButton";
+import { logout } from "@/services/api";
 
 const Profile = () => {
     const { user } = useAuth();
@@ -58,7 +60,11 @@ const Profile = () => {
                     <InfoRow label="Fecha de nacimiento" value="15 Mar 2024" />
                     <InfoRow label="Edad" value="1 año" />
                 </View>
+
             </View>
+                <Pressable onPress={logout} style={styles.logoutButton}>
+                    <Text style={{color: "#fefefe", fontWeight: "700", fontSize: 18}}>Cerrar sesión</Text>
+                </Pressable>
         </ScrollView>
     );
 };
@@ -156,6 +162,15 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: "right",
     },
+    logoutButton: {
+        alignSelf: "center",
+        backgroundColor: "#Da4c3b",
+        width: 250,
+        borderRadius: 50,
+        height: 72,
+        justifyContent: "center",
+        alignItems: "center"
+    }
 });
 
 export default Profile;
