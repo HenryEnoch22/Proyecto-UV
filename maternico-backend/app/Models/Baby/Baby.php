@@ -9,6 +9,7 @@ class Baby extends Model
     public $timestamps = true;
     protected $table = 'babies';
     protected $fillable = [
+        'user_id',
         'name',
         'last_name',
         'mother_last_name',
