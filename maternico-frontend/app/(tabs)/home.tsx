@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet, ScrollView, Pressable, FlatList } from "react-native";
 import { useAuth } from "@/contexts/AuthContext";
-import { getProfile, logout } from "@/services/api";
+import { getProfile, logout, UserResponse } from "@/services/api";
 import { BellIcon, UserCircleIcon } from "react-native-heroicons/solid";
 import BabyCard from "../../components/BabyCard";
 import ResponseCard from "../../components/ResponseCard";
 import EventCard from "../../components/EventCard";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 
 interface Event {
     id: number;
@@ -25,27 +26,38 @@ const data: Event[] = [
 export default function HomeScreen() {
     const { user, setUser } = useAuth();
 
-    if (!user) {
-        getProfile().then((userResponse) => {
-            if (userResponse) {
-                const user = {
-                    ...userResponse,
-                    id: userResponse.id.toString(),
-                };
-                setUser(user);
+    const [isLoading, setIsLoading] = useState(true);
+    
+      useEffect(() => {
+        const checkAuthStatus = async () => {
+          try {
+            const userData: UserResponse | null = await getProfile();
+    
+            if (userData?.user) {
+              const { user } = userData;
+              setUser({
+                id: user.id.toString(),
+                name: user.name,
+                email: user.email,
+                last_name: user.last_name,
+                mother_last_name: user.mother_last_name,
+                birth_date: user.birth_date,
+                profile_photo: user.profile_photo,
+              });
+            } else {
+              setUser(null);
             }
-        });
-    }
-    const router = useRouter();
-
-    const handleLogout = async () => {
-        try {
-            await logout();
+          } catch (error) {
+            console.error("Error verificando autenticación:", error);
             setUser(null);
-        } catch (e) {
-            console.error("Error al cerrar sesión:", e);
-        }
-    };
+          } finally {
+            setIsLoading(false);
+          }
+        };
+    
+        checkAuthStatus();
+      }, []);
+    const router = useRouter();
 
     return (
         <ScrollView>
@@ -84,7 +96,7 @@ export default function HomeScreen() {
 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Respuestas</Text>
-                    <Pressable onPress={handleLogout}>
+                    <Pressable onPress={() => router.push('/forum')}>
                         <ResponseCard />
                     </Pressable>
                 </View>
@@ -92,7 +104,7 @@ export default function HomeScreen() {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Tu bebé</Text>
                     <Pressable onPress={() => alert("Info del bebé")}> 
-                        <BabyCard />
+                        <BabyCard name='Mark grayson' birthDate="2025-02-17" height={41} weight={4} />
                     </Pressable>
                 </View>
             </View>

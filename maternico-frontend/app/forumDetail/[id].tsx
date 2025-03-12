@@ -21,11 +21,9 @@ const ForumDetail = () => {
 		const fetchData = async () => {
             try {
                 setLoading(true);
-                // Obtener foro
                 const forumData = await getForum(id);
                 if (forumData.data) {
                     setForum(forumData.data);
-                    // Obtener comentarios con owner
                     const commentsData = await getForumComments(forumData.data.id);
                     setComments(commentsData.data || []);
                 } else {
@@ -67,7 +65,7 @@ const ForumDetail = () => {
     if (loading) {
         return (
             <View style={styles.container}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#f392be" />
             </View>
         );
     }
@@ -87,7 +85,7 @@ const ForumDetail = () => {
 					<Pressable onPress={() => router.back()} style={styles.backButton}>
 						<ArrowLongLeftIcon size={24} color="#FEFEFE" />
 					</Pressable>
-					<Text style={styles.headerTitle}>Publicación</Text>
+					<Text style={styles.headerTitle}>{forum.title}</Text>
 				</View>
 
 				<View style={styles.mainContent}>
@@ -113,18 +111,10 @@ const ForumDetail = () => {
                         comments.map((comment, index) => (
                             <View key={index} style={styles.commentContainer}>
                                 <View style={styles.commentUser}>
-                                    <View style={styles.commentInitials}>
-                                        <Text style={styles.initialsText}>
-                                            {`${comment.owner.name[0]}${comment.owner.last_name[0]}`}
-                                        </Text>
-                                    </View>
                                     <View style={styles.commentContent}>
                                         <View style={styles.commentHeader}>
                                             <Text style={styles.commentName}>
-                                                {`${comment.owner.name} ${comment.owner.last_name}`}
-                                            </Text>
-                                            <Text style={styles.commentHandle}>
-                                                @{comment.owner.email.split("@")[0]}
+                                                {`${comment.owner.name} ${comment.owner.last_name} ${comment.owner.mother_last_name}:`}
                                             </Text>
                                         </View>
                                         <Text style={styles.commentText}>{comment.text}</Text>
@@ -141,7 +131,7 @@ const ForumDetail = () => {
                                 multiline
                                 numberOfLines={4}
                                 value={inputText}
-                                onChangeText={(e) => setInputText(e)}
+                                onChangeText={(e: string) => setInputText(e)}
                                 style={styles.mainInput}
                             />)}
                             <PrimaryButton 

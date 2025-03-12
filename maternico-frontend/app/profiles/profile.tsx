@@ -1,17 +1,25 @@
 import { View, Text, StyleSheet, ScrollView, Image, Pressable } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
-import { useNavigation } from "@react-navigation/native";
 import { ArrowLongLeftIcon, PencilIcon } from "react-native-heroicons/solid";
 import { useRouter } from "expo-router";
-import PrimaryButton from "../../components/PrimaryButton";
 import { logout } from "@/services/api";
 
 const Profile = () => {
-    const { user } = useAuth();
+    const { user, setUser } = useAuth();
     const router = useRouter();
 
     const getRoleText = () => {
         return /*user?.child ? */ `Mamá de Fulanito`/* : "Mamá primeriza";*/
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            setUser(null);
+            router.push('/screens/LoginScreen');
+        } catch (e) {
+            console.error("Error al cerrar sesión:", e);
+        }
     };
 
     return (
@@ -62,7 +70,7 @@ const Profile = () => {
                 </View>
 
             </View>
-                <Pressable onPress={logout} style={styles.logoutButton}>
+                <Pressable onPress={handleLogout} style={styles.logoutButton}>
                     <Text style={{color: "#fefefe", fontWeight: "700", fontSize: 18}}>Cerrar sesión</Text>
                 </Pressable>
         </ScrollView>
@@ -167,7 +175,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#Da4c3b",
         width: 250,
         borderRadius: 50,
-        height: 72,
+        height: 64,
         justifyContent: "center",
         alignItems: "center"
     }

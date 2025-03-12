@@ -1,6 +1,8 @@
 import CategoryMagazineCard from "@/components/CategoryMagazineCard";
 import HealthCenterCard from "@/components/HealthCenterCard";
+import { getHealthCenters } from "@/services/api";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -15,6 +17,9 @@ import {
 } from "react-native-heroicons/solid";
 
 const Info = () => {
+	const [dataHealthCenter, setDataHealthCenter] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 	interface Video {
 		id: number;
 		name: string;
@@ -104,24 +109,35 @@ const Info = () => {
 		phone_number: string;
 	}
 
-	const dataHealthCenter: HealthCenter[] = [
-		{
-			id: 1,
-			name: "Centro de salud Panchita",
-			address: "enfrente",
-            city: "Xalapa",
-            state: "Veracruz",
-			phone_number: "921-528-7863",
-		},
-		{
-			id: 2,
-			name: "CS Lopez Mateos",
-			address: "enfrente",
-            city: "Xalapa",
-            state: "Veracruz",
-			phone_number: "921-528-7863",
-		},
-	];
+	
+	useEffect(() => {
+		try {
+			const dataHealthCenter = getHealthCenters();
+			setDataHealthCenter(dataHealthCenter);
+		} catch (error) {
+			console.error("Error al cargar los centros de salud:", error);
+		}
+	}, []);
+
+	useEffect(() => {
+			const fetchHealthCenters = async () => {
+				try {
+					setLoading(true);
+					const healthCenterData = await getHealthCenters();
+					if (healthCenterData.data) {
+						setDataHealthCenter(healthCenterData.data);
+					} else {
+						setError("Centros de salud no encontrados");
+					}
+				} catch (err) {
+					setError("Error al cargar los centros de salud");
+				} finally {
+					setLoading(false);
+				}
+			};
+	
+			fetchHealthCenters();
+		}, []);
 
 	const router = useRouter();
 
@@ -176,7 +192,8 @@ const Info = () => {
 								horizontal
 								showsHorizontalScrollIndicator={false}
 								renderItem={({ item }) => (
-									<Pressable onPress={() => router.push(`/video/${item.id}`)}>
+									<Pressable onPress={() => router.push(`/video/${item.id}`)}
+										style={styles.cardPressable}>
 										<CategoryMagazineCard
 											category={item.name}
 											publications={4}

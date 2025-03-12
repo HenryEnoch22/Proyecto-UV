@@ -240,11 +240,30 @@ export const getForums = async () => {
         if (!response.ok) throw new Error('Error al obtener los foros');
 
         const data = await response.json();
-        console.log('Foros:', data);
 
         return data;
     } catch (error) {
         console.error('Error obteniendo foros apits:', error);
+        return [];
+    }
+}
+
+export const createForum = async (userID: number, title: string, text: string) => {
+    try {
+        const response = await fetch(`${API_URL}/forums`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 'user_id': userID, 'title': title, 'text': text }),
+        });
+        if (!response.ok) throw new Error('Error al crear el foro');
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error creando foro:', error);
         return [];
     }
 }
@@ -262,7 +281,6 @@ export const createComment = async (userID: number, forumID: number, comment: st
         if (!response.ok) throw new Error('Error al crear el comentario');
 
         const data = await response.json();
-        console.log('Comentario creado:', data);
 
         return data;
     } catch (error) {
@@ -284,10 +302,28 @@ export const getForumComments = async (forumID: number) => {
         if (!response.ok) throw new Error('Error al obtener los comentarios');
 
         const data = await response.json();
-        console.log('Comentarios:', data);
         return data;
     } catch (error) {
         console.error('Error obteniendo comentarios:', error);
+        return [];
+    }
+}
+
+export const getHealthCenters = async () => {
+    try {
+        const response = await fetch(`${API_URL}/health-centers`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Error al obtener los centros de salud');
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error obteniendo centros de salud:', error);
         return [];
     }
 }

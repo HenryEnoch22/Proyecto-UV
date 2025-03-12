@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { View, Text, Pressable, Modal, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import FormTextField from "../../components/FormTextField";
 import PrimaryButton from "@/components/PrimaryButton";
-import { getForums } from "@/services/api"; // Asegúrate de importar tu función
+import { createForum, getForums } from "@/services/api"; // Asegúrate de importar tu función
 import { router } from "expo-router";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Forum {
   id: number;
@@ -13,6 +14,7 @@ interface Forum {
 }
 
 const Forum = () => {
+  const { user } = useAuth();
   const [inputText, setInputText] = useState("");
   const [showTitleModal, setShowTitleModal] = useState(false);
   const [forumTitle, setForumTitle] = useState("");
@@ -20,7 +22,6 @@ const Forum = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Obtener foros al montar el componente
   useEffect(() => {
     const fetchForums = async () => {
       try {
@@ -43,18 +44,11 @@ const Forum = () => {
 
   const handleSubmitForum = async () => {
     try {
-      // Aquí deberías implementar tu función createForum
-      console.log("Creando foro:", { title: forumTitle, text: inputText });
+      await createForum(user.id, forumTitle, inputText);
       
-      // Simulación de actualización temporal
-      const newForum: Forum = {
-        id: forums.length + 1,
-        user_id: 1, // ID del usuario actual
-        title: forumTitle,
-        text: inputText
-      };
-      
-      setForums(prev => [newForum, ...prev]);
+      // Volver a cargar todos los foros
+      const updatedForums = await getForums();
+      setForums(updatedForums.forums);
       
       setInputText("");
       setForumTitle("");
@@ -83,12 +77,10 @@ const Forum = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Comunidad</Text>
       </View>
 
-      {/* Campo de texto principal */}
       <View style={styles.inputContainer}>
         <FormTextField
           placeholder="¿Qué quieres contar hoy?"
@@ -99,7 +91,6 @@ const Forum = () => {
           style={styles.mainInput}
         />
 
-        {/* Botón flotante cuando hay texto */}
         {inputText.length > 0 && (
           <PrimaryButton 
             style={styles.floatingButton}
@@ -109,7 +100,6 @@ const Forum = () => {
         )}
       </View>
 
-      {/* Listado de foros existentes */}
       <ScrollView style={styles.forumList}>
         {forums.length === 0 ? (
           <Text style={styles.emptyText}>No hay foros disponibles</Text>
@@ -134,7 +124,6 @@ const Forum = () => {
         )}
       </ScrollView>
 
-      {/* Modal para título */}
       <Modal
         visible={showTitleModal}
         animationType="slide"
@@ -160,7 +149,7 @@ const Forum = () => {
                 style={[styles.modalButton, styles.submitButton]}
                 onPress={handleSubmitForum}
               >
-                <Text style={styles.modalButtonText}>Publicar</Text>
+                <Text style={styles.modalSubmitText}>Publicar</Text>
               </Pressable>
             </View>
           </View>
@@ -287,9 +276,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f5f9',
   },
   submitButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#F392BE',
   },
   modalButtonText: {
+    fontWeight: '500',
+  },
+  modalSubmitText: {
+    color: '#fefefe',
     fontWeight: '500',
   },
   loadingContainer: {
