@@ -43,7 +43,17 @@ export default function HomeScreen() {
                 mother_last_name: user.mother_last_name,
                 birth_date: user.birth_date,
                 profile_photo: user.profile_photo,
-              });
+                baby: user.baby ? {
+                  id: user.baby.id.toString(),
+                  user_id: user.baby.user_id,
+                  name: user.baby.name,
+                  last_name: user.baby.last_name,
+                  mother_last_name: user.baby.mother_last_name,
+                  birth_date: user.baby.birth_date,
+                  height: user.baby.height,
+                  weight: user.baby.weight,
+                  blood_type: user.baby.blood_type,
+              }: null});
             } else {
               setUser(null);
             }
@@ -103,8 +113,13 @@ export default function HomeScreen() {
 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Tu bebé</Text>
-                    <Pressable onPress={() => alert("Info del bebé")}> 
-                        <BabyCard name='Mark grayson' birthDate="2025-02-17" height={41} weight={4} />
+                    <Pressable onPress={() => router.push(`/baby/1`)}> 
+                    <BabyCard 
+                        name={user?.baby?.name || 'Nombre no disponible'} 
+                        birthDate={user?.baby?.birth_date || 'Fecha no disponible'} 
+                        height={user?.baby?.height ? parseFloat(user.baby.height) : 0} 
+                        weight={user?.baby?.weight ? parseFloat(user.baby.weight) : 0} 
+                        />
                     </Pressable>
                 </View>
             </View>

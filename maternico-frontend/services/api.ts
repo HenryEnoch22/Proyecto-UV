@@ -48,6 +48,18 @@ export const login = async (email: string, password: string) => {
 
 
 // 🔹 Función para obtener el perfil del usuario autenticado
+type Baby = {
+    id: string;
+    user_id: number;
+    name: string;
+    last_name: string;
+    mother_last_name: string;
+    birth_date: string;
+    height: string;
+    weight: string;
+    blood_type: string;
+}
+
 type User = {
   id: number;
   name: string;
@@ -56,6 +68,7 @@ type User = {
   mother_last_name: string;
   birth_date: string;
   profile_photo: string;
+  baby: Baby;
 };
 
 export type UserResponse = {
@@ -111,12 +124,38 @@ interface Magazine {
     magazine_path: string;
 }
 
+export const getMagazines = async () => {
+    try {
+        const token = await AsyncStorage.getItem('token'); // Añadir
+        const response = await fetch(`${API_URL}/magazines`, {
+            headers: {
+                'Authorization': `Bearer ${token}`, // Añadir header
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {throw new Error('Error al obtener revistas');}
+        
+        const { data } = await response.json();
+        console.log('magazines data en api', data);
+        return data;
+    } catch (error) {
+        return [];
+    }
+}
+
 export const getMagazine = async (magazineID: number): Promise<{ magazine: Magazine }> => {
     try {
-        const response = await fetch(`${API_URL}/magazine/${magazineID}`);
+        const response = await fetch(`${API_URL}/magazine/${magazineID}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
         if (!response.ok) throw new Error('Error al obtener las revistas');
 
-        return await response.json();
+        const { data } = await response.json(); // Extraer data
+        return data;
     } catch (error) {
         console.error('Error obteniendo revistas:', error);
         return { magazine: { id: '', title: '', magazine_path: '' } };
@@ -127,6 +166,24 @@ interface Video {
     id: string;
     title: string;
     video_path: string;
+}
+
+export const getVideos = async () => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await fetch(`${API_URL}/videos`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Error al obtener videos');
+        const { data } = await response.json(); // Extraer data
+        console.log('videos data en api', data);
+        return data;
+    } catch (error) {
+        return [];
+    }
 }
 
 export const getVideo = async (videoID: string): Promise<{ video: Video }> => {
@@ -324,6 +381,25 @@ export const getHealthCenters = async () => {
         return data;
     } catch (error) {
         console.error('Error obteniendo centros de salud:', error);
+        return [];
+    }
+}
+
+export const getBaby = async (babyID: number) => {
+    try {
+        const response = await fetch(`${API_URL}/babies/${babyID}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) throw new Error('Error al obtener el bebé');
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error obteniendo bebé:', error);
         return [];
     }
 }

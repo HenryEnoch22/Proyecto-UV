@@ -7,7 +7,7 @@ const notifications = [
   {
     id: 1,
     title: "Recordatorio de vacuna",
-    message: "La próxima vacuna de Luna es en 6 días",
+    message: "La próxima vacuna de Mark es en 6 días",
     date: "2025-03-09",
     time: "10:00",
     unread: true,
@@ -15,17 +15,17 @@ const notifications = [
   },
   {
     id: 2,
-    title: "Nuevo artículo",
-    message: "5 consejos para la alimentación complementaria",
-    date: "2025-03-8",
+    title: "Recordatorio de alimentacion",
+    message: "La proxima comida de Mark es en 30 minutos",
+    date: "2025-03-08",
     time: "15:30",
     unread: false,
     type: "article"
   },
   {
     id: 3,
-    title: "Cita confirmada",
-    message: "Pediatría - 15 de febrero a las 10:00 AM",
+    title: "Cita medica",
+    message: "La cita de Mark es en 2 dias",
     date: "2025-02-15",
     time: "10:00",
     unread: false,

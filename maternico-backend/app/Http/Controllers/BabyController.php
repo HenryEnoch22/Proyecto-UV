@@ -42,7 +42,7 @@ class BabyController extends Controller
     public function show($motherId) //Recibe el id de la madre como parámetro
     {
         try{
-            $baby = Baby::where('user_id', $motherId)->get();
+            $baby = Baby::where('user_id', $motherId)->first();
             return response()->json([
                 'success' => true,
                 'message' => 'Datos del bebé obtenidos correctamente',

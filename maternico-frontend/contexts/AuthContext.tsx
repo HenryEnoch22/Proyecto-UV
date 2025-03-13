@@ -1,6 +1,17 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 // 1️⃣ Define el tipo de usuario
+type Baby = {
+    id: string;
+    user_id: number;
+    name: string;
+    last_name: string;
+    mother_last_name: string;
+    birth_date: string;
+    height: string;
+    weight: string;
+    blood_type: string;
+}
 type User = {
     id: string;
     name: string;
@@ -9,6 +20,7 @@ type User = {
     mother_last_name: string,
     birth_date: string,
     profile_photo: string,
+    baby: Baby
 } | null;
 
 // 2️⃣ Define el tipo del contexto

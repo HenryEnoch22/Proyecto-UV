@@ -1,6 +1,6 @@
 import CategoryMagazineCard from "@/components/CategoryMagazineCard";
 import HealthCenterCard from "@/components/HealthCenterCard";
-import { getHealthCenters } from "@/services/api";
+import { getHealthCenters, getMagazines, getVideos } from "@/services/api";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -18,88 +18,29 @@ import {
 
 const Info = () => {
 	const [dataHealthCenter, setDataHealthCenter] = useState([]);
+	const [dataMagazine, setDataMagazine] = useState([]);
+	const [dataVideo, setDataVideo] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	
+	// Nuevo (correcto)
 	interface Video {
 		id: number;
-		name: string;
+		title: string; // ← Campo correcto
 		video_path: string;
 	}
+	
+	const videoCover = require("../../assets/images/logo/MaternicoLogo.png")
 
-	const dataVideo: Video[] = [
-		{
-			id: 1,
-			name: "Primeros 30 dias",
-			video_path: require("../../assets/images/logo/MaternicoLogo.png"),
-		},
-		{
-			id: 2,
-			name: "Que hacer si es chaparro",
-			video_path: require("../../assets/images/logo/MaternicoLogo.png"),
-		},
-		{
-			id: 3,
-			name: "Que hacer si es morado",
-			video_path: require("../../assets/images/logo/MaternicoLogo.png"),
-		},
-		{
-			id: 4,
-			name: "Que hacer si es pelon",
-			video_path: require("../../assets/images/logo/MaternicoLogo.png"),
-		},
-		{
-			id: 5,
-			name: "Que hacer si no es pelon",
-			video_path: require("../../assets/images/logo/MaternicoLogo.png"),
-		},
-	];
-
+	
+	// Para revistas
 	interface MagazineCategory {
 		id: number;
-		name: string;
-		publications: number;
-		cover: string;
+		title: string; // ← API usa 'title' no 'name'
+		magazine_path: string; // ← Nuevo campo necesario
 	}
 
-	const dataMagazine: MagazineCategory[] = [
-		{
-			id: 1,
-			name: "Revista 0",
-			publications: 3,
-			cover: require("../../assets/images/portada.png"),
-		},
-		{
-			id: 2,
-			name: "Revista 1",
-			publications: 2,
-			cover: require("../../assets/images/portada.png"),
-		},
-		{
-			id: 3,
-			name: "Revista 2",
-			publications: 1,
-			cover: require("../../assets/images/portada.png"),
-		},
-		{
-			id: 4,
-			name: "Revista 3",
-			publications: 5,
-			cover: require("../../assets/images/portada.png"),
-		},
-		{
-			id: 5,
-			name: "Revista 4",
-			publications: 2,
-			cover: require("../../assets/images/portada.png"),
-		},
-		{
-			id: 6,
-			name: "Revista 5",
-			publications: 2,
-			cover: require("../../assets/images/portada.png"),
-		},
-	];
-
+	const magazineCover = require("../../assets/images/portada.png")
 	interface HealthCenter {
 		id: number;
 		name: string;
@@ -109,34 +50,62 @@ const Info = () => {
 		phone_number: string;
 	}
 
-	
+	// Para revistas
 	useEffect(() => {
-		try {
-			const dataHealthCenter = getHealthCenters();
-			setDataHealthCenter(dataHealthCenter);
-		} catch (error) {
-			console.error("Error al cargar los centros de salud:", error);
-		}
+		const fetchMagazines = async () => {
+			try {
+				setLoading(true);
+				const magazinesData = await getMagazines();
+				// magazinesData ya sería el array directo
+				console.log(magazinesData);
+				setDataMagazine(magazinesData);
+			} catch (error) {
+				setError("Error al cargar las revistas");
+				console.error("Error cargando revistas:", error);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchMagazines();
+	}, []);
+
+	// Para videos
+	useEffect(() => {
+		const fetchVideos = async () => {
+			try {
+				setLoading(true);
+				const videosData = await getVideos();
+				// videosData sería el array directo
+				console.log(videosData);
+				setDataVideo(videosData);
+			} catch (error) {
+				setError("Error al cargar los videos");
+				console.error("Error cargando videos:", error);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchVideos();
 	}, []);
 
 	useEffect(() => {
-			const fetchHealthCenters = async () => {
-				try {
-					setLoading(true);
-					const healthCenterData = await getHealthCenters();
-					if (healthCenterData.data) {
-						setDataHealthCenter(healthCenterData.data);
-					} else {
-						setError("Centros de salud no encontrados");
-					}
-				} catch (err) {
-					setError("Error al cargar los centros de salud");
-				} finally {
-					setLoading(false);
+		const fetchHealthCenters = async () => {
+			try {
+				setLoading(true);
+				const healthCenterData = await getHealthCenters();
+				if (healthCenterData.data) {
+					setDataHealthCenter(healthCenterData.data);
+				} else {
+					setError("Centros de salud no encontrados");
 				}
-			};
-	
-			fetchHealthCenters();
+			} catch (err) {
+				setError("Error al cargar los centros de salud");
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchHealthCenters();
 		}, []);
 
 	const router = useRouter();
@@ -168,9 +137,8 @@ const Info = () => {
 										style={styles.cardPressable}
 									>
 										<CategoryMagazineCard
-											category={item.name}
-											cover={item.cover}
-											publications={item.publications}
+											category={item.title}
+											cover={magazineCover}
 											key={item.id}
 										/>
 									</Pressable>
@@ -195,9 +163,9 @@ const Info = () => {
 									<Pressable onPress={() => router.push(`/video/${item.id}`)}
 										style={styles.cardPressable}>
 										<CategoryMagazineCard
-											category={item.name}
-											publications={4}
-											cover={item.video_path}
+											category={item.title}
+											cover={videoCover}
+											key={item.id}
 										/>
 									</Pressable>
 								)}

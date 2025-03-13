@@ -3,11 +3,11 @@ import { DocumentTextIcon } from "react-native-heroicons/solid";
 
 interface CategoryMagazineCardProps {
     category: string,
-    publications: number,
+    // publications: number,
     cover: string,
 }
 
-const CategoryMagazineCard = ({ category, publications, cover  }: CategoryMagazineCardProps) => {
+const CategoryMagazineCard = ({ category, cover  }: CategoryMagazineCardProps) => {
 	return (
 		<View style={styles.container}>
             <Image source={cover} style={styles.header} />
