@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://192.168.100.6:8000/api'; 
+const API_URL = 'http://192.168.100.16:8000/api'; 
 
 export const register = async (name: string, lastName: string, motherLastName: string, email: string, password: string) => {
     try {
