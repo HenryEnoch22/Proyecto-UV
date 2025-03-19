@@ -21,6 +21,15 @@ const Album = ({ events, onAddEvent }: AlbumProps) => {
     
     const [showModal, setShowModal] = useState(false);
 
+    const getImage = (title: string) => {
+        if (title.toLowerCase().includes("gatear")) {
+            return require("../assets/images/babyEvents/gateando.jpg");
+        } else if (title.toLowerCase().includes("palabra")) {
+            return require("../assets/images/babyEvents/hablando.jpg");
+        }
+        return require("../assets/images/babyEvents/jugando.png");
+    }
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -40,12 +49,10 @@ const Album = ({ events, onAddEvent }: AlbumProps) => {
                             <Text style={styles.descriptionText}>{event.description}</Text>
                         )}
                         
-                        {event.photo_path && (
-                            <Image 
-                                source={{ uri: event.photo_path || require('../assets/images/portada.png') }}
-                                style={styles.eventImage}
-                            />
-                        )}
+                        <Image 
+                            source={getImage(event.event_title) }
+                            style={styles.eventImage}
+                        />
                     </View>
                 </View>
             ))}

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://192.168.100.16:8000/api'; 
+const API_URL = 'http://172.20.10.5:8000/api'; 
 
 export const register = async (name: string, lastName: string, motherLastName: string, email: string, password: string) => {
     try {
@@ -136,7 +136,6 @@ export const getMagazines = async () => {
         if (!response.ok) {throw new Error('Error al obtener revistas');}
         
         const { data } = await response.json();
-        console.log('magazines data en api', data);
         return data;
     } catch (error) {
         return [];
@@ -145,13 +144,14 @@ export const getMagazines = async () => {
 
 export const getMagazine = async (magazineID: number): Promise<{ magazine: Magazine }> => {
     try {
-        const response = await fetch(`${API_URL}/magazine/${magazineID}`, {
+        const response = await fetch(`${API_URL}/magazines/${magazineID}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
             }
         });
+        console.log('response:', response);
         if (!response.ok) throw new Error('Error al obtener las revistas');
 
         const { data } = await response.json(); // Extraer data
@@ -178,8 +178,7 @@ export const getVideos = async () => {
             }
         });
         if (!response.ok) throw new Error('Error al obtener videos');
-        const { data } = await response.json(); // Extraer data
-        console.log('videos data en api', data);
+        const { data } = await response.json();
         return data;
     } catch (error) {
         return [];
@@ -188,10 +187,18 @@ export const getVideos = async () => {
 
 export const getVideo = async (videoID: string): Promise<{ video: Video }> => {
     try {
-        const response = await fetch(`${API_URL}/video/${videoID}`);
+        const response = await fetch(`${API_URL}/videos/${videoID}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const { data } = await response.json();
+        console.log('data de video:', data);
         if (!response.ok) throw new Error('Error al obtener el video');
-
-        return await response.json();
+        
+        return data;
     } catch (error) {
         console.error('Error obteniendo video:', error);
         return { video: { id: '', title: '', video_path: '' } };

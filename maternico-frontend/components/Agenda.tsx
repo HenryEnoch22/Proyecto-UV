@@ -1,5 +1,4 @@
 import { deleteEvent } from "@/services/api";
-import { router } from "expo-router";
 import { useMemo } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import {

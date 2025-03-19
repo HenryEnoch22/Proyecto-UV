@@ -56,8 +56,6 @@ const Info = () => {
 			try {
 				setLoading(true);
 				const magazinesData = await getMagazines();
-				// magazinesData ya sería el array directo
-				console.log(magazinesData);
 				setDataMagazine(magazinesData);
 			} catch (error) {
 				setError("Error al cargar las revistas");
@@ -75,8 +73,6 @@ const Info = () => {
 			try {
 				setLoading(true);
 				const videosData = await getVideos();
-				// videosData sería el array directo
-				console.log(videosData);
 				setDataVideo(videosData);
 			} catch (error) {
 				setError("Error al cargar los videos");

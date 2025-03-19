@@ -14,8 +14,10 @@ const VideoView = () => {
         const fetchVideo = async () => {
             try {
                 const data = await getVideo(id);
-                if (data.video) {
-                    setVideo(data.video);
+                console.log('video id: ', id);
+                console.log('video: ', data);
+                if (data) {
+                    setVideo(data);
                 } else {
                     setError("Video no encontrado");
                 }

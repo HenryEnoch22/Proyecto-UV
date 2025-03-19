@@ -2,16 +2,38 @@ import { getBaby } from "@/services/api";
 import { router, useLocalSearchParams } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Modal } from "react-native";
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable } from "react-native";
 import { ArrowLongLeftIcon, PencilSquareIcon} from "react-native-heroicons/solid";
 import Album from "../../components/Album";
-import AddEventModal from "@/components/AddEventModal";
 import EditBabyModal from "@/components/EditBabyModal";
 
 const Baby = () => {
     const { id } = useLocalSearchParams();
     const navigation = useNavigation();
     const [showModal, setShowModal] = useState(false);
+    const [events, setEvents] = useState<{ id: number; baby_id: number; event_title: string; description?: string; date: string; photo_path?: string }[]>([
+        {
+            "id": 1,
+            "baby_id": 1,
+            "event_title": "Aprendió a gatear",
+            "description": "Gateo del sillon a la mesa de centro",
+            "date": "2025-02-09",
+        },
+        {
+            "id": 2,
+            "baby_id": 1,
+            "event_title": "Dijo su primera palabra",
+            "description": "Dijo mamá mientras se despertaba de una siesta",
+            "date": "2025-03-10",
+        },
+        {
+            "id": 3,
+            "baby_id": 1,
+            "event_title": "Empezó a jugar con sus juguetes",
+            "description": "Se mantuvo jugando con su pelotita durante toda la tarde",
+            "date": "2025-03-11",
+        }
+    ]);
 
     type BabyData = {
         id: number;
@@ -33,7 +55,6 @@ const Baby = () => {
         const fetchData = async () => {
             try {
                 const response = await getBaby(Number(id));
-                console.log(response.data);
                 setData(response.data);
             } catch (err: Error | any) {
                 setError(err.message || "Error al cargar los datos.");
@@ -67,12 +88,12 @@ const Baby = () => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Pressable onPress={() => navigation.goBack()}>
                     <ArrowLongLeftIcon size={32} color="#fff" />
-                </TouchableOpacity>
+                </Pressable>
                 <Text style={[styles.title, { flex: 1 }]}>{babyFullName || "Sin nombre"}</Text>
                 
-                <TouchableOpacity
+                <Pressable
                     onPress={() => {
                         setShowModal(true);
                     }}
@@ -80,7 +101,7 @@ const Baby = () => {
                     accessibilityLabel="Editar información del bebé"
                 >
                     <PencilSquareIcon color={"#FEFEFE"} size={20} />
-                </TouchableOpacity>
+                </Pressable>
                 </View>
 
             <View style={styles.section}>
@@ -116,23 +137,22 @@ const Baby = () => {
                 </Text>
             </View>
 
-            <Album events={[
-                {
-                    id: 1,
-                    baby_id: 2,
-                    event_title: "Suboor",
-                    description: "Descripción del evento",
-                    date: "2024-03-15",
-                    photo_path: "https://randomuser.me/api/portraits/lego/6.jpg"
-                },
-                {
-                    id: 2,
-                    baby_id: 2,
-                    event_title: "Ya camina",
-                    description: "Dio sus primeros pasos",
-                    date: "2024-06-15",
-                },
-            ]} />
+            <Album 
+                events={events} 
+                onAddEvent={({event_title, description, date, photo_path}) => {
+                    setEvents([
+                        ...events,
+                        {
+                            id: events.length + 1,
+                            baby_id: 2,
+                            event_title,
+                            ...(description && { description }),
+                            date,
+                            ...(photo_path && { photo_path }),
+                        },
+                    ]);
+                }} 
+            />
 
             <EditBabyModal
 				visible={showModal}
@@ -201,7 +221,7 @@ const styles = StyleSheet.create({
     editButton: {
     padding: 10,
     borderRadius: 50,
-    backgroundColor: "rgba(255, 255, 255, 0.2)", // Fondo sutil para mejor contraste
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
   },
   editButtonText: {
     color: "#fff",

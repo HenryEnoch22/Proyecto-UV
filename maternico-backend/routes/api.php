@@ -48,6 +48,22 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/baby-events/{babEventId}', [BabyEventController::class, 'show']);
     Route::post('/baby-events', [BabyEventController::class, 'store']);
     Route::delete('/baby-events/{babyEventId}', [BabyEventController::class, 'destroy']);
+
+    Route::get('/videos/{videoId}', function ($videoId){
+        return response()->json([
+            'success' => true,
+            'message' => 'Video obtenido correctamente',
+            'data' => \App\Models\Information\Video::findOrFail($videoId),
+        ]);
+    });
+
+    Route::get('/magazines/{magazineId}', function ($magazineId){
+        return response()->json([
+            'success' => true,
+            'message' => 'Revista obtenida correctamente',
+            'data' => \App\Models\Information\Magazine::findOrFail($magazineId),
+        ]);
+    });
     
     Route::get('/videos', function (){
         return response()->json([

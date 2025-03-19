@@ -274,15 +274,6 @@ const CalendarScreen = () => {
 
 			</View>
 
-			<EventModal
-				visible={showEvent}
-				onClose={() => setShowEvent(false)}
-				events={events.filter(event => 
-					event.date.split('T')[0] === selectedDate
-				)}
-				selectedDate={selectedDate}
-			/>
-
 			<AddEventModal
 				visible={showModal}
 				onClose={() => setShowModal(false)}
@@ -291,7 +282,7 @@ const CalendarScreen = () => {
 
 			<ScrollView style={{ marginTop: 24 }}>
 			{loading ? (
-				<Text>Cargando eventos...</Text>
+				<Text style={{paddingHorizontal: 16}}>Cargando eventos...</Text>
 			) : error ? (
 				<Text style={{ color: 'red' }}>{error}</Text>
 			) : (

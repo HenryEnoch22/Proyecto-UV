@@ -39,41 +39,35 @@ const ForumDetail = () => {
         fetchData();
     }, [id]);
 
-    const handleSendComment = async () => { // Hacer la función async
+    const handleSendComment = async () => {
         if (!showInput) {
             setShowInput(true);
             return;
         }
-    
+
+        setError(null);
+
         if (inputText.trim() === "") {
             setError("No se puede enviar un comentario vacío");
             return;
         }
-    
+
         try {
             await createComment(user.id, forum.id, inputText);
             setInputText("");
             setShowInput(false);
             
-            // Actualizar lista de comentarios
             const updatedComments = await getForumComments(forum.id);
             setComments(updatedComments.data || []);
         } catch (error) {
             setError("Error al enviar el comentario");
-    }}
+        }
+    }
 
     if (loading) {
         return (
             <View style={styles.container}>
                 <ActivityIndicator size="large" color="#f392be" />
-            </View>
-        );
-    }
-
-    if (error) {
-        return (
-            <View style={styles.container}>
-                <Text>{error}</Text>
             </View>
         );
     }
@@ -125,22 +119,30 @@ const ForumDetail = () => {
                     ) : (
 						<>
                             <Text style={styles.noComments}>Sé el primero en responder</Text>
-                            {showInput && (
-                                <FormTextField
-                                placeholder="Yo te recomiendo que..."
-                                multiline
-                                numberOfLines={4}
-                                value={inputText}
-                                onChangeText={(e: string) => setInputText(e)}
-                                style={styles.mainInput}
-                            />)}
-                            <PrimaryButton 
-                                style={styles.floatingButton}
-                                onPress={handleSendComment}
-                                text="Agregar comentario"
-                            />
                         </>
 					)}
+                    {showInput && (
+                    <>
+                        <FormTextField
+                            placeholder="Yo te recomiendo que..."
+                            multiline
+                            numberOfLines={4}
+                            value={inputText}
+                            onChangeText={(text: string) => {
+                                setInputText(text);
+                                setError(null);
+                            }}
+                            style={styles.mainInput}
+                        />
+                        {error && <Text style={styles.errorText}>{error}</Text>}
+                    </>
+                )}
+                
+                <PrimaryButton 
+                    style={styles.floatingButton}
+                    onPress={handleSendComment}
+                    text={showInput ? "Enviar comentario" : "Agregar comentario"}
+                />
 				</View>
 			</ScrollView>
 		);
@@ -294,6 +296,12 @@ const styles = StyleSheet.create({
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.1,
   
+    },
+    errorText: {
+        color: 'red',
+        marginHorizontal: 16,
+        marginTop: 8,
+        fontSize: 14,
     },
 });
 
