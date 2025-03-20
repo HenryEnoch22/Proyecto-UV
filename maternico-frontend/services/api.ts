@@ -1,15 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://192.168.100.16:8000/api'; 
+const API_URL = 'http://192.168.100.19:8000/api';
 
-export const register = async (name: string, lastName: string, motherLastName: string, email: string, password: string) => {
+export const register = async (name: string, lastName: string, motherLastName: string, email: string, password: string, confirmPassword:string) => {
     try {
 
         const response = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, last_name: lastName, mother_last_name: motherLastName, email, password }),
+            body: JSON.stringify({ name, last_name: lastName, mother_last_name: motherLastName, email, password, password_confirmation: confirmPassword }),
         });
 
         if (!response.ok) throw new Error('Error en el registro');

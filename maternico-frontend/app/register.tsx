@@ -39,7 +39,8 @@ export default function RegisterScreen() {
                 lastName,
                 motherLastName,
                 email,
-                password
+                password,
+                confirmPassword
             );
 
             const user = await getProfile();
