@@ -19,7 +19,7 @@ type User = {
     last_name: string,
     mother_last_name: string,
     birth_date: string,
-    profile_photo: string,
+    profile_photo_path: string,
     baby: Baby
 } | null;
 

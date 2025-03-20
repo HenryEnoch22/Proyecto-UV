@@ -40,23 +40,23 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'data' => \App\Models\Health\HealthCenter::all(),
         ]);
     });
-    Route::post('/babies', [BabyController::class, 'store']); 
+    Route::post('/babies', [BabyController::class, 'store']);
     Route::get('/babies/{babyId}', [BabyController::class, 'show']);
     Route::patch('/babies/{babyId}', [BabyController::class, 'update']); //TODO: Implementar el método update en BabyController
-    
+
     Route::get('/baby-events-get/{babyId}', [BabyEventController::class, 'index']);
     Route::get('/baby-events/{babEventId}', [BabyEventController::class, 'show']);
     Route::post('/baby-events', [BabyEventController::class, 'store']);
     Route::delete('/baby-events/{babyEventId}', [BabyEventController::class, 'destroy']);
-    
+
     Route::get('/videos', function (){
         return response()->json([
             'success' => true,
             'message' => 'Video obtenido correctamente',
             'data' => \App\Models\Information\Video::all(),
         ]);
-    });	
-    
+    });
+
     Route::get('/magazines', function (){
         return response()->json([
             'success' => true,
@@ -64,6 +64,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'data' => \App\Models\Information\Magazine::all(),
         ]);
     });
+
+    Route::patch('/profile/{userId}', [App\Http\Controllers\ProfileController::class, 'update']);
 
 });
 

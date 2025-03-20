@@ -403,3 +403,30 @@ export const getBaby = async (babyID: number) => {
         return [];
     }
 }
+
+export const updateProfile = async (userId: number, data:any) =>{
+    if(!userId){
+        console.error('No se proporcionó el ID del usuario');
+        return [];
+    }
+    try {
+        const response = await fetch(`${API_URL}/profile/${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        if (!response.ok) {
+            console.error('Error en la respuesta:', responseData);
+            throw new Error('Error al actualizar el perfil');
+        }
+
+        return responseData;
+    } catch (error) {
+        console.error('Error al enviar la petición', error);
+        return [];
+    }
+}
