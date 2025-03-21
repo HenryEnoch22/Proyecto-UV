@@ -18,9 +18,10 @@ return new class extends Migration
             $table->string('last_name', 45);
             $table->string('mother_last_name', 45);
             $table->string('email', 255)->unique();
-            $table->date('birth_date');
+            $table->date('birth_date')->nullable();
             $table->string('password');
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('profile_photo_path', 2048)->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

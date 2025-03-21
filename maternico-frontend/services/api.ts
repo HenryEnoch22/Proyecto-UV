@@ -1,15 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://172.20.10.5:8000/api'; 
+const API_URL = 'http://192.168.100.19:8000/api';
 
-export const register = async (name: string, lastName: string, motherLastName: string, email: string, password: string) => {
+export const register = async (name: string, lastName: string, motherLastName: string, email: string, password: string, confirmPassword:string) => {
     try {
 
         const response = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, last_name: lastName, mother_last_name: motherLastName, email, password }),
+            body: JSON.stringify({ name, last_name: lastName, mother_last_name: motherLastName, email, password, password_confirmation: confirmPassword }),
         });
 
         if (!response.ok) throw new Error('Error en el registro');
@@ -407,6 +407,33 @@ export const getBaby = async (babyID: number) => {
         return data;
     } catch (error) {
         console.error('Error obteniendo bebé:', error);
+        return [];
+    }
+}
+
+export const updateProfile = async (userId: number, data:any) =>{
+    if(!userId){
+        console.error('No se proporcionó el ID del usuario');
+        return [];
+    }
+    try {
+        const response = await fetch(`${API_URL}/profile/${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        if (!response.ok) {
+            console.error('Error en la respuesta:', responseData);
+            throw new Error('Error al actualizar el perfil');
+        }
+
+        return responseData;
+    } catch (error) {
+        console.error('Error al enviar la petición', error);
         return [];
     }
 }

@@ -1,15 +1,17 @@
 import { View, Text, StyleSheet, ScrollView, TextInput, Pressable, Image } from "react-native";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLongLeftIcon, CameraIcon } from "react-native-heroicons/solid";
 import PrimaryButton from "../../components/PrimaryButton";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { launchImageLibrary } from "react-native-image-picker";
+import { updateProfile } from "@/services/api";
 
 const EditProfileScreen = () => {
     const { user, setUser } = useAuth();
     const navigation = useNavigation();
 
+    console.log(user?.profile_photo_path);
     const [formData, setFormData] = useState({
         id: user?.id || "",
         name: user?.name || "",
@@ -18,13 +20,42 @@ const EditProfileScreen = () => {
         email: user?.email || "",
         birth_date: user?.birth_date || "",
         password: "",
-        profile_photo: user?.profile_photo || "https://randomuser.me/api/portraits/lego/6.jpg",
+        profile_photo_path: user?.profile_photo_path || "https://randomuser.me/api/portraits/lego/6.jpg",
     });
 
-    const handleSubmit = () => {
-        setUser(formData);
-        navigation.goBack();
-    };
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                id: user.id || "",
+                name: user.name || "",
+                last_name: user.last_name || "",
+                mother_last_name: user.mother_last_name || "",
+                email: user.email || "",
+                birth_date: user.birth_date || "",
+                password: "", // Si no se está modificando, podemos dejarlo vacío
+                profile_photo_path: user.profile_photo_path || "https://randomuser.me/api/portraits/lego/6.jpg",
+            });
+        }
+    }, [user]);  // Dependemos de user, cuando cambie, el formulario se actualizará
+
+
+    const handleSubmit = async () => {
+        if(!user?.id) {
+            console.log("No se puede actualizar el perfil sin un usuario");
+            return;
+        }
+        try{
+            const updateProfileResponse = await updateProfile(Number(user.id), formData);
+            if(updateProfileResponse){
+                setUser(updateProfileResponse);
+                navigation.goBack();
+            }else{
+                alert("Error al actualizar perfil");
+            }
+        }catch (e) {
+            console.error("Error al cerrar sesión:", e);
+        }
+    }
 
     const handleImagePicker = async () => {
         console.log('handleImagePicker');
@@ -34,15 +65,15 @@ const EditProfileScreen = () => {
         });
 
         if (!result.didCancel && result.assets?.[0]?.uri) {
-            setFormData({...formData, profile_photo: result.assets[0].uri});
+            setFormData({...formData, profile_photo_path: result.assets[0].uri});
         }
     };
 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
-                <Pressable 
-                    onPress={() => navigation.goBack()} 
+                <Pressable
+                    onPress={() => navigation.goBack()}
                     style={styles.backButton}
                 >
                     <ArrowLongLeftIcon size={24} color="#FEFEFE" />
@@ -53,8 +84,8 @@ const EditProfileScreen = () => {
             <View style={styles.formContainer}>
                 <Text style={styles.sectionTitle}>Foto de perfil</Text>
                 <Pressable onPress={handleImagePicker} style={styles.imageContainer}>
-                    <Image 
-                        source={{ uri: formData.profile_photo }}
+                    <Image
+                        source={{ uri: formData.profile_photo_path }}
                         style={styles.profileImage}
                     />
                     <View style={styles.cameraIcon}>
@@ -91,13 +122,13 @@ const EditProfileScreen = () => {
                     keyboardType="email-address"
                 />
 
-                <Text style={styles.sectionTitle}>Datos del bebé</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nombre del bebé"
-                    value={formData.name}
-                    onChangeText={(text) => setFormData({...formData, name: text})}
-                />
+                {/*<Text style={styles.sectionTitle}>Datos del bebé</Text>*/}
+                {/*<TextInput*/}
+                {/*    style={styles.input}*/}
+                {/*    placeholder="Nombre del bebé"*/}
+                {/*    value={formData.name}*/}
+                {/*    onChangeText={(text) => setFormData({...formData, name: text})}*/}
+                {/*/>*/}
                 <TextInput
                     style={styles.input}
                     placeholder="Fecha de nacimiento (DD/MM/AAAA)"
@@ -105,9 +136,9 @@ const EditProfileScreen = () => {
                     onChangeText={(text) => setFormData({...formData, password: text})}
                 />
 
-                <PrimaryButton 
-                    text="Guardar cambios" 
-                    onPress={handleSubmit} 
+                <PrimaryButton
+                    text="Guardar cambios"
+                    onPress={handleSubmit}
                     style={{ marginTop: 24 }}
                 />
             </View>
