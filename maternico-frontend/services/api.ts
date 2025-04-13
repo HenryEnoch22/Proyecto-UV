@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://192.168.1.76:8000/api';
+const API_URL = 'http://192.168.1.68:8000/api';
 
 // INTERFACES
 // 🔹 Función para obtener el perfil del usuario autenticado
