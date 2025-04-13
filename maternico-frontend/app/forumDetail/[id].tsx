@@ -219,9 +219,7 @@ const ForumDetail = () => {
 						</Text>
 					</View>
 				</View>
-
-				<Text style={styles.commentsTitle}>Respuestas</Text>
-
+				
 				<CommentsList
 					comments={comments}
 					currentUserId={user?.id}

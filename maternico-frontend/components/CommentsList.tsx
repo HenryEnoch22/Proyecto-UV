@@ -1,4 +1,3 @@
-// components/CommentsList.tsx
 import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import CommentItem from "./CommentItem";
