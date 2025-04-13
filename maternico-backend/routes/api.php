@@ -14,26 +14,27 @@ use App\Http\Controllers\BabyController;
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/user', function (Request $request) {
-        $user = $request->user()->load('baby'); // Cargar la relación 'baby'
+        $user = $request->user();
+
         return response()->json([
             'success' => true,
             'user' => $user,
         ]);
     });
 
-    Route::post('/get-events', [EventController::class, 'index']); //ya
-    Route::post('/events', [EventController::class, 'store']); //ya
-    Route::get('/events/{eventId}', [EventController::class, 'show']); //todavia
-    Route::patch('/events/{eventId}', [EventController::class, 'update']); //todavia
-    Route::delete('/events/{eventId}', [EventController::class, 'destroy']); //ya
+    Route::post('/get-events', [EventController::class, 'index']);
+    Route::post('/events', [EventController::class, 'store']);
+    Route::get('/events/{eventId}', [EventController::class, 'show']);
+    Route::patch('/events/{eventId}', [EventController::class, 'update']);
+    Route::delete('/events/{eventId}', [EventController::class, 'destroy']);
 
-    Route::apiResource('forums', ForumController::class); // store y show
-    Route::get('/forums/{forumId}/comments', [ForumController::class, 'comments']); //ya
+    Route::apiResource('forums', ForumController::class);
+    Route::get('/forums/{forumId}/comments', [ForumController::class, 'comments']);
 
-    Route::post('/comments', [CommentController::class, 'store']); //ya
-    Route::delete('/comments/{commentId}', [CommentController::class, 'destroy']); //todavia
+    Route::post('/comments', [CommentController::class, 'store']);
+    Route::delete('/comments/{commentId}', [CommentController::class, 'destroy']);
 
-    Route::get('/health-centers', function (){ // ya
+    Route::get('/health-centers', function (){
         return response()->json([
             'success' => true,
             'message' => 'Centros de salud obtenidos correctamente',
@@ -42,7 +43,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     Route::post('/babies', [BabyController::class, 'store']);
     Route::get('/babies/{babyId}', [BabyController::class, 'show']);
-    Route::patch('/babies/{babyId}', [BabyController::class, 'update']); //TODO: Implementar el método update en BabyController
+    Route::get('/baby/{mother}', [BabyController::class, 'getBabyByMother']);
+    Route::patch('/babies/{babyId}', [BabyController::class, 'update']);
 
     Route::get('/baby-events-get/{babyId}', [BabyEventController::class, 'index']);
     Route::get('/baby-events/{babEventId}', [BabyEventController::class, 'show']);

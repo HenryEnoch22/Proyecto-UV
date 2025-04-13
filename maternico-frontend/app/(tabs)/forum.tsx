@@ -46,7 +46,6 @@ const Forum = () => {
     try {
       await createForum(user.id, forumTitle, inputText);
       
-      // Volver a cargar todos los foros
       const updatedForums = await getForums();
       setForums(updatedForums.forums);
       
@@ -83,7 +82,7 @@ const Forum = () => {
 
       <View style={styles.inputContainer}>
         <FormTextField
-          placeholder="¿Qué quieres contar hoy?"
+          placeholder="¿Qué experiencia nueva tienes para compartir?"
           multiline
           numberOfLines={4}
           value={inputText}

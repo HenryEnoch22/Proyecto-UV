@@ -1,5 +1,5 @@
 import { getBaby } from "@/services/api";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable } from "react-native";

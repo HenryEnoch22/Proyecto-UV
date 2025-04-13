@@ -27,7 +27,8 @@ class BabyController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Bebé creado correctamente',
-                'data' => $baby], 201);
+                'data' => $baby
+            ], 201);
         }catch (Exception $e){
             return response()->json([
                 'success' => false,
@@ -71,6 +72,26 @@ class BabyController extends Controller
                 'success' => false,
                 'message' => 'Error al actualizar el bebé',
                 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get the specified baby by mother id
+     */
+    public function getBabyByMother($motherID) {
+        try {
+            $baby = Baby::where('user_id', $motherID)->first();
+            return response()->json([
+                'success' => true,
+                'message' => 'Bebé obtenido correctamente',
+                'data' => $baby
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el bebé',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 

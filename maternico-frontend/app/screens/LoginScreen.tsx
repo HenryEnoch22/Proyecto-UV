@@ -16,7 +16,6 @@ const LoginScreen = () => {
 
     const handleLogin = async () => {
         try {
-            // Limpiar errores previos
             setErrors({});
             
             const userData = await login(email, password);
@@ -35,13 +34,11 @@ const LoginScreen = () => {
 
     return (
         <View style={styles.mainContainer}>
-            {/* Sección superior */}
             <View style={styles.topSection}>
                 <Text style={styles.greet}>Hola!</Text>
                 <Text style={styles.greetFoot}>Bienvenida a MaterniCo</Text>
             </View>
 
-            {/* Sección inferior */}
             <View style={styles.bottomSection}>
                 <View style={styles.logoContainer}>
                     <Image
@@ -72,10 +69,6 @@ const LoginScreen = () => {
                         errors={errors.password || []}
                         style={styles.customInput}
                     />
-
-                    <Pressable onPress={() => alert("Este servicio no está disponible por el momento, intenta mas tarde.")}>
-                        <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
-                    </Pressable>
 
                     <PrimaryButton 
                         onPress={handleLogin} 

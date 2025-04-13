@@ -1,12 +1,45 @@
-import { View, Text, StyleSheet, ScrollView, Image, Pressable } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image, Pressable, ActivityIndicator } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { ArrowLongLeftIcon, PencilIcon } from "react-native-heroicons/solid";
 import { useRouter } from "expo-router";
-import { logout } from "@/services/api";
+import { getProfile, logout, UserResponse } from "@/services/api";
+import { useEffect, useState } from "react";
 
 const Profile = () => {
     const { user, setUser } = useAuth();
     const router = useRouter();
+    
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+            const checkAuthStatus = async () => {
+              try {
+                const userData: UserResponse | null = await getProfile();
+        
+                if (userData?.user) {
+                  const { user } = userData;
+                  setUser({
+                    id: user.id.toString(),
+                    name: user.name,
+                    email: user.email,
+                    last_name: user.last_name,
+                    mother_last_name: user.mother_last_name,
+                    birth_date: user.birth_date,
+                    profile_photo_path: user.profile_photo,
+                });
+                } else {
+                  setUser(null);
+                }
+              } catch (error) {
+                console.error("Error verificando autenticación:", error);
+                setUser(null);
+              } finally {
+                setIsLoading(false);
+              }
+            };
+        
+            checkAuthStatus();
+          }, []);
 
     const getRoleText = () => {
         return /*user?.child ? */ `Mamá de Fulanito`/* : "Mamá primeriza";*/
@@ -21,6 +54,15 @@ const Profile = () => {
             console.error("Error al cerrar sesión:", e);
         }
     };
+
+    if (isLoading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#f283b5" />
+                <Text style={styles.loadingText}>Cargando usuario...</Text>
+            </View>
+        );
+    }
 
     return (
         <ScrollView style={styles.container}>
@@ -61,14 +103,6 @@ const Profile = () => {
                     
                 </View>
 
-                {/* Datos médicos (puedes agregar más según tu modelo) */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Mi bebé</Text>
-                    <InfoRow label="Nombre del bebé" value="Fulanito" />
-                    <InfoRow label="Fecha de nacimiento" value="15 Mar 2024" />
-                    <InfoRow label="Edad" value="1 año" />
-                </View>
-
             </View>
                 <Pressable onPress={handleLogout} style={styles.logoutButton}>
                     <Text style={{color: "#fefefe", fontWeight: "700", fontSize: 18}}>Cerrar sesión</Text>
@@ -84,11 +118,20 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
     </View>
 );
 
-// Mantenemos los mismos estilos del último ejemplo pero ajustamos algunos valores
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#FEFEFE",
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#fff",
+    },
+    loadingText: {
+        marginTop: 10,
+        color: "#666",
     },
     header: {
         backgroundColor: "#F392BE",
@@ -177,7 +220,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         height: 64,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
     }
 });
 

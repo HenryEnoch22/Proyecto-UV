@@ -34,6 +34,12 @@ class ProfileController extends Controller
         try{
             $user = User::findOrFail($userId);
             $user->update($request->validated());
+            $user->load('baby');
+            return response()->json([
+                'success' => true,
+                'message' => 'Perfil actualizado correctamente',
+                'data' => $user,
+            ]);
         }catch (Exception $e){
             return response()->json([
                 'success' => false,
