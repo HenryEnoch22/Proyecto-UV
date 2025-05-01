@@ -43,7 +43,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     Route::post('/babies', [BabyController::class, 'store']);
     Route::get('/babies/{babyId}', [BabyController::class, 'show']);
-    Route::get('/baby/{mother}', [BabyController::class, 'getBabyByMother']);
+    Route::get('/baby-mother/{mother}', [BabyController::class, 'getBabyByMother']);
     Route::patch('/babies/{babyId}', [BabyController::class, 'update']);
 
     Route::get('/baby-events-get/{babyId}', [BabyEventController::class, 'index']);

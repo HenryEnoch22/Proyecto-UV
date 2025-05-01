@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5e788919-54b2-4be2-802b-ab70c5419276" name="Changes" comment="" />
+    <list default="true" id="5e788919-54b2-4be2-802b-ab70c5419276" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -147,10 +149,23 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;PHPUnit.AutenticatedSessionControllerTest.test_login_fails_when_email_does_not_exist.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.AutenticatedSessionControllerTest.test_login_fails_with_wrong_password.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.AutenticatedSessionControllerTest.test_user_can_login_with_correct_credentials.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.AuthenticatedSessionControllerTest.test_login_fails_when_email_does_not_exist.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.AuthenticatedSessionControllerTest.test_login_fails_with_wrong_password.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.AuthenticatedSessionControllerTest.test_logout_fails_when_user_is_not_authenticated.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.AuthenticatedSessionControllerTest.test_user_can_login_with_correct_credentials.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.AuthenticatedSessionControllerTest.test_user_can_logout_successfully.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.RegisteredUserControllerTest.test_registration_fails_when_passwords_do_not_match.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.RegisteredUserControllerTest.test_registration_fails_with_duplicate_email.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.RegisteredUserControllerTest.test_registration_fails_with_invalid_email.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.RegisteredUserControllerTest.test_registration_fails_with_missing_fields.executor&quot;: &quot;Run&quot;,
+    &quot;PHPUnit.RegisteredUserControllerTest.test_user_can_register_successfully.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;henryy&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Asus/Desktop/ProyectoUV&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/laragon/www/rotomfit-app&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -161,11 +176,40 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="PHPUnit.AuthenticatedSessionControllerTest.test_logout_fails_when_user_is_not_authenticated">
+    <configuration name="AuthenticatedSessionControllerTest.test_login_fails_when_email_does_not_exist" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner class="Auth\AuthenticatedSessionControllerTest" configuration_file="$PROJECT_DIR$/maternico-backend/phpunit.xml" file="$PROJECT_DIR$/maternico-backend/tests/Feature/Auth/AuthenticatedSessionControllerTest.php" method="test_login_fails_when_email_does_not_exist" scope="Method" />
+      <method v="2" />
+    </configuration>
+    <configuration name="AuthenticatedSessionControllerTest.test_login_fails_with_wrong_password" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner class="Auth\AuthenticatedSessionControllerTest" configuration_file="$PROJECT_DIR$/maternico-backend/phpunit.xml" file="$PROJECT_DIR$/maternico-backend/tests/Feature/Auth/AuthenticatedSessionControllerTest.php" method="test_login_fails_with_wrong_password" scope="Method" />
+      <method v="2" />
+    </configuration>
+    <configuration name="AuthenticatedSessionControllerTest.test_logout_fails_when_user_is_not_authenticated" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner class="Auth\AuthenticatedSessionControllerTest" configuration_file="$PROJECT_DIR$/maternico-backend/phpunit.xml" file="$PROJECT_DIR$/maternico-backend/tests/Feature/Auth/AuthenticatedSessionControllerTest.php" method="test_logout_fails_when_user_is_not_authenticated" scope="Method" />
+      <method v="2" />
+    </configuration>
+    <configuration name="AuthenticatedSessionControllerTest.test_user_can_login_with_correct_credentials" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner class="Auth\AuthenticatedSessionControllerTest" configuration_file="$PROJECT_DIR$/maternico-backend/phpunit.xml" file="$PROJECT_DIR$/maternico-backend/tests/Feature/Auth/AuthenticatedSessionControllerTest.php" method="test_user_can_login_with_correct_credentials" scope="Method" />
+      <method v="2" />
+    </configuration>
+    <configuration name="AuthenticatedSessionControllerTest.test_user_can_logout_successfully" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner class="Auth\AuthenticatedSessionControllerTest" configuration_file="$PROJECT_DIR$/maternico-backend/phpunit.xml" file="$PROJECT_DIR$/maternico-backend/tests/Feature/Auth/AuthenticatedSessionControllerTest.php" method="test_user_can_logout_successfully" scope="Method" />
+      <method v="2" />
+    </configuration>
     <configuration name="Main" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
       <TestRunner configuration_file="$PROJECT_DIR$/maternico-backend/phpunit.xml" scope="XML" use_alternative_configuration_file="true" />
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="PHPUnit.AuthenticatedSessionControllerTest.test_logout_fails_when_user_is_not_authenticated" />
+        <item itemvalue="PHPUnit.AuthenticatedSessionControllerTest.test_user_can_logout_successfully" />
+        <item itemvalue="PHPUnit.AuthenticatedSessionControllerTest.test_login_fails_when_email_does_not_exist" />
+        <item itemvalue="PHPUnit.AuthenticatedSessionControllerTest.test_login_fails_with_wrong_password" />
+        <item itemvalue="PHPUnit.AuthenticatedSessionControllerTest.test_user_can_login_with_correct_credentials" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -200,6 +244,10 @@
       <workItem from="1744150025737" duration="957000" />
       <workItem from="1744151000244" duration="1670000" />
       <workItem from="1744565020939" duration="1157000" />
+      <workItem from="1745928305792" duration="18380000" />
+      <workItem from="1746049044961" duration="16555000" />
+      <workItem from="1746124084491" duration="1970000" />
+      <workItem from="1746130729270" duration="440000" />
     </task>
     <servers />
   </component>
