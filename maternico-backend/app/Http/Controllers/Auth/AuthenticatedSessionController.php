@@ -66,6 +66,6 @@ class AuthenticatedSessionController extends Controller
             return response()->json(['message' => 'Sesión cerrada correctamente'], 200);
         }
 
-        return response()->json(['message' => 'Usuario no autenticado'], 401);
+        return response()->json([], 401);
     }
 }
