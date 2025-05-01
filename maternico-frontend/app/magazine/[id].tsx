@@ -14,7 +14,6 @@ const MagazineView = () => {
         const fetchMagazine = async () => {
             try {
                 const data = await getMagazine(id);
-                console.log('revista: ', data);
                 if (data) {
                     setMagazine(data);
                 } else {

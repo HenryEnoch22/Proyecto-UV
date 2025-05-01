@@ -5,19 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e788919-54b2-4be2-802b-ab70c5419276" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/app/Http/Controllers/Auth/AuthenticatedSessionController.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/app/Http/Controllers/Auth/AuthenticatedSessionController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/app/Http/Controllers/BabyEventController.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/app/Http/Controllers/BabyEventController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/app/Http/Controllers/CommentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/app/Http/Controllers/CommentController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/app/Http/Requests/Baby/StoreBabyRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/app/Http/Requests/Baby/StoreBabyRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/database/seeders/DatabaseSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/routes/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/routes/auth.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/tests/Feature/Auth/AuthenticationTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/tests/Feature/Auth/PasswordResetTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-backend/tests/Feature/Auth/RegistrationTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/maternico-frontend/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-frontend/services/api.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -258,7 +246,8 @@
       <workItem from="1744565020939" duration="1157000" />
       <workItem from="1745928305792" duration="18380000" />
       <workItem from="1746049044961" duration="16555000" />
-      <workItem from="1746124084491" duration="1236000" />
+      <workItem from="1746124084491" duration="1970000" />
+      <workItem from="1746130729270" duration="440000" />
     </task>
     <servers />
   </component>

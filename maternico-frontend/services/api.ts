@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://192.168.1.68:8000/api';
+const API_URL = 'http://148.226.202.107:8000/api';
 
 // INTERFACES
 // 🔹 Función para obtener el perfil del usuario autenticado
@@ -332,7 +332,7 @@ export const getBaby = async (babyID: number) => {
 
 export const getBabyByMother = async (motherID: number): Promise<Baby | null> => {
     try {
-        const response = await fetch(`${API_URL}/baby/${motherID}`, {
+        const response = await fetch(`${API_URL}/baby-mother/${motherID}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
@@ -342,14 +342,14 @@ export const getBabyByMother = async (motherID: number): Promise<Baby | null> =>
         if (!response.ok) throw new Error('Error al obtener el bebé por madre');
 
         const { data } = await response.json();
-        return data as Baby;
+        return data;
     } catch (error) {
         console.error('Error obteniendo bebé por madre:', error);
         return null;
     }
 }
 
-export const registerBaby = async (name: string, lastName: string, motherLastName: string, birthDate: string, weight: number, height: number, bloodType: string) => {
+export const registerBaby = async (userID: number | undefined, name: string, lastName: string, motherLastName: string, birthDate: string, weight: number, height: number, bloodType: string) => {
     try {
         const response = await fetch(`${API_URL}/babies`, {
             'method': 'POST',
@@ -357,13 +357,12 @@ export const registerBaby = async (name: string, lastName: string, motherLastNam
                 'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
             },
-            'body': JSON.stringify({name, lastName, motherLastName, weight, height, bloodType})
+            'body': JSON.stringify({user_id: userID, name, last_name: lastName, mother_last_name: motherLastName, weight, height, blood_type: bloodType, birth_date: birthDate})
         })
 
         if (!response.ok) throw new Error('Error al registrar el bebé');
 
         const data = await response.json();
-        console.log('data de registerBaby:', data);
         return data;
     } catch (error) {
         console.error('Error registrando bebé:', error);
@@ -371,7 +370,7 @@ export const registerBaby = async (name: string, lastName: string, motherLastNam
     }
 }
 
-export const updateBaby = async (babyID: string, weight: string, height: string, bloodType: string) => { 
+export const updateBaby = async (babyID: string, name:string, lastName: string, motherLastName: string, birthDate: string, bloodType: string, weight: number, height: number) => { 
     try {
         const response = await fetch(`${API_URL}/babies/${babyID}`, {
             'method': 'PATCH',
@@ -379,13 +378,12 @@ export const updateBaby = async (babyID: string, weight: string, height: string,
                 'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
             },
-            'body': JSON.stringify({ weight, height, blood_type: bloodType })
+            'body': JSON.stringify({ name, last_name: lastName, mother_last_name: motherLastName, birth_date: birthDate, blood_type: bloodType, weight, height })
         });
 
         if (!response.ok) throw new Error('Error al actualizar el bebé');
 
         const data = await response.json();
-        console.log('data de updateBaby:', data);
         return data;
     } catch (error) {
         console.error('Error actualizando bebé:', error);
@@ -417,6 +415,7 @@ export const getEvents = async (userID: number, year: number, month: number) => 
 
 export const createEvent = async (userID: number, eventTitle: string, date: string, time: string, notifiable: boolean, type: number) => {
     try {
+        console.log('datos', userID, eventTitle, date, time, notifiable, type);
         const token = await AsyncStorage.getItem('token');
         if (!token) return;
 
@@ -445,7 +444,7 @@ export const createEvent = async (userID: number, eventTitle: string, date: stri
     }
 }
 
-export const deleteEvent = async (eventID: number) => {
+export const deleteEvent = async (eventID: string | undefined) => {
     try {
         const token = await AsyncStorage.getItem('token');
         if (!token) return;
@@ -462,6 +461,30 @@ export const deleteEvent = async (eventID: number) => {
     } catch (error) {
         console.error('Error eliminando evento:', error);
         return [];
+    }
+}
+
+export const updateEvent = async (eventID: string | undefined, eventTitle: string, date: string, time: string, notifiable: boolean, type: number) => {
+   try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) return;
+
+        const response = await fetch(`${API_URL}/events/${eventID}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ event_title: eventTitle, date, time, notifiable, type })
+        });
+        
+        if (!response.ok) throw new Error('Error al actualizar el evento');
+
+        const { data } = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error actualizando evento:', error);
+        return null;
     }
 }
 
@@ -493,7 +516,6 @@ export const getMagazine = async (magazineID: number): Promise<{ magazine: Magaz
                 'Content-Type': 'application/json'
             }
         });
-        console.log('response:', response);
         if (!response.ok) throw new Error('Error al obtener las revistas');
 
         const { data } = await response.json(); // Extraer data
@@ -531,7 +553,6 @@ export const getVideo = async (videoID: string): Promise<{ video: Video }> => {
             }
         });
         const { data } = await response.json();
-        console.log('data de video:', data);
         if (!response.ok) throw new Error('Error al obtener el video');
         
         return data;

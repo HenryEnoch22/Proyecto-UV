@@ -28,8 +28,8 @@ class StoreBabyRequest extends FormRequest
             'name' => ['required', 'string', 'max:64'],
             'last_name' => ['required', 'string', 'max:64'],
             'mother_last_name' => ['required', 'string', 'max:64'],
-            'weight' => ['required', 'string', 'max:45'],
-            'height' => ['required', 'string', 'max:45'],
+            'weight' => ['required', 'numeric'],
+            'height' => ['required', 'numeric'],
             'birth_date' => ['required', 'date'],
             'blood_type' => ['required', 'string', 'max:45'],
         ];
