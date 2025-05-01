@@ -15,7 +15,21 @@ class BabyEventController extends Controller
     public function index($babyId)
     {
         try{
+            $baby = BabyEvent::find($babyId);
+            if (!$baby) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bebé no encontrado',
+                ], 404);
+            }
+
             $babyEvents = BabyEvent::where('baby_id', $babyId)->get();
+            if ($babyEvents->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontraron eventos para este bebé',
+                ], 404);
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Eventos del bebé obtenidos correctamente',
@@ -90,8 +104,8 @@ class BabyEventController extends Controller
         }catch (Exception $e){
             return response()->json([
                 'success' => false,
-                'message' => 'Error al eliminar el evento del bebé',
-                'error' => $e->getMessage()], 500);
+                'message' => 'No se encontró el evento del bebé'
+            ], 404);
         }
     }
 }

@@ -1,4 +1,4 @@
-import { deleteEvent } from "@/services/api";
+import { deleteEvent, updateEvent } from "@/services/api";
 import { useMemo } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import {
@@ -11,6 +11,9 @@ import {
 	PlusCircleIcon,
 	ShieldCheckIcon,
 } from "react-native-heroicons/outline";
+import { useState } from "react";
+import EventDetailModal from "./EventDetailModal";
+
 interface Event {
 	id: number;
 	event_title?: string;
@@ -18,6 +21,7 @@ interface Event {
 	isDone?: boolean;
 	notifiable?: boolean;
 	time?: string;
+	type?: 1 | 2 | 3 | 4 | 5;
 }
 
 interface AgendaProps {
@@ -25,6 +29,14 @@ interface AgendaProps {
 }
 
 const Agenda = ({ events }: AgendaProps) => {
+	const [showDetailModal, setShowDetailModal] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+    const handleEventPress = (event: Event) => {
+        setSelectedEvent(event);
+        setShowDetailModal(true);
+    };
+
 	const groupedEvents = useMemo(() => {
 		const eventMap = new Map<string, Event[]>();
 
@@ -91,7 +103,7 @@ const Agenda = ({ events }: AgendaProps) => {
 			<Pressable
 				style={styles.eventCard}
 				key={event.id}
-				onPress={() => deleteEvent(event.id)}
+				onPress={() => handleEventPress(event)}
 			>
 				<View style={styles.eventCardHeader}>
 					<Text style={styles.eventTitle}>{event.event_title}</Text>
@@ -131,19 +143,33 @@ const Agenda = ({ events }: AgendaProps) => {
 	}
 
 	return (
-		<ScrollView
-			style={styles.container}
-			contentContainerStyle={styles.listContainer}
-		>
-			<Text style={styles.screenTitle}>Mi Agenda</Text>
+		<>
+			<ScrollView
+				style={styles.container}
+				contentContainerStyle={styles.listContainer}
+			>
+				<Text style={styles.screenTitle}>Mi Agenda</Text>
 
-			{groupedEvents.map(([date, eventsForDate]) => (
-				<View style={styles.dateGroup} key={date}>
-					<Text style={styles.dateGroupTitle}>{date}</Text>
-					{eventsForDate.map(renderEvent)}
-				</View>
-			))}
-		</ScrollView>
+				{groupedEvents.map(([date, eventsForDate]) => (
+					<View style={styles.dateGroup} key={date}>
+						<Text style={styles.dateGroupTitle}>{date}</Text>
+						{eventsForDate.map(renderEvent)}
+					</View>
+				))}
+			</ScrollView>
+			<EventDetailModal
+				visible={showDetailModal}
+				onClose={() => setShowDetailModal(false)}
+				event={{
+					id: selectedEvent?.id?.toString(),
+					event_title: selectedEvent?.event_title || '',
+					date: new Date(selectedEvent?.date || ''),
+					time: selectedEvent?.time || '',
+					notifiable: selectedEvent?.notifiable || false,
+					type: selectedEvent?.type || 0
+				}}
+			/>
+		</>
 	);
 };
 

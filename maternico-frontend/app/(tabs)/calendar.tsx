@@ -16,6 +16,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import EventModal from "../../components/EventModal";
 
 const CalendarScreen = () => {
+	{/* TODO: desmarcar dias en los que los eventos fueron eliminados */}
 	interface Event {
 		id: number;
 		title: string;
@@ -206,24 +207,10 @@ const CalendarScreen = () => {
 			<View style={{ paddingHorizontal: 16 }}>
 				<View style={styles.instructionBox}>
 					<CalendarIcon size={20} color="#9061F9" />
+					{/* TODO: Cortar el texto para evitar que se vea amontonado */}
 					<Text style={styles.instructionText}>
-						Toca en cualquier día para ver tus citas o agregar un recordatorio
+						Toca en cualquier día para ver tus recordatorios registrados
 					</Text>
-				</View>
-
-				<View style={styles.legendContainer}>
-					<View style={styles.legendItem}>
-						<View style={[styles.dot, { backgroundColor: "#60A5FA" }]} />
-						<Text style={styles.legendText}>Vacunas</Text>
-					</View>
-					<View style={styles.legendItem}>
-						<View style={[styles.dot, { backgroundColor: "#34D399" }]} />
-						<Text style={styles.legendText}>Citas medicas</Text>
-					</View>
-					<View style={styles.legendItem}>
-						<View style={[styles.dot, { backgroundColor: "#F87171" }]} />
-						<Text style={styles.legendText}>Revisiones</Text>
-					</View>
 				</View>
 
 				<Calendar

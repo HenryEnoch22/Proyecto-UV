@@ -1,10 +1,10 @@
-import { getBaby } from "@/services/api";
+import { getBaby, updateBaby } from "@/services/api";
 import { useLocalSearchParams } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable } from "react-native";
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable, Alert } from "react-native";
 import { ArrowLongLeftIcon, PencilSquareIcon} from "react-native-heroicons/solid";
-import Album from "../../components/Album";
+import Album from "@/components/Album";
 import EditBabyModal from "@/components/EditBabyModal";
 
 const Baby = () => {
@@ -65,6 +65,48 @@ const Baby = () => {
 
         fetchData();
     }, [id]);
+
+    const handleEditBaby = async (updatedData: {
+        id: number;
+        name: string;
+        lastName: string;
+        motherLastName: string;
+        birthDate: string;
+        weight: number;
+        height: number;
+        bloodType: string;
+    }) => {
+        try {
+            if (!data) return;
+    
+            await updateBaby(
+                data.id.toString(),
+                updatedData.name,
+                updatedData.lastName,
+                updatedData.motherLastName,
+                updatedData.birthDate,
+                updatedData.bloodType,
+                updatedData.weight,
+                updatedData.height
+            );
+    
+            setData(prev => prev ? {
+                ...prev,
+                name: updatedData.name,
+                last_name: updatedData.lastName,
+                mother_last_name: updatedData.motherLastName,
+                birth_date: updatedData.birthDate,
+                blood_type: updatedData.bloodType,
+                weight: updatedData.weight,
+                height: updatedData.height
+            } : null);
+    
+            setShowModal(false);
+        } catch (error) {
+            console.error("Error al editar el bebé:", error);
+            Alert.alert("Error", "No se pudo actualizar la información del bebé");
+        }
+    }
 
     if (isLoading) {
         return (
@@ -157,9 +199,17 @@ const Baby = () => {
             <EditBabyModal
 				visible={showModal}
 				onClose={() => setShowModal(false)}
-				onSubmit={() => setShowModal(false)}
-                weight={data.weight.toString()}
-                height={data.height.toString()}
+				onSubmit={handleEditBaby}
+                baby={{
+                    id: data.id,
+                    name: data.name,
+                    lastName: data.last_name,
+                    motherLastName: data.mother_last_name,
+                    birthDate: data.birth_date,
+                    weight: data.weight,
+                    height: data.height,
+                    bloodType: data.blood_type
+                }}
 			/>
         </ScrollView>
     );

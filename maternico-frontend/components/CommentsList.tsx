@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import CommentItem from "./CommentItem";
 
 interface CommentsListProps {
@@ -30,12 +30,15 @@ export const CommentsList = ({
 		<View>
             <Text style={styles.commentsTitle}>Respuestas</Text>
 			{comments.map((comment) => (
-				<CommentItem
+				<Pressable 
 					key={comment.id}
-					comment={comment}
-					currentUserId={currentUserId}
-					onDelete={onDeleteComment}
-				/>
+					onPress={() => alert(`Comment ID: ${comment.id}`)}>
+					<CommentItem
+						comment={comment}
+						currentUserId={currentUserId}
+						onDelete={onDeleteComment}
+					/>
+				</Pressable>
 			))}
 		</View>
 	);

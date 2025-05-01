@@ -40,18 +40,19 @@ class BabyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($motherId) //Recibe el id de la madre como parámetro
+    public function show($babyId) //Recibe el id de la madre como parámetro
     {
         try{
-            $baby = Baby::where('user_id', $motherId)->first();
+            $baby = Baby::findOrFail($babyId);
             return response()->json([
                 'success' => true,
                 'message' => 'Datos del bebé obtenidos correctamente',
                 'data' => $baby], 200);
         }catch (Exception $e){
             return response()->json([
-                'message' => 'Error al obtener los datos del bebé',
-                'error' => $e->getMessage()], 500);
+                'success' => false,
+                'message' => 'Error al obtener los datos del bebé',]
+            , 404);
         }
     }
 
