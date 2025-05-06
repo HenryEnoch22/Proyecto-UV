@@ -3,6 +3,7 @@ import { View, Text, Modal, TouchableOpacity, StyleSheet, Pressable, Switch, Tex
 import { XCircleIcon } from 'react-native-heroicons/solid';
 import { Calendar } from 'react-native-calendars';
 import { Picker } from '@react-native-picker/picker';
+import DatePicker from './DatePicker';
 
 interface AddEventModalProps {
     visible: boolean;
@@ -41,19 +42,14 @@ const AddEventModal = ({ visible, onClose, onSubmit }: AddEventModalProps) => {
             return;
         }
 
-        if (!timeRegex.test(time)) {
+        if (time && !timeRegex.test(time)) {
             alert('Formato de hora inválido (HH:MM)');
             return;
         }
 
-        const [hours, minutes] = time.split(':').map(Number);
-        const finalDate = new Date(selectedDate);
-        finalDate.setHours(hours);
-        finalDate.setMinutes(minutes);
-        
         onSubmit({
             name: eventName,
-            date: finalDate,
+            date: selectedDate,
             time,
             notify,
             type: type
@@ -108,45 +104,10 @@ const AddEventModal = ({ visible, onClose, onSubmit }: AddEventModalProps) => {
                             autoFocus
                         />
 
-                        <Pressable
-                            style={styles.dateInput}
-                            onPress={() => setShowDatePicker(!showDatePicker)}
-                        >
-                            <Text style={styles.dateText}>
-                                {selectedDate.toLocaleDateString('es-ES', {
-                                    day: '2-digit',
-                                    month: 'long',
-                                    year: 'numeric'
-                                })}
-                            </Text>
-                        </Pressable>
-
-                        {showDatePicker && (
-                            <Calendar
-                                current={selectedDate.toISOString().split('T')[0]}
-                                onDayPress={(day: {dateString: string}) => {
-                                    const localDate = new Date(day.dateString + 'T12:00:00'); // Hora fija para evitar cambios
-                                    setSelectedDate(localDate);
-                                    setShowDatePicker(false);
-                                }}
-                                markedDates={{
-                                    [selectedDate.toISOString().split('T')[0]]: {
-                                        selected: true,
-                                        selectedColor: '#9061F9'
-                                    }
-                                }}
-                                theme={{
-                                    todayTextColor: '#9061F9',
-                                    arrowColor: '#9061F9',
-                                    'stylesheet.calendar.main': {
-                                        weekContainer: {
-                                            paddingHorizontal: 4,
-                                        }
-                                    }
-                                }}
-                                style={styles.calendar}
-                            />
-                        )}
+                        <DatePicker
+                            value={selectedDate}
+                            onChange={(date: Date) => setSelectedDate(date)}
+                        />
 
                         <TextInput
                             style={styles.input}

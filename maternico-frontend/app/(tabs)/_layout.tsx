@@ -16,8 +16,6 @@ export default function TabsLayout() {
         <Stack.Screen name="calendar" options={{headerShown: false}} />
         <Stack.Screen name="forum" options={{headerShown: false}} />
         <Stack.Screen name="notifications" options={{headerShown: false}} />
-        <Stack.Screen name="profiles" options={{headerShown: false}} />
-        <Stack.Screen name="baby" options={{headerShown: false}} />
       </Stack>
       <BottomNavbar />
     </View>

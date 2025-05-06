@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import {
 	BellAlertIcon,
-	CalendarDaysIcon,
 	ClockIcon,
 	CakeIcon,
 	ShoppingCartIcon,
@@ -191,6 +190,8 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		backgroundColor: "#F4F4F4",
+		marginHorizontal: 20,
+		padding: 20,
 	},
 	emptyTitle: {
 		fontSize: 22,

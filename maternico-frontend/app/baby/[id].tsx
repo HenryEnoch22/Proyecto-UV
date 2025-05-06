@@ -11,29 +11,6 @@ const Baby = () => {
     const { id } = useLocalSearchParams();
     const navigation = useNavigation();
     const [showModal, setShowModal] = useState(false);
-    const [events, setEvents] = useState<{ id: number; baby_id: number; event_title: string; description?: string; date: string; photo_path?: string }[]>([
-        {
-            "id": 1,
-            "baby_id": 1,
-            "event_title": "Aprendió a gatear",
-            "description": "Gateo del sillon a la mesa de centro",
-            "date": "2025-02-09",
-        },
-        {
-            "id": 2,
-            "baby_id": 1,
-            "event_title": "Dijo su primera palabra",
-            "description": "Dijo mamá mientras se despertaba de una siesta",
-            "date": "2025-03-10",
-        },
-        {
-            "id": 3,
-            "baby_id": 1,
-            "event_title": "Empezó a jugar con sus juguetes",
-            "description": "Se mantuvo jugando con su pelotita durante toda la tarde",
-            "date": "2025-03-11",
-        }
-    ]);
 
     type BabyData = {
         id: number;
@@ -180,20 +157,7 @@ const Baby = () => {
             </View>
 
             <Album 
-                events={events} 
-                onAddEvent={({event_title, description, date, photo_path}) => {
-                    setEvents([
-                        ...events,
-                        {
-                            id: events.length + 1,
-                            baby_id: 2,
-                            event_title,
-                            ...(description && { description }),
-                            date,
-                            ...(photo_path && { photo_path }),
-                        },
-                    ]);
-                }} 
+                babyId={data.id}
             />
 
             <EditBabyModal

@@ -2,30 +2,59 @@ import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet, Pressable, TextInput } from 'react-native';
 import { XCircleIcon } from 'react-native-heroicons/solid';
 import { Calendar } from 'react-native-calendars';
+import DatePicker from './DatePicker';
+import * as ImagePicker from 'expo-image-picker';
 
 interface EventModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (data: { event_title: string; description?: string; date: string }) => void;
-  initialData?: AlbumEvent;
+  onSubmit: (data: { event_title: string; description?: string; date: string, photo_path: ImagePicker.ImagePickerAsset }) => void;
 }
 
-const AlbumEventModal = ({ visible, onClose, onSubmit, initialData }: EventModalProps) => {
-  const [eventTitle, setEventTitle] = useState(initialData?.event_title || '');
-  const [description, setDescription] = useState(initialData?.description || '');
-  const [selectedDate, setSelectedDate] = useState(initialData?.date || '');
+const AlbumEventModal = ({ visible, onClose, onSubmit }: EventModalProps) => {
+  const [eventTitle, setEventTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
+
+  const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
+  const [imagePickerText, setImagePickerText] = useState<string>('Seleccionar imagen');
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+  
+    if (!result.canceled && result.assets[0]) {
+      setImage(result.assets[0]);
+      setImagePickerText('Imagen seleccionada');
+    } else {
+      setImage(null);
+      setImagePickerText('Seleccionar imagen');
+    }
+  };
 
   const handleSubmit = () => {
     if (!eventTitle.trim() || !selectedDate) {
-      alert('Por favor completa los campos requeridos');
+      alert('Campos requeridos faltantes');
       return;
     }
-
+  
+    if (!image) {
+      alert('¡Selecciona una imagen primero!'); // Validación explícita
+      return;
+    }
+  
     onSubmit({
       event_title: eventTitle,
       description: description.trim(),
-      date: selectedDate
+      date: selectedDate,
+      photo_path: image, // Objeto completo de ImagePicker
     });
     
     onClose();
@@ -44,7 +73,7 @@ const AlbumEventModal = ({ visible, onClose, onSubmit, initialData }: EventModal
             <XCircleIcon size={24} color="#F392BE" />
           </Pressable>
 
-          <Text style={styles.modalTitle}>{initialData ? 'Editar Evento' : 'Nuevo Evento'}</Text>
+          <Text style={styles.modalTitle}>Nuevo Evento</Text>
 
           <View style={styles.formContainer}>
             <TextInput
@@ -57,53 +86,37 @@ const AlbumEventModal = ({ visible, onClose, onSubmit, initialData }: EventModal
 
             <TextInput
               style={[styles.input, { height: 80 }]}
-              placeholder="Descripción (opcional)"
+              placeholder="Descripción"
               value={description}
               onChangeText={setDescription}
               multiline
             />
 
-            <TouchableOpacity
-              style={styles.dateInput}
-              onPress={() => setShowCalendar(!showCalendar)}
-            >
-              <Text style={selectedDate ? styles.dateText : styles.placeholderText}>
-                {selectedDate || 'Seleccionar fecha*'}
-              </Text>
-            </TouchableOpacity>
-
-            {showCalendar && (
-              <Calendar
-                current={selectedDate}
-                onDayPress={(day) => {
-                  setSelectedDate(day.dateString);
-                  setShowCalendar(false);
-                }}
-                markedDates={{
-                  [selectedDate]: {
-                    selected: true,
-                    selectedColor: '#F392BE'
-                  }
-                }}
-                theme={{
-                  todayTextColor: '#F392BE',
-                  arrowColor: '#F392BE',
-                  textDayFontWeight: '500',
-                  textMonthFontWeight: '600',
-                }}
-                style={styles.calendar}
+            <DatePicker
+              label='Fecha del evento'
+              value={selectedDate ? new Date(selectedDate) : new Date()}
+              onChange={(date) => {
+                setSelectedDate(date.toISOString().split('T')[0]);
+                setShowCalendar(false);
+              }}
               />
-            )}
+
+              <Pressable
+                style={styles.imagePicker}
+                onPress={pickImage}
+              >
+                <Text>{imagePickerText}</Text>
+              </Pressable>
           </View>
 
-          <TouchableOpacity
+          <Pressable
             style={styles.actionButton}
             onPress={handleSubmit}
           >
             <Text style={styles.actionButtonText}>
-              {initialData ? 'Guardar cambios' : 'Crear Evento'}
+              Crear Evento
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </Modal>
@@ -184,6 +197,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 12,
     overflow: 'hidden',
+  },
+  imagePicker: {
+    height: 48,
+    borderColor: '#E2E8F0',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    justifyContent: 'center',
+    backgroundColor: '#F8FAFC',
+    alignItems: 'center',
   },
 });
 

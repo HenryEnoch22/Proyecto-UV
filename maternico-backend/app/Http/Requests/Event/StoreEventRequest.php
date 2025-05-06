@@ -29,7 +29,7 @@ class StoreEventRequest extends FormRequest
             'event_title' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string', 'in:' . implode(',', Event::$types)],
             'date' => ['required', 'date'],
-            'time' => ['required', 'string', 'date_format:H:i', 'max:6'],
+            'time' => ['sometimes', 'string', 'date_format:H:i', 'max:6'],
             'notifiable' => ['required', 'boolean'],
         ];
     }
@@ -50,7 +50,6 @@ class StoreEventRequest extends FormRequest
             'type.in' => 'El tipo de evento no es válido. Debe ser uno de los siguientes: ' . implode(', ', Event::$types) . '.',
             'date.required' => 'La fecha del evento es obligatoria.',
             'date.date' => 'El formato de la fecha es inválido. Usa el formato YYYY-MM-DD.',
-            'time.required' => 'El campo hora es obligatorio.',
             'time.date_format' => 'El campo hora debe de ser una hora válida. Ejemplo: 12:00 - 09:30',
             'time.string' => 'El campo hora debe ser una cadena de texto.',
             'time.max' => 'El campo hora no puede superar los 6 caracteres.',

@@ -31,11 +31,11 @@ interface Event {
 }
 
 const data: Event[] = [
-	{ id: 1, name: "Vacuna", leftDays: 6, typeEvent: "vaccine" },
-	{ id: 2, name: "Cita médica", leftDays: 8, typeEvent: "appointment" },
-	{ id: 3, name: "Cita médica", leftDays: 11, typeEvent: "appointment" },
-	{ id: 4, name: "Cita médica", leftDays: 18, typeEvent: "appointment" },
-	{ id: 5, name: "Cumpleaños", leftDays: 83, typeEvent: "birthday" },
+	{ id: 1, name: "No tienes nuevos eventos", leftDays: 0, typeEvent: "vaccine" },
+	// { id: 2, name: "Cita médica", leftDays: 8, typeEvent: "appointment" },
+	// { id: 3, name: "Cita médica", leftDays: 11, typeEvent: "appointment" },
+	// { id: 4, name: "Cita médica", leftDays: 18, typeEvent: "appointment" },
+	// { id: 5, name: "Cumpleaños", leftDays: 83, typeEvent: "birthday" },
 ];
 
 const CardNoBaby = () => {
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
 		marginBottom: 40,
 	},
 	cardContainer: {
-		backgroundColor: "fefefe",
+		backgroundColor: "#fefefe",
 		borderRadius: 12,
 		padding: 20,
 		marginVertical: 10,

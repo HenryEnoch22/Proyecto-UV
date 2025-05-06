@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { ChatBubbleLeftEllipsisIcon, ChevronRightIcon } from "react-native-heroicons/solid";
 
-const ResponseCard: React.FC = () => {
+const ResponseCard = () => {
     return (
         <View style={styles.container}>
             <View style={styles.iconContainer}>
@@ -9,9 +9,9 @@ const ResponseCard: React.FC = () => {
             </View>
 
             <View style={styles.info}>
-                <Text style={styles.infoTitle}>Alguien hizo un comentario en tu foro</Text>
+                <Text style={styles.infoTitle}>No tienes nuevas respuestas</Text>
                 <View>
-                    <Text style={styles.infoText}>1 comentario nuevo</Text>
+                    <Text style={styles.infoText}>Crea un foro y compare con la comunidad</Text>
                 </View>
             </View>
 

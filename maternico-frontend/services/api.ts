@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-const API_URL = 'http://148.226.202.107:8000/api';
+const API_URL = 'http://192.168.100.6:8000/api';
 
 // INTERFACES
 // 🔹 Función para obtener el perfil del usuario autenticado
@@ -391,6 +392,87 @@ export const updateBaby = async (babyID: string, name:string, lastName: string, 
     }
 }
 
+// BABY ALBUM
+export const getAlbumEvents = async (babyID: number) => {
+    try {
+        const response = await fetch(`${API_URL}/baby-events-get/${babyID}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
+            }
+        });
+        if (!response.ok) throw new Error('Error al obtener los eventos del álbum');
+
+        const { data } = await response.json();
+        console.log('evnetos fethceados', data);
+        return data;
+    } catch (error) {
+        console.error('Error obteniendo eventos del álbum:', error);
+        return [];
+    }
+}
+
+async function uriToBlob(uri: string): Promise<Blob> {
+    // En web, los data: URIs funcionan con fetch
+    if (uri.startsWith("data:") || uri.startsWith("http")) {
+      const resp = await fetch(uri);
+      return await resp.blob();
+    }
+    // En iOS/Android – React Native – usa XMLHttpRequest para file://
+    return await new Promise<Blob>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => resolve(xhr.response);
+      xhr.onerror = () => reject(new Error("No se pudo leer el archivo"));
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+  }
+
+  
+  export const createAlbumEvent = async (
+    babyID: number,
+    eventTitle: string,
+    description: string,
+    date: string,
+    photoPath?: ImagePicker.ImagePickerAsset
+  ) => {
+    try {
+      const formData = new FormData();
+      formData.append("baby_id", babyID.toString());
+      formData.append("event_title", eventTitle);
+      formData.append("description", description);
+      formData.append("date", date);
+  
+      if (photoPath?.uri) {
+        const uri = photoPath.uri;               // ← sin “file://”
+        const name = uri.split("/").pop()!;      
+        const ext = name.split(".").pop()!.toLowerCase();
+        const mime = ext === "png" ? "image/png" : "image/jpeg";
+  
+        // convierte a Blob de forma cross‑platform
+        const blob = await uriToBlob(uri);
+        formData.append("photo_path", blob, name);
+      }
+  
+      const token = await AsyncStorage.getItem("token");
+      const res = await fetch(`${API_URL}/baby-events`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+  
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || "Error creando evento");
+      return json.data;
+    } catch (e) {
+      console.error("Error creando evento del álbum:", e);
+      return null;
+    }
+  };
+  
+  
+
 // CALENDAR
 export const getEvents = async (userID: number, year: number, month: number) => {
     try {
@@ -413,36 +495,60 @@ export const getEvents = async (userID: number, year: number, month: number) => 
     }
 }
 
-export const createEvent = async (userID: number, eventTitle: string, date: string, time: string, notifiable: boolean, type: number) => {
+export const createEvent = async (
+    userID: number,
+    eventTitle: string,
+    date: string,
+    time: string,
+    notifiable: boolean,
+    type: number
+  ) => {
     try {
-        console.log('datos', userID, eventTitle, date, time, notifiable, type);
-        const token = await AsyncStorage.getItem('token');
-        if (!token) return;
-
-        const types: {[key: number]: string}
-         = {
-            1: 'Vacunación',
-            2: 'Alimentación',
-            3: 'Desarrollo',
-            4: 'Cita médica',
-            5: 'Cumpleaños'
-        };
-        
-        const response = await fetch(`${API_URL}/events`, {
-            method: 'POST',
-            headers: { 
-                'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`,
-                'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userID, event_title: eventTitle, date, time, notifiable, type: types[type] }),
-        });
-        if (!response.ok) throw new Error('Error al crear evento');
-    
-        return await response.json();
+      const token = await AsyncStorage.getItem('token');
+      if (!token) return;
+  
+      const types: { [key: number]: string } = {
+        1: 'Vacunación',
+        2: 'Alimentación',
+        3: 'Desarrollo',
+        4: 'Cita médica',
+        5: 'Cumpleaños'
+      };
+  
+      // Validar y formatear la hora
+      const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
+      const formattedTime = timeRegex.test(time) ? time : null;
+  
+      // Crear objeto de datos
+      const requestBody = {
+        user_id: userID,
+        event_title: eventTitle,
+        date: date,
+        time: formattedTime, // Enviar null si no es válido
+        notifiable: notifiable,
+        type: types[type]
+      };
+  
+      const response = await fetch(`${API_URL}/events`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(requestBody)
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al crear evento');
+      }
+  
+      return await response.json();
     } catch (error) {
-        console.error('Error creando evento:', error);
-        return [];
+      console.error('Error creando evento:', error);
+      throw error; // Propagar el error para manejar en el componente
     }
-}
+  };
 
 export const deleteEvent = async (eventID: string | undefined) => {
     try {

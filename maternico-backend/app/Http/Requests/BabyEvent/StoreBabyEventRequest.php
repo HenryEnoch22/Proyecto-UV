@@ -28,7 +28,7 @@ class StoreBabyEventRequest extends FormRequest
             'event_title' => ['required', 'string', 'max:64'],
             'description' => ['required', 'string', 'max:255'],
             'date' => ['required', 'date'],
-//            'photo_path' => ['nullable', 'string', 'max:2048'],
+           'photo_path' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
 
@@ -47,6 +47,9 @@ class StoreBabyEventRequest extends FormRequest
             'event_date.required' => 'El campo event_date es obligatorio',
             'event_date.date' => 'El campo event_date debe ser una fecha',
             //TODO: Agregar mensajes de error para el campo photo_path
+            'photo_path.image' => 'El archivo debe ser una imagen',
+            'photo_path.mimes' => 'La imagen debe ser de tipo jpeg, png o jpg',
+            'photo_path.max' => 'La imagen no debe superar los 2MB',
         ];
     }
     protected function failedValidation(Validator $validator)

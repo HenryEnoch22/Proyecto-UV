@@ -4,6 +4,7 @@ import { XCircleIcon, TrashIcon } from 'react-native-heroicons/solid';
 import { Calendar } from 'react-native-calendars';
 import { Picker } from '@react-native-picker/picker';
 import { updateEvent, deleteEvent } from '@/services/api';
+import DatePicker from './DatePicker';
 
 type EventType = {
     id?: string;
@@ -32,7 +33,6 @@ const types = {
 const EventDetailModal = ({ visible, onClose, event }: EventDetailModalProps) => {
     const [eventName, setEventName] = useState(event.event_title);
     const [selectedDate, setSelectedDate] = useState(new Date(event.date));
-    const [showDatePicker, setShowDatePicker] = useState(false);
     const [time, setTime] = useState(event.time);
     const [notifiable, setNotifiable] = useState(event.notifiable);
     const [type, setType] = useState<number>(event.type);
@@ -54,19 +54,16 @@ const EventDetailModal = ({ visible, onClose, event }: EventDetailModalProps) =>
         }
 
         if (!timeRegex.test(time)) {
+            console.log('Invalid time format:', time);
             alert('Formato de hora inválido (HH:MM)');
             return;
         }
 
-        const [hours, minutes] = time.split(':').map(Number);
-        const finalDate = new Date(selectedDate);
-        finalDate.setHours(hours);
-        finalDate.setMinutes(minutes);
         
         updateEvent(
             event.id,
             eventName,
-            finalDate.toISOString().split('T')[0],
+            selectedDate.toISOString().split('T')[0],
             time,
             notifiable,
             type
@@ -124,45 +121,11 @@ const EventDetailModal = ({ visible, onClose, event }: EventDetailModalProps) =>
                             autoFocus
                         />
 
-                        <Pressable
-                            style={styles.dateInput}
-                            onPress={() => setShowDatePicker(!showDatePicker)}
-                        >
-                            <Text style={styles.dateText}>
-                                {selectedDate.toLocaleDateString('es-ES', {
-                                    day: '2-digit',
-                                    month: 'long',
-                                    year: 'numeric'
-                                })}
-                            </Text>
-                        </Pressable>
-
-                        {showDatePicker && (
-                            <Calendar
-                                current={selectedDate.toISOString().split('T')[0]}
-                                onDayPress={(day) => {
-                                    const localDate = new Date(day.dateString + 'T12:00:00');
-                                    setSelectedDate(localDate);
-                                    setShowDatePicker(false);
-                                }}
-                                markedDates={{
-                                    [selectedDate.toISOString().split('T')[0]]: {
-                                        selected: true,
-                                        selectedColor: '#9061F9'
-                                    }
-                                }}
-                                theme={{
-                                    todayTextColor: '#9061F9',
-                                    arrowColor: '#9061F9',
-                                    'stylesheet.calendar.main': {
-                                        weekContainer: {
-                                            paddingHorizontal: 4,
-                                        }
-                                    }
-                                }}
-                                style={styles.calendar}
-                            />
-                        )}
+                        <DatePicker
+                            label="Fecha"
+                            value={selectedDate}
+                            onChange={(date: Date) => setSelectedDate(date)}
+                        />
 
                         <TextInput
                             style={styles.input}

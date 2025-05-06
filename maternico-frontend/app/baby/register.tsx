@@ -14,6 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { registerBaby, getProfile } from "@/services/api";
 import { Calendar } from "react-native-calendars";
 import { useUser } from "@/hooks/useUser";
+import DatePicker from "@/components/DatePicker";
 
 export default function RegisterBaby() {
 	const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ export default function RegisterBaby() {
 		if (!formData.motherLastName)
 			newErrors.motherLastName = ["Por favor ingresa su apellido materno"];
 		if (!formData.birthDate)
-			newErrors.birthDate = ["Por favor ingresa su fecha de nacimiento"];
+			newErrors.birthDate = ["Por favor selecciona su fecha de nacimiento"];
 		if (!formData.weight) newErrors.weight = ["Por favor ingresa su peso"];
 		if (!formData.height) newErrors.height = ["Por favor ingresa su altura"];
 		if (!formData.bloodType)
@@ -135,79 +136,46 @@ export default function RegisterBaby() {
 						style={styles.customInput}
 						placeholder="Moreno"
 					/>
-
-                    <Text style={{
-                        color: "#334155",
-                        fontWeight: 500,
-                    }}>Fecha de nacimiento</Text>
-					<Pressable
-						style={styles.dateInput}
-						onPress={() => setShowDatePicker(!showDatePicker)}
-					>
-						<Text style={styles.dateText}>
-							{selectedDate.toLocaleDateString("es-ES", {
-								day: "2-digit",
-								month: "long",
-								year: "numeric",
-							})}
-						</Text>
-					</Pressable>
-
-					{showDatePicker && (
-						<Calendar
-							current={selectedDate.toISOString().split("T")[0]}
-							onDayPress={(day: { dateString: string }) => {
-                                const localDate = new Date(day.dateString + "T12:00:00");
-                                setSelectedDate(localDate);
-                                setFormData(prev => ({ ...prev, birthDate: day.dateString })); // Actualizar formData
-                                setShowDatePicker(false);
-                            }}
-							markedDates={{
-								[selectedDate.toISOString().split("T")[0]]: {
-									selected: true,
-									selectedColor: "#9061F9",
-								},
-							}}
-							theme={{
-								todayTextColor: "#9061F9",
-								arrowColor: "#9061F9",
-								"stylesheet.calendar.main": {
-									weekContainer: {
-										paddingHorizontal: 4,
-									},
-								},
-							}}
-							style={styles.calendar}
-						/>
-					)}
+					
+					<DatePicker
+						label="Fecha de nacimiento"
+						value={selectedDate}
+						onChange={(date: Date) => {
+							setSelectedDate(date);
+							setFormData((prev) => ({
+								...prev,
+								birthDate: date.toISOString().split("T")[0],
+							}));
+						}}
+					/>
 
 					<FormTextField
 						label="Peso (kg)"
-						value={String(formData.weight)}
-						onChangeText={(text: string) =>
+						value={formData.weight}
+						onChangeText={(text: number) =>
 							setFormData((prev) => ({
 								...prev,
-								weight: parseFloat(text) || 0,
+								weight: text || 0,
 							}))
 						}
 						errors={errors.weight || []}
 						style={styles.customInput}
-						keyboardType="numeric"
+						keyboardType="decimal"
 						placeholder="4.75"
 					/>
 
 					<FormTextField
 						label="Altura (cm)"
-						value={String(formData.height)}
-						onChangeText={(text: string) =>
+						value={formData.height}
+						onChangeText={(text: number) =>
 							setFormData((prev) => ({
 								...prev,
-								height: parseFloat(text) || 0,
+								height: text || 0,
 							}))
 						}
 						errors={errors.height || []}
 						style={styles.customInput}
-						keyboardType="numeric"
+						keyboardType="decimal"
 						placeholder="53.2"
 					/>
 

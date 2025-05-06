@@ -1,23 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable, Image } from "react-native";
 import { PlusCircleIcon } from "react-native-heroicons/solid";
 import AlbumEventModal from "./AlbumEventModal";
+import { getAlbumEvents, createAlbumEvent } from "@/services/api";
+import * as ImagePicker from "expo-image-picker";
 
-interface AlbumEvent {
+type AlbumEvent = {
     id: number;
     baby_id: number;
     event_title: string;
     description?: string;
     date: string;
     photo_path?: string;
-}
+  }
 
 interface AlbumProps {
-    events: AlbumEvent[];
-    onAddEvent: (newEvent: AlbumEvent) => void;
+    babyId: number;
 }
 
-const Album = ({ events, onAddEvent }: AlbumProps) => {
+const Album = ({ babyId }: AlbumProps) => {
+    const [events, setEvents] = useState<AlbumEvent[]>([]);
+    const fetchEvents = async () => {
+        try {
+            const response = await getAlbumEvents(babyId);
+            console.log("Fetched events:", response.data);
+            setEvents(response);
+        } catch (error) {
+            console.error("Error fetching events:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchEvents();
+    }, []);
+
+
+    const onAddEvent = async (newEvent: Omit<AlbumEvent, 'id'>) => {
+        try {
+          if (!newEvent.photo_path) {
+            throw new Error("Debes seleccionar una imagen");
+          }
+          
+          await createAlbumEvent(
+            babyId,
+            newEvent.event_title,
+            newEvent.description || "",
+            newEvent.date,
+            newEvent.photo_path
+          );
+          fetchEvents();
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      };
+
     
     const [showModal, setShowModal] = useState(false);
 
@@ -39,28 +75,41 @@ const Album = ({ events, onAddEvent }: AlbumProps) => {
                 </Pressable>
             </View>
             
-            {events.map((event) => (
-                <View key={event.id} style={styles.eventItem}>
-                    
-                    <View style={styles.eventContent}>
-                        <Text style={styles.eventTitle}>{event.event_title}</Text>
-                        
-                        {event.description && (
-                            <Text style={styles.descriptionText}>{event.description}</Text>
-                        )}
-                        
-                        <Image 
-                            source={getImage(event.event_title) }
-                            style={styles.eventImage}
-                        />
+            {events ? (
+                events.map((event) => (
+                    <View key={event.id} style={styles.eventItem}>
+                        <View style={styles.eventContent}>
+                            <Text style={styles.eventTitle}>{event.event_title}</Text>
+                            
+                            {event.description && (
+                                <Text style={styles.descriptionText}>{event.description}</Text>
+                            )}
+                            
+                            { event.photo_path
+                                ? (
+                                    <Image
+                                    source={{ uri: `http://192.168.100.6:8000/storage/${event.photo_path}` }}
+                                    style={styles.eventImage}
+                                    />
+                                )
+                                : (
+                                    <Image
+                                    source={getImage(event.event_title)}
+                                    style={styles.eventImage}
+                                    />
+                                )
+                            }
+                        </View>
                     </View>
-                </View>
-            ))}
+                ))
+            ) : (
+                <Text style={{ color: '#888', fontSize: 16 }}>No hay eventos disponibles.</Text>
+            )}
 
             <AlbumEventModal 
                 visible={showModal} 
                 onClose={() => setShowModal(false)} 
-                onSubmit={(newEvent) => onAddEvent(newEvent)} />
+                onSubmit={(newEvent) => onAddEvent({ ...newEvent, baby_id: babyId })} />
 
             
         </ScrollView>

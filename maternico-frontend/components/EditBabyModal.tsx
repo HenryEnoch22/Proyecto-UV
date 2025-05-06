@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
 import { XCircleIcon } from 'react-native-heroicons/solid';
 import FormTextField from './FormTextField';
+import DatePicker from './DatePicker';
 
 type BabyData = {
   id: number;
@@ -94,6 +95,12 @@ const EditBabyModal = ({ visible, onClose, onSubmit, baby }: EditBabyModalProps)
               onChangeText={(text: string) => handleChange('motherLastName', text)}
               errors={errors.height}
               style={styles.customInput}
+            />
+
+            <DatePicker
+              label="Fecha de nacimiento"
+              value={new Date(babyData.birthDate)}
+              onChange={(date: Date) => handleChange('birthDate', date.toISOString())}
             />
 
             <FormTextField

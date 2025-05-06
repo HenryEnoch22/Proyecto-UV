@@ -25,7 +25,7 @@ const EventCard = ({text, days, typeEvent}: EventCardProps) => {
                 <Text style={styles.textStyle}>{text}</Text>
             </View>
             <View style={styles.footer}>
-                <Text style={styles.daysStyles}>{`${days} días restantes`}</Text>
+                <Text style={styles.daysStyles}>Agrega eventos al calendario</Text>
             </View>
         </View>
     )
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
         borderLeftWidth: 2,
         marginHorizontal: 4,
         borderRadius: 4,
-        width: 170,
-        maxWidth: 170,
+        width: 250,
+        maxWidth: 250,
         minHeight: 72,
         backgroundColor: "#fff",
     },

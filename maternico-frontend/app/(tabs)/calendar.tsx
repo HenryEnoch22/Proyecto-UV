@@ -13,7 +13,6 @@ import AddEventModal from "../../components/AddEventModal";
 import { createEvent, getEvents, getProfile } from "@/services/api";
 import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import EventModal from "../../components/EventModal";
 
 const CalendarScreen = () => {
 	{/* TODO: desmarcar dias en los que los eventos fueron eliminados */}
@@ -31,8 +30,6 @@ const CalendarScreen = () => {
 	const [showModal, setShowModal] = useState(false);
 	const { user, setUser } = useAuth();
 	const [events, setEvents] = useState<Event[]>([]);
-	const [selectedDate, setSelectedDate] = useState("");
-	const [showEvent, setShowEvent] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 
@@ -86,41 +83,13 @@ const CalendarScreen = () => {
 
 	LocaleConfig.locales["es"] = {
 		monthNames: [
-			"Enero",
-			"Febrero",
-			"Marzo",
-			"Abril",
-			"Mayo",
-			"Junio",
-			"Julio",
-			"Agosto",
-			"Septiembre",
-			"Octubre",
-			"Noviembre",
-			"Diciembre",
+			"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
 		],
 		monthNamesShort: [
-			"Ene",
-			"Feb",
-			"Mar",
-			"Abril",
-			"Mayo",
-			"Jun",
-			"Jul",
-			"Ago",
-			"Sep",
-			"Oct",
-			"Nov",
-			"Dic",
+			"Ene", "Feb", "Mar", "Abril", "Mayo", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
 		],
 		dayNames: [
-			"Domingo",
-			"Lunes",
-			"Martes",
-			"Miercoles",
-			"Jueves",
-			"Viernes",
-			"Sabado",
+			"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado",
 		],
 		dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
 		today: "Hoy",
@@ -153,24 +122,12 @@ const CalendarScreen = () => {
 		return markedDates;
 	};
 
-	const handleDayPress = (day: { dateString: string }) => {
-		setSelectedDate(day.dateString);
-
-		const hasEvents = events.some(
-			(event) => event.date.split("T")[0] === day.dateString
-		);
-
-		if (hasEvents) {
-			setShowEvent(true);
-		}
-	};
-
 	const navigation = useNavigation();
 
 	const handleSubmit = async (eventData: {
 		name: string;
 		date: Date;
-		time: string;
+		time?: string;
 		notify: boolean;
 		type: number;
 	}) => {
@@ -216,7 +173,6 @@ const CalendarScreen = () => {
 				<Calendar
 					style={styles.calendar}
 					current={currentDate}
-					onDayPress={handleDayPress}
 					markedDates={getMarkedDates()}
 					theme={{
 						calendarBackground: "#FEFEFE",
