@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BabyEvent\StoreBabyEventRequest;
+use App\Models\Baby\Baby;
 use App\Models\Baby\BabyEvent;
 use Exception;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class BabyEventController extends Controller
     public function index($babyId)
     {
         try{
-            $baby = BabyEvent::find($babyId);
+            $baby = Baby::find($babyId);
             if (!$baby) {
                 return response()->json([
                     'success' => false,

@@ -7,6 +7,8 @@ use App\Http\Controllers\ForumController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BabyController;
+use App\Http\Controllers\MagazineController;
+use App\Http\Controllers\VideoController;
 
 //Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //    return $request->user();
@@ -52,37 +54,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/baby-events/{babyEventId}', [BabyEventController::class, 'destroy']);
 
 
-    Route::get('/videos/{videoId}', function ($videoId){
-        return response()->json([
-            'success' => true,
-            'message' => 'Video obtenido correctamente',
-            'data' => \App\Models\Information\Video::findOrFail($videoId),
-        ]);
-    });
+    Route::get('/videos', [VideoController::class, 'index']);
+    Route::get('/videos/{videoId}', [VideoController::class, 'show']);
+    Route::post('/videos', [VideoController::class, 'store']);
+    Route::delete('/videos/{videoId}', [VideoController::class, 'destroy']);
 
-    Route::get('/magazines/{magazineId}', function ($magazineId){
-        return response()->json([
-            'success' => true,
-            'message' => 'Revista obtenida correctamente',
-            'data' => \App\Models\Information\Magazine::findOrFail($magazineId),
-        ]);
-    });
+    Route::get('/magazines', [MagazineController::class, 'index']);
+    Route::get('/magazines/{magazineId}', [MagazineController::class, 'show']);
+    Route::post('/magazines', [MagazineController::class, 'store']);
+    Route::delete('/magazines/{magazineId}', [MagazineController::class, 'destroy']);
     
-    Route::get('/videos', function (){
-        return response()->json([
-            'success' => true,
-            'message' => 'Video obtenido correctamente',
-            'data' => \App\Models\Information\Video::all(),
-        ]);
-    });
 
-    Route::get('/magazines', function (){
-        return response()->json([
-            'success' => true,
-            'message' => 'Revista obtenida correctamente',
-            'data' => \App\Models\Information\Magazine::all(),
-        ]);
-    });
 
     Route::patch('/profile/{userId}', [App\Http\Controllers\ProfileController::class, 'update']);
 

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, Pressable, TextInput } from 'react-native';
+import { View, Text, Modal, StyleSheet, Pressable, TextInput } from 'react-native';
 import { XCircleIcon } from 'react-native-heroicons/solid';
-import { Calendar } from 'react-native-calendars';
 import DatePicker from './DatePicker';
 import * as ImagePicker from 'expo-image-picker';
+import PrimaryButton from './PrimaryButton';
 
 interface EventModalProps {
   visible: boolean;
@@ -27,8 +27,6 @@ const AlbumEventModal = ({ visible, onClose, onSubmit }: EventModalProps) => {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
   
     if (!result.canceled && result.assets[0]) {
       setImage(result.assets[0]);
@@ -46,7 +44,7 @@ const AlbumEventModal = ({ visible, onClose, onSubmit }: EventModalProps) => {
     }
   
     if (!image) {
-      alert('¡Selecciona una imagen primero!'); // Validación explícita
+      alert('¡Selecciona una imagen primero!');
       return;
     }
   
@@ -54,8 +52,14 @@ const AlbumEventModal = ({ visible, onClose, onSubmit }: EventModalProps) => {
       event_title: eventTitle,
       description: description.trim(),
       date: selectedDate,
-      photo_path: image, // Objeto completo de ImagePicker
+      photo_path: image,
     });
+
+    setEventTitle('');
+    setDescription('');
+    setSelectedDate('');
+    setImage(null);
+    setImagePickerText('Seleccionar imagen');
     
     onClose();
   };
@@ -93,7 +97,6 @@ const AlbumEventModal = ({ visible, onClose, onSubmit }: EventModalProps) => {
             />
 
             <DatePicker
-              label='Fecha del evento'
               value={selectedDate ? new Date(selectedDate) : new Date()}
               onChange={(date) => {
                 setSelectedDate(date.toISOString().split('T')[0]);
@@ -109,14 +112,11 @@ const AlbumEventModal = ({ visible, onClose, onSubmit }: EventModalProps) => {
               </Pressable>
           </View>
 
-          <Pressable
-            style={styles.actionButton}
+          <PrimaryButton
+            text='Crear Evento'
             onPress={handleSubmit}
           >
-            <Text style={styles.actionButtonText}>
-              Crear Evento
-            </Text>
-          </Pressable>
+          </PrimaryButton>
         </View>
       </View>
     </Modal>

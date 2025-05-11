@@ -1,5 +1,4 @@
 import { Image, StyleSheet, Text, View } from "react-native";
-import { DocumentTextIcon } from "react-native-heroicons/solid";
 
 interface CategoryMagazineCardProps {
     category: string,

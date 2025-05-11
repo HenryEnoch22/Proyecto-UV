@@ -14,6 +14,7 @@ type Baby = {
 }
 type User = {
     id: number;
+    role_id: number;
     name: string;
     email: string;
     last_name: string,

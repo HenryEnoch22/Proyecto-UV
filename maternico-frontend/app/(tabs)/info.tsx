@@ -10,6 +10,7 @@ import {
 	Pressable,
 	StyleSheet,
 	ScrollView,
+	Linking,
 } from "react-native";
 import {
 	ArrowLongLeftIcon,
@@ -23,21 +24,19 @@ const Info = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	
-	// Nuevo (correcto)
 	interface Video {
 		id: number;
-		title: string; // ← Campo correcto
+		title: string;
 		video_path: string;
 	}
 	
 	const videoCover = require("../../assets/images/logo/MaternicoLogo.png")
 
-	
 	// Para revistas
 	interface MagazineCategory {
 		id: number;
-		title: string; // ← API usa 'title' no 'name'
-		magazine_path: string; // ← Nuevo campo necesario
+		title: string;
+		magazine_path: string;
 	}
 
 	const magazineCover = require("../../assets/images/portada.png")
@@ -106,6 +105,13 @@ const Info = () => {
 
 	const router = useRouter();
 
+	const openDocument = (url: string) => {
+		Linking.openURL(url).catch((err) => {
+			console.error("Error al abrir el enlace:", err);
+			setError("No se pudo abrir el documento");
+		});
+	};
+
 	return (
 		<ScrollView contentContainerStyle={styles.scrollContainer}>
 			<View style={styles.container}>
@@ -129,7 +135,7 @@ const Info = () => {
 								showsHorizontalScrollIndicator={false}
 								renderItem={({ item }) => (
 									<Pressable
-										onPress={() => router.push(`/magazine/${item.id}`)}
+										onPress={() => openDocument(item.magazine_path)}
 										style={styles.cardPressable}
 									>
 										<CategoryMagazineCard
@@ -156,7 +162,7 @@ const Info = () => {
 								horizontal
 								showsHorizontalScrollIndicator={false}
 								renderItem={({ item }) => (
-									<Pressable onPress={() => router.push(`/video/${item.id}`)}
+									<Pressable onPress={() => openDocument(item.video_path)}
 										style={styles.cardPressable}>
 										<CategoryMagazineCard
 											category={item.title}

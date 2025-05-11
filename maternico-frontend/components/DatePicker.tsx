@@ -12,7 +12,7 @@ const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
 	const [isCalendarVisible, setCalendarVisible] = useState(false);
 
 	const handleDayPress = (day: { dateString: string }) => {
-		const selectedDate = new Date(day.dateString + "T12:00:00"); // Hora fija para evitar cambios de zona horaria
+		const selectedDate = new Date(day.dateString);
 		onChange(selectedDate);
 		setCalendarVisible(false);
 	};

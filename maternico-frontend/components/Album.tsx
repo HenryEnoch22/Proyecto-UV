@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable, Image } from "react-native";
-import { PlusCircleIcon } from "react-native-heroicons/solid";
+import { PlusCircleIcon, TrashIcon } from "react-native-heroicons/solid";
 import AlbumEventModal from "./AlbumEventModal";
 import { getAlbumEvents, createAlbumEvent } from "@/services/api";
 import * as ImagePicker from "expo-image-picker";
+import { API_URL, deleteAlbumEvent } from "@/services/api";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 type AlbumEvent = {
     id: number;
@@ -20,10 +22,14 @@ interface AlbumProps {
 
 const Album = ({ babyId }: AlbumProps) => {
     const [events, setEvents] = useState<AlbumEvent[]>([]);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
+    
+    const LOCAL_API_URL = API_URL.split("/api")[0];
+
     const fetchEvents = async () => {
         try {
             const response = await getAlbumEvents(babyId);
-            console.log("Fetched events:", response.data);
             setEvents(response);
         } catch (error) {
             console.error("Error fetching events:", error);
@@ -54,17 +60,19 @@ const Album = ({ babyId }: AlbumProps) => {
         }
       };
 
-    
-    const [showModal, setShowModal] = useState(false);
-
-    const getImage = (title: string) => {
-        if (title.toLowerCase().includes("gatear")) {
-            return require("../assets/images/babyEvents/gateando.jpg");
-        } else if (title.toLowerCase().includes("palabra")) {
-            return require("../assets/images/babyEvents/hablando.jpg");
+      const handleDeleteEvent = async () => {
+        if (!selectedEventId) return;
+        
+        try {
+            const success = await deleteAlbumEvent(selectedEventId);
+            if (success) {
+                fetchEvents();
+                setSelectedEventId(null);
+            }
+        } catch (error) {
+            console.error("Error eliminando evento:", error);
         }
-        return require("../assets/images/babyEvents/jugando.png");
-    }
+    };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -77,30 +85,26 @@ const Album = ({ babyId }: AlbumProps) => {
             
             {events ? (
                 events.map((event) => (
-                    <View key={event.id} style={styles.eventItem}>
-                        <View style={styles.eventContent}>
-                            <Text style={styles.eventTitle}>{event.event_title}</Text>
-                            
-                            {event.description && (
-                                <Text style={styles.descriptionText}>{event.description}</Text>
-                            )}
-                            
-                            { event.photo_path
-                                ? (
-                                    <Image
-                                    source={{ uri: `http://192.168.100.6:8000/storage/${event.photo_path}` }}
+                        <View key={event.id} style={styles.eventItem}>
+                            <View style={styles.eventContent}>
+                                <Text style={styles.eventTitle}>{event.event_title}</Text>
+                                
+                                {event.description && (
+                                    <Text style={styles.descriptionText}>{event.description}</Text>
+                                )}
+                                
+                                <Image
+                                    source={{ uri: `${LOCAL_API_URL}/storage/${event.photo_path}` }}
                                     style={styles.eventImage}
-                                    />
-                                )
-                                : (
-                                    <Image
-                                    source={getImage(event.event_title)}
-                                    style={styles.eventImage}
-                                    />
-                                )
-                            }
+                                />
+                            </View>
+                            <Pressable 
+                                style={styles.deleteButton}
+                                onPress={() => setSelectedEventId(event.id)}
+                            >
+                                <TrashIcon color="#FF4444" size={20} />
+                            </Pressable>
                         </View>
-                    </View>
                 ))
             ) : (
                 <Text style={{ color: '#888', fontSize: 16 }}>No hay eventos disponibles.</Text>
@@ -109,9 +113,17 @@ const Album = ({ babyId }: AlbumProps) => {
             <AlbumEventModal 
                 visible={showModal} 
                 onClose={() => setShowModal(false)} 
-                onSubmit={(newEvent) => onAddEvent({ ...newEvent, baby_id: babyId })} />
+                onSubmit={(newEvent) => onAddEvent({ ...newEvent, baby_id: babyId })}
+            />
 
-            
+            <ConfirmDeleteModal
+                visible={!!selectedEventId}
+                onClose={() => setSelectedEventId(null)}
+                onConfirm={handleDeleteEvent}
+                title="Eliminar evento del álbum"
+                description="¿Estás seguro de eliminar este evento? Todos los datos asociados se perderán permanentemente."
+            />
+
         </ScrollView>
     );
 };

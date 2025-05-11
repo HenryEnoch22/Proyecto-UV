@@ -1,4 +1,3 @@
-// app/(tabs)/_layout.tsx
 import { Stack } from "expo-router";
 import { View } from "react-native";
 import BottomNavbar from "@/components/ui/BottomNavbar";

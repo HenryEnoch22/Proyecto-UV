@@ -1,13 +1,8 @@
 import { View, StyleSheet, Pressable } from "react-native";
 import { useRouter, usePathname } from "expo-router";
-import { 
-  HomeIcon, 
-  CalendarIcon, 
-  InformationCircleIcon, 
-  ChatBubbleBottomCenterTextIcon 
-} from "react-native-heroicons/outline";
+import { CloudArrowUpIcon, BookOpenIcon, VideoCameraIcon } from "react-native-heroicons/outline";
 
-const BottomNavbar = () => {
+const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -15,31 +10,33 @@ const BottomNavbar = () => {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={() => router.push("/home")} style={styles.navItem}>
+      <Pressable 
+        onPress={() => router.push("/admin/file-management")} 
+        style={styles.navItem}
+      >
         <View style={styles.iconContainer}>
-          <HomeIcon size={24} color="#F392BE" />
-          {(isActive("/home") || isActive("/")) && <View style={styles.activeIndicator} />}
+          <CloudArrowUpIcon size={24} color="#F392BE" />
+          {(isActive("/admin/file-management") || isActive("/")) && <View style={styles.activeIndicator} />}
         </View>
       </Pressable>
-
-      <Pressable onPress={() => router.push("/calendar")} style={styles.navItem}>
+      
+      <Pressable 
+        onPress={() => router.push("/admin/magazines")} 
+        style={styles.navItem}
+      >
         <View style={styles.iconContainer}>
-          <CalendarIcon size={24} color="#F392BE" />
-          {isActive("/calendar") && <View style={styles.activeIndicator} />}
+          <BookOpenIcon size={24} color="#F392BE" />
+          {isActive("/admin/magazines") && <View style={styles.activeIndicator} />}
         </View>
       </Pressable>
-
-      <Pressable onPress={() => router.push("/(tabs)/info")} style={styles.navItem}>
+      
+      <Pressable 
+        onPress={() => router.push("/admin/videos")} 
+        style={styles.navItem}
+      >
         <View style={styles.iconContainer}>
-          <InformationCircleIcon size={32} color="#F392BE" />
-          {isActive("/(tabs)/info") && <View style={[styles.activeIndicator, { bottom: -6 }]} />}
-        </View>
-      </Pressable>
-
-      <Pressable onPress={() => router.push("/forum")} style={styles.navItem}>
-        <View style={styles.iconContainer}>
-          <ChatBubbleBottomCenterTextIcon size={24} color="#F392BE" />
-          {isActive("/forum") && <View style={styles.activeIndicator} />}
+          <VideoCameraIcon size={24} color="#F392BE" />
+          {isActive("/admin/videos") && <View style={styles.activeIndicator} />}
         </View>
       </Pressable>
     </View>
@@ -73,10 +70,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -5,
     height: 2,
-    width: '70%',
+    width: '80%',
     backgroundColor: '#F392BE',
     borderRadius: 2,
   },
 });
 
-export default BottomNavbar;
+export default Navbar;
