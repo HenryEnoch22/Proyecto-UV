@@ -63,8 +63,8 @@ const Videos = () => {
         <View style={styles.container}>
             <Text style={styles.title}>Gestión de Videos</Text>
             
-            {error && <Text style={styles.error}>{error}</Text>}
-            {success && <Text style={styles.success}>{success}</Text>}
+            {error !== '' && <Text style={styles.error}>{error}</Text>}
+            {success !== '' && <Text style={styles.success}>{success}</Text>}
 
             <FlatList
                 data={videos}

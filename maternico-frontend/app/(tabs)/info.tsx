@@ -1,6 +1,6 @@
 import CategoryMagazineCard from "@/components/CategoryMagazineCard";
 import HealthCenterCard from "@/components/HealthCenterCard";
-import { getHealthCenters, getMagazines, getVideos } from "@/services/api";
+import { getHealthCenters, getMagazines, getProfile, getVideos } from "@/services/api";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -16,6 +16,8 @@ import {
 	ArrowLongLeftIcon,
 	ChevronRightIcon,
 } from "react-native-heroicons/solid";
+import { useAuth } from "@/contexts/AuthContext";
+import Loader from "@/components/Loader";
 
 const Info = () => {
 	const [dataHealthCenter, setDataHealthCenter] = useState([]);
@@ -23,6 +25,24 @@ const Info = () => {
 	const [dataVideo, setDataVideo] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const { user, setUser } = useAuth();
+
+	useEffect(() => {
+		setError(null);
+		const fetchUser = async () => {
+			try {
+				const userData = await getProfile();
+
+				if (userData?.user) {
+					const { user } = userData;
+					setUser({...user});
+				}
+			} catch (error) {
+				console.error("Error al cargar el usuario:", error);
+			}
+		};
+		fetchUser();
+	}, []);
 	
 	interface Video {
 		id: number;
@@ -51,6 +71,7 @@ const Info = () => {
 
 	// Para revistas
 	useEffect(() => {
+		setError(null);
 		const fetchMagazines = async () => {
 			try {
 				setLoading(true);
@@ -68,6 +89,7 @@ const Info = () => {
 
 	// Para videos
 	useEffect(() => {
+		setError(null);
 		const fetchVideos = async () => {
 			try {
 				setLoading(true);
@@ -84,6 +106,7 @@ const Info = () => {
 	}, []);
 
 	useEffect(() => {
+		setError(null);
 		const fetchHealthCenters = async () => {
 			try {
 				setLoading(true);
@@ -106,11 +129,22 @@ const Info = () => {
 	const router = useRouter();
 
 	const openDocument = (url: string) => {
-		Linking.openURL(url).catch((err) => {
-			console.error("Error al abrir el enlace:", err);
-			setError("No se pudo abrir el documento");
-		});
+		setError(null);
+		if (user?.is_premium) {
+			Linking.openURL(url).catch((err) => {
+				console.error("Error al abrir el enlace:", err);
+				setError("No se pudo abrir el documento");
+			});
+		} else {
+			setError("Debes ser usuario premium para acceder a este contenido");
+		}
 	};
+
+	if (loading) {
+		return (
+			<Loader />
+		);
+	}
 
 	return (
 		<ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -121,6 +155,28 @@ const Info = () => {
 					</Pressable>
 					<Text style={styles.title}>Sección informativa</Text>
 				</View>
+
+				{error && (
+					<View style={{ padding: 20 }}>
+						<Text style={{ color: "red", textAlign: "center" }}>{error}</Text>
+						<Pressable
+							onPress={() => {
+								setError(null);
+								router.push("/premium/card-data");
+							}}
+							style={{
+								backgroundColor: "#F392BE",
+								padding: 10,
+								borderRadius: 8,
+								marginTop: 10,
+							}}
+						>
+							<Text style={{ color: "#fff", textAlign: "center" }}>
+								Convertirme en premium
+							</Text>
+						</Pressable>
+					</View>
+				)}
 
 				<View style={styles.contentWrapper}>
 					<View style={styles.section}>
@@ -188,13 +244,9 @@ const Info = () => {
 								horizontal
 								showsHorizontalScrollIndicator={false}
 								renderItem={({ item }) => (
-									<Pressable
-										onPress={() => router.push(`/magazine/${item.id}`)}
-									>
-										<HealthCenterCard {...item} />
-									</Pressable>
+									<HealthCenterCard {...item} />
 								)}
-								keyExtractor={(item) => item.id.toString()}
+								keyExtractor={(item) => item.id}
 								contentContainerStyle={styles.listContent}
 							/>
 						</View>

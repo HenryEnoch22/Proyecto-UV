@@ -15,6 +15,7 @@ class Comment extends Model
         'user_id',
         'forum_id',
         'text',
+        'seen',
         'created_at',
         'deleted_at',
     ];
@@ -22,5 +23,10 @@ class Comment extends Model
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function forum()
+    {
+        return $this->belongsTo(Forum::class, 'forum_id');
     }
 }

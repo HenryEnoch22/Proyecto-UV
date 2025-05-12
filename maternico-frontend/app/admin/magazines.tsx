@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, Pressable, Linking, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { useEffect, useState } from "react";
 import { getMagazines, deleteMagazine } from "@/services/api";
 import FileCard from "@/components/ui/admin/FileCard";
@@ -63,8 +63,8 @@ const Magazines = () => {
         <View style={styles.container}>
             <Text style={styles.title}>Gestión de Revistas</Text>
             
-            {error && <Text style={styles.error}>{error}</Text>}
-            {success && <Text style={styles.success}>{success}</Text>}
+            {error !== '' && <Text style={styles.error}>{error}</Text>}
+            {success !== '' && <Text style={styles.success}>{success}</Text>}
 
             <FlatList
                 data={magazines}

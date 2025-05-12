@@ -27,6 +27,7 @@ type User = {
 	mother_last_name: string;
 	birth_date: string;
 	profile_photo_path: string;
+	is_premium: number;
 };
 
 export type UserResponse = {
@@ -144,6 +145,7 @@ export const getProfile = async (): Promise<UserResponse | null> => {
 		return null;
 	}
 };
+
 export const updateUser = async (
 	userID: string,
 	name: string,
@@ -181,6 +183,64 @@ export const updateUser = async (
 		return [];
 	}
 };
+
+export const becomePremium = async (userID: number) => {
+	try {
+		const response = await fetch(`${API_URL}/become-premium/${userID}`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		if (!response.ok) throw new Error("Error al convertir a premium");
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error convirtiendo a premium:", error);
+		return [];
+	}
+}
+
+export const getForumResponses = async (userID: number) => {
+	try {
+		const response = await fetch(`${API_URL}/forums-responses/${userID}`, {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (!response.ok) throw new Error("Error al obtener las respuestas");
+
+		const {data} = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error obteniendo respuestas:", error);
+		return [];
+	}
+};
+
+export const markCommentsAsRead = async (userID: number, forumID: number) => {
+	try {
+		console.log("Marking comments as read for user:", userID, "and forum:", forumID);
+		const response = await fetch(`${API_URL}/forum-responses/${userID}/${forumID}`, {
+			headers: {
+				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (!response.ok) throw new Error("Error al marcar comentarios como leídos");
+
+		const {data} = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error marcando comentarios como leídos:", error);
+		return null;
+	}
+}
 
 // FORUM
 export const getForum = async (forumID: number) => {

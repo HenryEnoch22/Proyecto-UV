@@ -56,4 +56,23 @@ class ProfileController extends Controller
     {
         //
     }
+
+    public function becomePremium($userID) {
+        try {
+            $user = User::findOrFail($userID);
+            $user->update(['is_premium' => 1]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario actualizado a premium correctamente',
+                'data' => $user,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el usuario a premium',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

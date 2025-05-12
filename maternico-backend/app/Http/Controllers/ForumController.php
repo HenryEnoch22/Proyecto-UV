@@ -8,6 +8,7 @@ use App\Models\Forum\Comment;
 use App\Models\Forum\Forum;
 use Exception;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ForumController extends Controller
 {
@@ -124,5 +125,58 @@ class ForumController extends Controller
             'success' => true,
             'message' => 'Foro eliminado correctamente',
         ], 200);
+    }
+
+    /**
+     * Get how many responses the user has in the forum
+     * @param int $userID
+     */
+    public function getForumResponses($userID)
+    {
+        $forums = Forum::where('user_id', $userID)->get();
+        \Log::info($forums);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Foros obtenidos correctamente',
+            'data' => $forums,
+        ], 200);
+    }
+
+    /**
+     * Mark comments as viewed by the user
+     * @param int $userID
+     * @param int $forumID
+     */
+    public function markCommentsViewed($userID, $forumID)
+    {
+        \Log::info(Carbon::now());
+        $comments = Comment::where('forum_id', $forumID)
+            ->where('created_at', '<=', Carbon::now())
+            ->get();
+        \Log::info($comments);
+
+        if ($comments->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No hay comentarios para marcar como vistos',
+            ], 404);
+        }
+
+        foreach ($comments as $comment) {
+            $comment->load('forum');
+            if ($comment->forum->user_id === $userID) {
+                $comment->update([
+                    'seen' => 1,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Comentarios vistos por el usuario',
+            'data' => $comments,
+        ], 200);
+
     }
 }

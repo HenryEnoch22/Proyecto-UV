@@ -17,10 +17,11 @@ type User = {
     role_id: number;
     name: string;
     email: string;
-    last_name: string,
-    mother_last_name: string,
-    birth_date: string,
-    profile_photo_path: string,
+    last_name: string;
+    mother_last_name: string;
+    birth_date: string;
+    profile_photo_path: string;
+    is_premium: number;
 } | null;
 
 // 2️⃣ Define el tipo del contexto

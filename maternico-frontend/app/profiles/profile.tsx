@@ -18,15 +18,7 @@ const Profile = () => {
         
                 if (userData?.user) {
                   const { user } = userData;
-                  setUser({
-                    id: user.id.toString(),
-                    name: user.name,
-                    email: user.email,
-                    last_name: user.last_name,
-                    mother_last_name: user.mother_last_name,
-                    birth_date: user.birth_date,
-                    profile_photo_path: user.profile_photo,
-                });
+                  setUser({...user});
                 } else {
                   setUser(null);
                 }
@@ -40,10 +32,6 @@ const Profile = () => {
         
             checkAuthStatus();
           }, []);
-
-    const getRoleText = () => {
-        return /*user?.child ? */ `Mamá de Fulanito`/* : "Mamá primeriza";*/
-    };
 
     const handleLogout = async () => {
         try {
@@ -66,7 +54,6 @@ const Profile = () => {
 
     return (
         <ScrollView style={styles.container}>
-            {/* Header */}
             <View style={styles.header}>
                 <Pressable 
                     onPress={() => router.back()} 
@@ -89,21 +76,42 @@ const Profile = () => {
                 <Text style={styles.name}>
                     {user?.name} {user?.last_name} {user?.mother_last_name}
                 </Text>
-                <Text style={styles.role}>{getRoleText()}</Text>
+                <Text style={styles.role}>Mamá primeriza</Text>
             </View>
 
-            {/* Profile Info */}
             <View style={styles.contentContainer}>
 
-                {/* Información básica */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Información personal</Text>
                     <InfoRow label="Nombre completo" value={`${user?.name} ${user?.last_name} ${user?.mother_last_name}`} />
                     <InfoRow label="Correo electrónico" value={user?.email || ""} />
-                    
                 </View>
 
             </View>
+
+            {
+                (user?.role_id === 2 && user.is_premium !== 1) && (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>¿Aún no eres premium?</Text>
+                        <Text style={{ fontSize: 16, color: "#4A5568", marginBottom: 16 }}>
+                            Conviértete en premium y disfruta de contenido exclusivo.
+                        </Text>
+                        <Pressable
+                            onPress={() => router.push('/premium/card-data')}
+                            style={{
+                                backgroundColor: "#F392BE",
+                                padding: 10,
+                                borderRadius: 8,
+                                marginTop: 10,
+                            }}
+                        >
+                            <Text style={{ color: "#fff", textAlign: "center" }}>
+                                Convertirme en premium
+                            </Text>
+                        </Pressable>
+                    </View>
+                )
+            }
                 <Pressable onPress={handleLogout} style={styles.logoutButton}>
                     <Text style={{color: "#fefefe", fontWeight: "700", fontSize: 18}}>Cerrar sesión</Text>
                 </Pressable>

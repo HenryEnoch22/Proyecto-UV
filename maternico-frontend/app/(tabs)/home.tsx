@@ -52,16 +52,8 @@ export default function HomeScreen() {
 
 				if (userData?.user) {
 					const { user } = userData;
-					setUser({
-						id: user.id,
-						role_id: user.role_id,
-						name: user.name,
-						email: user.email,
-						last_name: user.last_name,
-						mother_last_name: user.mother_last_name,
-						birth_date: user.birth_date,
-						profile_photo_path: user.profile_photo_path,
-					});
+					setUser({...user});
+					console.log(user);
 
 					const babyResponse = await getBabyByMother(user.id);
 					setBaby(babyResponse);

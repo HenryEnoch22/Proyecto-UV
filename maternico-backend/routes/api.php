@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BabyController;
 use App\Http\Controllers\MagazineController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\ProfileController;
 
 //Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //    return $request->user();
@@ -23,6 +24,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'user' => $user,
         ]);
     });
+
+    Route::post('/become-premium/{userID}', [ProfileController::class, 'becomePremium']);
+
+    Route::get('forum-responses/{userID}', [ForumController::class, 'getForumResponses']);
+    Route::get('forum-responses/{userID}/{forumId}', [ForumController::class, 'markCommentsViewed']);
 
     Route::post('/get-events', [EventController::class, 'index']);
     Route::post('/events', [EventController::class, 'store']);
@@ -66,7 +72,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
 
 
-    Route::patch('/profile/{userId}', [App\Http\Controllers\ProfileController::class, 'update']);
+    Route::patch('/profile/{userId}', [ProfileController::class, 'update']);
 
 });
 
