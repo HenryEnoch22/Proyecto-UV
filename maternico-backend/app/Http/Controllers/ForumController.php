@@ -134,12 +134,32 @@ class ForumController extends Controller
     public function getForumResponses($userID)
     {
         $forums = Forum::where('user_id', $userID)->get();
-        \Log::info($forums);
+        
+        if ($forums->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No hay foros para el usuario',
+                'data' => 0,
+            ], 404);
+        }
+
+        $responses = 0;
+        foreach ($forums as $forum) {
+            $forum->load('comments');
+            if ($forum->comments->isEmpty()) {
+                $responses = 0;
+            }
+            foreach ($forum->comments as $comment) {
+                if ($comment->seen == 0) {
+                    $responses++;
+                }
+            }
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Foros obtenidos correctamente',
-            'data' => $forums,
+            'data' => $responses,
         ], 200);
     }
 
@@ -154,7 +174,6 @@ class ForumController extends Controller
         $comments = Comment::where('forum_id', $forumID)
             ->where('created_at', '<=', Carbon::now())
             ->get();
-        \Log::info($comments);
 
         if ($comments->isEmpty()) {
             return response()->json([
@@ -165,7 +184,7 @@ class ForumController extends Controller
 
         foreach ($comments as $comment) {
             $comment->load('forum');
-            if ($comment->forum->user_id === $userID) {
+            if ($comment->forum->user_id == $userID) {
                 $comment->update([
                     'seen' => 1,
                 ]);

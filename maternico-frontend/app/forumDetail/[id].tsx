@@ -1,8 +1,8 @@
 import { useLocalSearchParams } from "expo-router";
 import { useRef, useState, useEffect } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, Dimensions } from "react-native";
-import { ArrowLongLeftIcon, EllipsisVerticalIcon } from "react-native-heroicons/solid";
-import { createComment, deleteComment, deleteForum, getForumComments, markCommentsAsRead, updateForum } from "@/services/api";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, Dimensions,} from "react-native";
+import { ArrowLongLeftIcon, EllipsisVerticalIcon,} from "react-native-heroicons/solid";
+import { createComment, deleteComment, deleteForum, getForumComments, markCommentsAsRead, updateForum,} from "@/services/api";
 import { CommentsList } from "@/components/CommentsList";
 import FormTextField from "@/components/FormTextField";
 import PrimaryButton from "@/components/PrimaryButton";
@@ -13,41 +13,29 @@ import { useUser } from "@/hooks/useUser";
 import { useForum } from "@/hooks/useForum";
 
 const ForumDetail = () => {
-    const { id } = useLocalSearchParams();
-    const { user, loading: userLoading, error: userError } = useUser();
-    const { comments, fetchForum, forum, loading, setComments } = useForum(Number(id));
-    const [inputText, setInputText] = useState("");
-    const [showInput, setShowInput] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [editedTitle, setEditedTitle] = useState("");
-    const [editedText, setEditedText] = useState("");
-    const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-    const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
-    const ellipsisIconRef = useRef(null);
-    const router = useRouter();
-    const [error, setError] = useState<string | null>(null);
+	const { id } = useLocalSearchParams();
+	const { user, loading: userLoading, error: userError } = useUser();
+	const { comments, fetchForum, forum, loading, setComments } = useForum(Number(id));
+	const [inputText, setInputText] = useState("");
+	const [showInput, setShowInput] = useState(false);
+	const [showEditModal, setShowEditModal] = useState(false);
+	const [editedTitle, setEditedTitle] = useState("");
+	const [editedText, setEditedText] = useState("");
+	const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+	const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
+	const ellipsisIconRef = useRef(null);
+	const router = useRouter();
+	const [error, setError] = useState<string | null>(null);
 
-    const isForumOwner = !!user && !!forum && user.id === forum.owner.id;
+	const isForumOwner = !!user && !!forum && user.id === forum.owner.id;
 
-    useEffect(() => {
+	useEffect(() => {
 		if (!id) return;
 
 		const loadData = async () => {
 			try {
 				await fetchForum();
-				
-				if (forum && isForumOwner) {
-					try {
-						console.log("Marcando cometarios como leídos", user.id, forum.id);
-						await markCommentsAsRead(
-							user.id, 
-							Number(forum.id)
-						);
-					} catch (error) {
-						console.error("Error actualizando estado 'visto':", error);
-					}
-				}
-				
+
 				if (forum) {
 					setEditedTitle(forum.title);
 					setEditedText(forum.text);
@@ -65,198 +53,211 @@ const ForumDetail = () => {
 		};
 	}, [id, user?.id]);
 
-    const showOptions = () => {
-        if (ellipsisIconRef.current) {
-            ellipsisIconRef.current.measure(
-                (width: number, height: number, pageX: number, pageY: number) => {
-                    setMenuPosition({
-                        top: pageY + height,
-                        right: Dimensions.get("window").width - (pageX + width),
-                    });
-                    setShowOptionsMenu(true);
-                }
-            );
-        }
-    };
+	useEffect(() => {
+		if (isForumOwner && forum && user) {
+			const markAsRead = async () => {
+				try {
+					await markCommentsAsRead(user.id, Number(forum.id));
+				} catch (error) {
+					console.error("Error actualizando estado 'visto':", error);
+				}
+			};
+			markAsRead();
+		}
+	}, [isForumOwner, forum, user?.id]);
 
-    const handleDeleteComment = async (commentId: string) => {
-        try {
-            await deleteComment(commentId);
-            const updatedComments = await getForumComments(Number(forum?.id));
-            setComments(updatedComments.data || []);
-        } catch (error) {
-            setError("Error al eliminar el comentario");
-        }
-    };
+	const showOptions = () => {
+		if (ellipsisIconRef.current) {
+			ellipsisIconRef.current.measure(
+				(width: number, height: number, pageX: number, pageY: number) => {
+					setMenuPosition({
+						top: pageY + height,
+						right: Dimensions.get("window").width - (pageX + width),
+					});
+					setShowOptionsMenu(true);
+				}
+			);
+		}
+	};
 
-    const handleSendComment = async () => {
-        if (!showInput) {
-            setShowInput(true);
-            return;
-        }
-        setError(null);
+	const handleDeleteComment = async (commentId: string) => {
+		try {
+			await deleteComment(commentId);
+			const updatedComments = await getForumComments(Number(forum?.id));
+			setComments(updatedComments.data || []);
+		} catch (error) {
+			setError("Error al eliminar el comentario");
+		}
+	};
 
-        if (!inputText.trim()) {
-            setError("No se puede enviar un comentario vacío");
-            return;
-        }
+	const handleSendComment = async () => {
+		if (!showInput) {
+			setShowInput(true);
+			return;
+		}
+		setError(null);
 
-        try {
-            if (user?.id && forum?.id) {
-                await createComment(user.id, Number(forum.id), inputText);
-                setInputText("");
-                setShowInput(false);
-                const updatedComments = await getForumComments(forum.id);
-                setComments(updatedComments.data);
-            }
-        } catch (error) {
-            setError("Error al enviar el comentario");
-        }
-    };
+		if (!inputText.trim()) {
+			setError("No se puede enviar un comentario vacío");
+			return;
+		}
 
-    const handleUpdateForum = async () => {
-        if (!editedTitle.trim() || !editedText.trim()) {
-            setError("Ambos campos son requeridos");
-            return;
-        }
+		try {
+			if (user?.id && forum?.id) {
+				await createComment(user.id, Number(forum.id), inputText);
+				setInputText("");
+				setShowInput(false);
+				const updatedComments = await getForumComments(forum.id);
+				setComments(updatedComments.data);
+			}
+		} catch (error) {
+			setError("Error al enviar el comentario");
+		}
+	};
 
-        try {
-            if (forum?.id) {
-                await updateForum(forum.id, editedTitle, editedText);
-                setShowEditModal(false);
-                setError(null);
-                await fetchForum();
-            }
-        } catch (error) {
-            setError("Error al actualizar el foro");
-        }
-    };
+	const handleUpdateForum = async () => {
+		if (!editedTitle.trim() || !editedText.trim()) {
+			setError("Ambos campos son requeridos");
+			return;
+		}
 
-    const handleDeleteForum = async () => {
-        try {
-            if (forum?.id) {
-                await deleteForum(forum.id);
-                router.replace("/(tabs)/forum");
-            }
-        } catch (error) {
-            setError("Error al eliminar el foro");
-        } finally {
-            setShowOptionsMenu(false);
-        }
-    };
+		try {
+			if (forum?.id) {
+				await updateForum(forum.id, editedTitle, editedText);
+				setShowEditModal(false);
+				setError(null);
+				await fetchForum();
+			}
+		} catch (error) {
+			setError("Error al actualizar el foro");
+		}
+	};
 
-    if (userLoading || loading || !forum || !user) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#f392be" />
-                <Text style={styles.loadingText}>Cargando datos...</Text>
-            </View>
-        );
-    }
+	const handleDeleteForum = async () => {
+		try {
+			if (forum?.id) {
+				await deleteForum(forum.id);
+				router.replace("/(tabs)/forum");
+			}
+		} catch (error) {
+			setError("Error al eliminar el foro");
+		} finally {
+			setShowOptionsMenu(false);
+		}
+	};
 
-    if (!forum) {
-        return (
-            <View style={styles.errorContainer}>
-                <Text style={styles.errorMessage}>
-                    Hubo un error al obtener el foro, inténtalo más tarde.
-                </Text>
-                {error && <Text style={styles.errorDetail}>{error}</Text>}
-                <PrimaryButton
-                    text="Volver"
-                    onPress={() => router.back()}
-                    style={styles.backToForumsButton}
-                />
-            </View>
-        );
-    }
+	if (userLoading || loading || !forum || !user) {
+		return (
+			<View style={styles.loadingContainer}>
+				<ActivityIndicator size="large" color="#f392be" />
+				<Text style={styles.loadingText}>Cargando datos...</Text>
+			</View>
+		);
+	}
 
-    return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <Pressable onPress={() => router.back()} style={styles.backButton}>
-                    <ArrowLongLeftIcon size={24} color="#FEFEFE" />
-                </Pressable>
-                <Text style={styles.headerTitle}>{forum.title}</Text>
-                {isForumOwner && (
-                    <Pressable
-                        ref={ellipsisIconRef}
-                        onPress={showOptions}
-                        style={styles.optionsButton}
-                    >
-                        <EllipsisVerticalIcon size={24} color="#FEFEFE" />
-                    </Pressable>
-                )}
-            </View>
+	if (!forum) {
+		return (
+			<View style={styles.errorContainer}>
+				<Text style={styles.errorMessage}>
+					Hubo un error al obtener el foro, inténtalo más tarde.
+				</Text>
+				{error && <Text style={styles.errorDetail}>{error}</Text>}
+				<PrimaryButton
+					text="Volver"
+					onPress={() => router.back()}
+					style={styles.backToForumsButton}
+				/>
+			</View>
+		);
+	}
 
-            <View style={styles.mainContent}>
-                <View style={styles.tweetContainer}>
-                    <View style={styles.userInfo}>
-                        <View style={styles.userDetails}>
-                            <Text style={styles.userName}>
-                                {`${forum.owner.name} ${forum.owner.last_name} ${forum.owner.mother_last_name}`}
-                            </Text>
-                        </View>
-                    </View>
+	return (
+		<ScrollView style={styles.container}>
+			<View style={styles.header}>
+				<Pressable onPress={() => router.back()} style={styles.backButton}>
+					<ArrowLongLeftIcon size={24} color="#FEFEFE" />
+				</Pressable>
+				<Text style={styles.headerTitle}>{forum.title}</Text>
+				{isForumOwner && (
+					<Pressable
+						ref={ellipsisIconRef}
+						onPress={showOptions}
+						style={styles.optionsButton}
+					>
+						<EllipsisVerticalIcon size={24} color="#FEFEFE" />
+					</Pressable>
+				)}
+			</View>
 
-                    <Text style={styles.tweetText}>{forum.text}</Text>
+			<View style={styles.mainContent}>
+				<View style={styles.tweetContainer}>
+					<View style={styles.userInfo}>
+						<View style={styles.userDetails}>
+							<Text style={styles.userName}>
+								{`${forum.owner.name} ${forum.owner.last_name} ${forum.owner.mother_last_name}`}
+							</Text>
+						</View>
+					</View>
 
-                    <View style={styles.tweetMetrics}>
-                        <Text style={styles.metricText}>
-                            {forum.comments.length} respuestas
-                        </Text>
-                    </View>
-                </View>
-                
-                <CommentsList
-                    comments={comments}
-                    currentUserId={user?.id}
-                    onDeleteComment={handleDeleteComment}
-                />
+					<Text style={styles.tweetText}>{forum.text}</Text>
 
-                {showInput && (
-                    <>
-                        <FormTextField
-                            placeholder="Yo te recomiendo que..."
-                            multiline
-                            numberOfLines={4}
-                            value={inputText}
-                            onChangeText={(text: string) => {
-                                setInputText(text);
-                                setError(null);
-                            }}
-                            style={styles.mainInput}
-                        />
-                        {!!error && <Text style={styles.errorText}>{error}</Text>}
-                    </>
-                )}
+					<View style={styles.tweetMetrics}>
+						<Text style={styles.metricText}>
+							{forum.comments.length} respuestas
+						</Text>
+					</View>
+				</View>
 
-                <PrimaryButton
-                    style={styles.floatingButton}
-                    onPress={handleSendComment}
-                    text={showInput ? "Enviar comentario" : "Agregar comentario"}
-                />
-            </View>
+				<CommentsList
+					comments={comments}
+					currentUserId={user?.id}
+					onDeleteComment={handleDeleteComment}
+				/>
 
-            <ForumEditModal
-                visible={showEditModal}
-                onClose={() => setShowEditModal(false)}
-                editedTitle={editedTitle}
-                editedText={editedText}
-                onTitleChange={setEditedTitle}
-                onTextChange={setEditedText}
-                onSave={handleUpdateForum}
-                error={error || undefined}
-            />
+				{showInput && (
+					<>
+						<FormTextField
+							placeholder="Yo te recomiendo que..."
+							multiline
+							numberOfLines={4}
+							value={inputText}
+							onChangeText={(text: string) => {
+								setInputText(text);
+								setError(null);
+							}}
+							style={styles.mainInput}
+						/>
+						{!!error && <Text style={styles.errorText}>{error}</Text>}
+					</>
+				)}
 
-            <ForumOptionsMenu
-                visible={showOptionsMenu}
-                position={menuPosition}
-                onClose={() => setShowOptionsMenu(false)}
-                onEdit={() => setShowEditModal(true)}
-                onDelete={handleDeleteForum}
-            />
-        </ScrollView>
-    );
+				<PrimaryButton
+					style={styles.floatingButton}
+					onPress={handleSendComment}
+					text={showInput ? "Enviar comentario" : "Agregar comentario"}
+				/>
+			</View>
+
+			<ForumEditModal
+				visible={showEditModal}
+				onClose={() => setShowEditModal(false)}
+				editedTitle={editedTitle}
+				editedText={editedText}
+				onTitleChange={setEditedTitle}
+				onTextChange={setEditedText}
+				onSave={handleUpdateForum}
+				error={error || undefined}
+			/>
+
+			<ForumOptionsMenu
+				visible={showOptionsMenu}
+				position={menuPosition}
+				onClose={() => setShowOptionsMenu(false)}
+				onEdit={() => setShowEditModal(true)}
+				onDelete={handleDeleteForum}
+			/>
+		</ScrollView>
+	);
 };
 
 const styles = StyleSheet.create({

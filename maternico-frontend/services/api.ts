@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-export const API_URL = "http://192.168.1.74:8000/api";
+export const API_URL = "http://148.226.202.53:8000/api";
 
 // INTERFACES
 // 🔹 Función para obtener el perfil del usuario autenticado
@@ -189,7 +189,7 @@ export const becomePremium = async (userID: number) => {
 		const response = await fetch(`${API_URL}/become-premium/${userID}`, {
 			method: "POST",
 			headers: {
-				Authorization: `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
 				"Content-Type": "application/json",
 			},
 		});
@@ -206,7 +206,7 @@ export const becomePremium = async (userID: number) => {
 
 export const getForumResponses = async (userID: number) => {
 	try {
-		const response = await fetch(`${API_URL}/forums-responses/${userID}`, {
+		const response = await fetch(`${API_URL}/forum-responses/${userID}`, {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
@@ -225,7 +225,6 @@ export const getForumResponses = async (userID: number) => {
 
 export const markCommentsAsRead = async (userID: number, forumID: number) => {
 	try {
-		console.log("Marking comments as read for user:", userID, "and forum:", forumID);
 		const response = await fetch(`${API_URL}/forum-responses/${userID}/${forumID}`, {
 			headers: {
 				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,

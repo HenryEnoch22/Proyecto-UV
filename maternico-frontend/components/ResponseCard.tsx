@@ -1,7 +1,69 @@
+import { getForumResponses } from "@/services/api";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ChatBubbleLeftEllipsisIcon, ChevronRightIcon } from "react-native-heroicons/solid";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ResponseCard = () => {
+
+    const { user, setUser } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
+    const [responses, setResponses] = useState(0);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+                user && setUser({...user});
+                const response = await getForumResponses(Number(user?.id));
+                setResponses(response);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    if (responses > 1) {
+        return (
+            <View style={styles.container}>
+                <View style={styles.iconContainer}>
+                    <ChatBubbleLeftEllipsisIcon color="#f283b5" size={32} />
+                </View>
+
+                <View style={styles.info}>
+                    <Text style={styles.infoTitle}>Tienes {responses} nuevas respuestas</Text>
+                    <View>
+                        <Text style={styles.infoText}>Revisa tus foros</Text>
+                    </View>
+                </View>
+
+                <ChevronRightIcon color="#f392be" size={20} />
+            </View>
+        );
+    }
+
+    if (responses === 1) {
+        return (
+            <View style={styles.container}>
+                <View style={styles.iconContainer}>
+                    <ChatBubbleLeftEllipsisIcon color="#f283b5" size={32} />
+                </View>
+
+                <View style={styles.info}>
+                    <Text style={styles.infoTitle}>Tienes {responses} nueva respuesta</Text>
+                    <View>
+                        <Text style={styles.infoText}>Revisa tu foro</Text>
+                    </View>
+                </View>
+
+                <ChevronRightIcon color="#f392be" size={20} />
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.iconContainer}>
@@ -35,10 +97,10 @@ const styles = StyleSheet.create({
     },
     info: {
         flexDirection: "column",
-        justifyContent: "center",
         alignItems: "flex-start",
         gap: 4,
         marginTop: 12,
+        marginLeft: 12,
     },
     infoTitle: {
         fontSize: 14,

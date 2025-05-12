@@ -56,7 +56,7 @@ const EditProfileScreen = () => {
 		}
 		try {
 			const updateProfileResponse = await updateUser(
-				formData.id,
+				String(formData.id),
 				formData.name,
 				formData.last_name,
 				formData.mother_last_name,

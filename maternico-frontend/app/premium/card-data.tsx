@@ -63,7 +63,6 @@ const CardData = () => {
 	const handleSubmit = () => {
 		becomePremium(Number(user?.id))
 			.then((response) => {
-				console.log("Tarjeta procesada:", response);
                 setUser({...response});
 				router.push("/(tabs)/home");
 			})

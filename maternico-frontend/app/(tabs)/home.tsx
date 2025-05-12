@@ -53,7 +53,6 @@ export default function HomeScreen() {
 				if (userData?.user) {
 					const { user } = userData;
 					setUser({...user});
-					console.log(user);
 
 					const babyResponse = await getBabyByMother(user.id);
 					setBaby(babyResponse);
