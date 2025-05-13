@@ -10,10 +10,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { getBabyByMother, getLastEvents, getProfile } from "@/services/api";
 import { BellIcon, UserCircleIcon } from "react-native-heroicons/solid";
-import BabyCard from "../../components/BabyCard";
-import ResponseCard from "../../components/ResponseCard";
-import CardNoBaby from "../../components/CardNoBaby";
-import EventCard from "../../components/EventCard";
+import { CardNoBaby, BabyCard, ResponseCard, EventCard } from "@/components";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 

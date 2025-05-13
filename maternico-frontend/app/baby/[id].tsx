@@ -4,8 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable, Alert } from "react-native";
 import { ArrowLongLeftIcon, PencilSquareIcon} from "react-native-heroicons/solid";
-import Album from "@/components/Album";
-import EditBabyModal from "@/components/EditBabyModal";
+import { Album, EditBabyModal } from "@/components";
 
 const Baby = () => {
     const { id } = useLocalSearchParams();

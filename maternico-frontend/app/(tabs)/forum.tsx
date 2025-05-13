@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, Text, Pressable, Modal, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
-import FormTextField from "../../components/FormTextField";
-import PrimaryButton from "@/components/PrimaryButton";
-import { createForum, getForums } from "@/services/api"; // Asegúrate de importar tu función
+import { createForum, getForums } from "@/services/api";
+import { PrimaryButton, FormTextField } from "@/components";
 import { router } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
 

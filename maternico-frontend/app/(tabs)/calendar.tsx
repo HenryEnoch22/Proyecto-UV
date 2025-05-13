@@ -1,21 +1,17 @@
 import { useState } from "react";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
-import PrimaryButton from "../../components/PrimaryButton";
 import {
 	ArrowLongLeftIcon,
 	CalendarIcon,
 } from "react-native-heroicons/outline";
 import { useNavigation } from "@react-navigation/native";
-import CustomCalendarHeader from "../../components/CustomCalendarHeader";
-import Agenda from "../../components/Agenda";
-import AddEventModal from "../../components/AddEventModal";
+import { PrimaryButton, CustomCalendarHeader, AddEventModal, Agenda } from "@/components";
 import { createEvent, getEvents, getProfile } from "@/services/api";
 import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
 const CalendarScreen = () => {
-	{/* TODO: desmarcar dias en los que los eventos fueron eliminados */}
 	interface Event {
 		id: number;
 		title: string;

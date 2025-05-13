@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login } from '../../services/api';
-import FormTextField from "../../components/FormTextField";
-import PrimaryButton from "../../components/PrimaryButton";
+import FormTextField from "../../components/general/FormTextField";
+import PrimaryButton from "../../components/general/PrimaryButton";
 import { Alert } from 'react-native';
 import logo from "../../assets/images/logo/MaternicoLogo.png";
 

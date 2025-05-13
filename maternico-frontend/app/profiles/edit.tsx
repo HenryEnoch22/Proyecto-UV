@@ -8,12 +8,11 @@ import {
 } from "react-native";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLongLeftIcon, CameraIcon } from "react-native-heroicons/solid";
-import PrimaryButton from "../../components/PrimaryButton";
 import { useEffect, useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import { updateUser } from "@/services/api";
 import { router } from "expo-router";
-import FormTextField from "../../components/FormTextField";
+import { FormTextField, PrimaryButton } from "@/components";
 
 const EditProfileScreen = () => {
 	const { user, setUser } = useAuth();

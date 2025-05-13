@@ -1,5 +1,3 @@
-import CategoryMagazineCard from "@/components/CategoryMagazineCard";
-import HealthCenterCard from "@/components/HealthCenterCard";
 import { getHealthCenters, getMagazines, getProfile, getVideos } from "@/services/api";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -17,7 +15,8 @@ import {
 	ChevronRightIcon,
 } from "react-native-heroicons/solid";
 import { useAuth } from "@/contexts/AuthContext";
-import Loader from "@/components/Loader";
+import {Loader} from "@/components";
+import { CategoryMagazineCard, HealthCenterCard } from "@/components";
 
 const Info = () => {
 	const [dataHealthCenter, setDataHealthCenter] = useState([]);
