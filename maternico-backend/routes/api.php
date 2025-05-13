@@ -35,6 +35,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/events/{eventId}', [EventController::class, 'show']);
     Route::patch('/events/{eventId}', [EventController::class, 'update']);
     Route::delete('/events/{eventId}', [EventController::class, 'destroy']);
+    Route::get('/get-last-events/{userID}', [EventController::class, 'getLastEvents']);
 
     Route::apiResource('forums', ForumController::class);
     Route::get('/forums/{forumId}/comments', [ForumController::class, 'comments']);

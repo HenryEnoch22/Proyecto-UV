@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 
 interface DatePickerProps {
-    label?: string;
+	label?: string;
 	value: Date;
 	onChange: (date: Date) => void;
 }
@@ -12,18 +12,21 @@ const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
 	const [isCalendarVisible, setCalendarVisible] = useState(false);
 
 	const handleDayPress = (day: { dateString: string }) => {
-		const selectedDate = new Date(day.dateString);
+		const [year, month, date] = day.dateString.split("-");
+
+		const selectedDate = new Date(
+			Number(year),
+			Number(month) - 1,
+			Number(date)
+		);
+
 		onChange(selectedDate);
 		setCalendarVisible(false);
 	};
 
 	return (
 		<View>
-            {label && (
-                <Text style={{ color: "#4A5568", fontSize: 16 }}>
-                    {label}
-                </Text>
-            )}
+			{label && <Text style={{ color: "#4A5568", fontSize: 16 }}>{label}</Text>}
 			<Pressable
 				style={styles.dateInput}
 				onPress={() => setCalendarVisible(!isCalendarVisible)}
@@ -33,6 +36,7 @@ const DatePicker = ({ label, value, onChange }: DatePickerProps) => {
 						day: "2-digit",
 						month: "long",
 						year: "numeric",
+						timeZone: "UTC",
 					})}
 				</Text>
 			</Pressable>

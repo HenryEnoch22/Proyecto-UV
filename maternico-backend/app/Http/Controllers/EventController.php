@@ -8,6 +8,7 @@ use App\Http\Requests\Event\UpdateEventRequest;
 use App\Models\Event\Event;
 use Exception;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -121,5 +122,26 @@ class EventController extends Controller
             'success' => true,
             'message' => 'Evento eliminado correctamente',
         ], 200);
+    }
+
+    public function getLastEvents($userID) {
+        try {
+            $events = Event::where('user_id', $userID)
+                ->where('date', '>=', Carbon::now())
+                ->orderBy('date', 'desc')
+                ->take(5)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Eventos obtenidos correctamente',
+                'data' => $events,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los eventos',
+            ], 500);
+        }
     }
 }

@@ -115,7 +115,7 @@ const Agenda = ({ events }: AgendaProps) => {
 					<View style={styles.eventDetailRow}>
 						<IconComponent color={eventTypeConfig.color} size={20} />
 						<Text style={styles.eventDetailText}>
-							Tipo: {event.type} {event.notifiable}
+							Tipo: {event.type} 
 						</Text>
 					</View>
 

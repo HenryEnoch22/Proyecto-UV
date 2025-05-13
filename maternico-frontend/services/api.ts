@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 
 // 🔹 URL base del backend Laravel (ajústala según la IP de tu servidor)
-export const API_URL = "http://148.226.202.53:8000/api";
+export const API_URL = "http://192.168.100.6:8000/api";
 
 // INTERFACES
 // 🔹 Función para obtener el perfil del usuario autenticado
@@ -204,42 +204,6 @@ export const becomePremium = async (userID: number) => {
 	}
 }
 
-export const getForumResponses = async (userID: number) => {
-	try {
-		const response = await fetch(`${API_URL}/forum-responses/${userID}`, {
-			method: "GET",
-			headers: {
-				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
-				"Content-Type": "application/json",
-			},
-		});
-		if (!response.ok) throw new Error("Error al obtener las respuestas");
-
-		const {data} = await response.json();
-		return data;
-	} catch (error) {
-		console.error("Error obteniendo respuestas:", error);
-		return [];
-	}
-};
-
-export const markCommentsAsRead = async (userID: number, forumID: number) => {
-	try {
-		const response = await fetch(`${API_URL}/forum-responses/${userID}/${forumID}`, {
-			headers: {
-				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
-				"Content-Type": "application/json",
-			},
-		});
-		if (!response.ok) throw new Error("Error al marcar comentarios como leídos");
-
-		const {data} = await response.json();
-		return data;
-	} catch (error) {
-		console.error("Error marcando comentarios como leídos:", error);
-		return null;
-	}
-}
 
 // FORUM
 export const getForum = async (forumID: number) => {
@@ -415,6 +379,43 @@ export const getForumComments = async (forumID: number) => {
 		return [];
 	}
 };
+
+export const getForumResponses = async (userID: number) => {
+	try {
+		const response = await fetch(`${API_URL}/forum-responses/${userID}`, {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (!response.ok) throw new Error("Error al obtener las respuestas");
+
+		const {data} = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error obteniendo respuestas:", error);
+		return [];
+	}
+};
+
+export const markCommentsAsRead = async (userID: number, forumID: number) => {
+	try {
+		const response = await fetch(`${API_URL}/forum-responses/${userID}/${forumID}`, {
+			headers: {
+				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (!response.ok) throw new Error("Error al marcar comentarios como leídos");
+
+		const {data} = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error marcando comentarios como leídos:", error);
+		return null;
+	}
+}
 
 // BABY
 export const getBaby = async (babyID: number) => {
@@ -772,6 +773,28 @@ export const updateEvent = async (
 		return null;
 	}
 };
+
+export const getLastEvents = async (userID: number) => {
+	try {
+		const token = await AsyncStorage.getItem("token");
+		if (!token) return;
+
+		const response = await fetch(`${API_URL}/get-last-events/${userID}`, {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (!response.ok) throw new Error("Error al obtener los últimos eventos");
+
+		const { data } = await response.json();
+		return data.reverse();
+	} catch (error) {
+		console.error("Error obteniendo últimos eventos:", error);
+		return [];
+	}
+}
 
 // CONTENT LIBRARY
 export const createMagazine = async (

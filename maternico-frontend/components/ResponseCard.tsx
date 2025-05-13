@@ -5,63 +5,34 @@ import { ChatBubbleLeftEllipsisIcon, ChevronRightIcon } from "react-native-heroi
 import { useAuth } from "@/contexts/AuthContext";
 
 const ResponseCard = () => {
-
     const { user, setUser } = useAuth();
-    const [isLoading, setIsLoading] = useState(false);
     const [responses, setResponses] = useState(0);
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setIsLoading(true);
                 user && setUser({...user});
                 const response = await getForumResponses(Number(user?.id));
                 setResponses(response);
             } catch (error) {
                 console.error("Error fetching data:", error);
-            } finally {
-                setIsLoading(false);
             }
         };
 
         fetchData();
     }, []);
 
+    let infoText = "";
+    let infoTitle = "";
+
     if (responses > 1) {
-        return (
-            <View style={styles.container}>
-                <View style={styles.iconContainer}>
-                    <ChatBubbleLeftEllipsisIcon color="#f283b5" size={32} />
-                </View>
-
-                <View style={styles.info}>
-                    <Text style={styles.infoTitle}>Tienes {responses} nuevas respuestas</Text>
-                    <View>
-                        <Text style={styles.infoText}>Revisa tus foros</Text>
-                    </View>
-                </View>
-
-                <ChevronRightIcon color="#f392be" size={20} />
-            </View>
-        );
-    }
-
-    if (responses === 1) {
-        return (
-            <View style={styles.container}>
-                <View style={styles.iconContainer}>
-                    <ChatBubbleLeftEllipsisIcon color="#f283b5" size={32} />
-                </View>
-
-                <View style={styles.info}>
-                    <Text style={styles.infoTitle}>Tienes {responses} nueva respuesta</Text>
-                    <View>
-                        <Text style={styles.infoText}>Revisa tu foro</Text>
-                    </View>
-                </View>
-
-                <ChevronRightIcon color="#f392be" size={20} />
-            </View>
-        );
+        infoText = "Revisa tus foros";
+        infoTitle = `Tienes ${responses} nuevas respuestas`;
+    } else if (responses === 1) {
+        infoText = "Revisa tu foro";
+        infoTitle = `Tienes ${responses} nueva respuesta`;
+    } else {
+        infoText = "No tienes nuevas respuestas";
+        infoTitle = "Crea un foro y comparte con la comunidad";
     }
 
     return (
@@ -71,9 +42,9 @@ const ResponseCard = () => {
             </View>
 
             <View style={styles.info}>
-                <Text style={styles.infoTitle}>No tienes nuevas respuestas</Text>
+                <Text style={styles.infoTitle}>{infoTitle}</Text>
                 <View>
-                    <Text style={styles.infoText}>Crea un foro y compare con la comunidad</Text>
+                    <Text style={styles.infoText}>{infoText}</Text>
                 </View>
             </View>
 
@@ -94,13 +65,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#f392be",
         backgroundColor: "#f392be50",
+        marginRight: 16, // Margen añadido aquí
     },
     info: {
+        flex: 1, // Añade esto para ocupar espacio disponible
         flexDirection: "column",
         alignItems: "flex-start",
         gap: 4,
-        marginTop: 12,
-        marginLeft: 12,
     },
     infoTitle: {
         fontSize: 14,

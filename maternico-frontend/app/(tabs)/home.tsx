@@ -1,10 +1,15 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, FlatList, ActivityIndicator } from "react-native";
-import { useAuth } from "@/contexts/AuthContext";
 import {
-	getBabyByMother,
-	getProfile,
-} from "@/services/api";
-import { BellIcon, UserCircleIcon, } from "react-native-heroicons/solid";
+	View,
+	Text,
+	StyleSheet,
+	ScrollView,
+	Pressable,
+	FlatList,
+	ActivityIndicator,
+} from "react-native";
+import { useAuth } from "@/contexts/AuthContext";
+import { getBabyByMother, getLastEvents, getProfile } from "@/services/api";
+import { BellIcon, UserCircleIcon } from "react-native-heroicons/solid";
 import BabyCard from "../../components/BabyCard";
 import ResponseCard from "../../components/ResponseCard";
 import CardNoBaby from "../../components/CardNoBaby";
@@ -14,31 +19,27 @@ import { useEffect, useState } from "react";
 
 interface Event {
 	id: number;
-	name: string;
-	leftDays: number;
-	typeEvent: "vaccine" | "appointment" | "birthday";
+	user_id: number;
+	event_title: string;
+	date: string;
+	time: string;
+	type: string;
+	notifiable: string;
 }
 
-const data: Event[] = [
-	{ id: 1, name: "No tienes nuevos eventos", leftDays: 0, typeEvent: "vaccine" },
-	// { id: 2, name: "Cita médica", leftDays: 8, typeEvent: "appointment" },
-	// { id: 3, name: "Cita médica", leftDays: 11, typeEvent: "appointment" },
-	// { id: 4, name: "Cita médica", leftDays: 18, typeEvent: "appointment" },
-	// { id: 5, name: "Cumpleaños", leftDays: 83, typeEvent: "birthday" },
-];
+interface Baby {
+	user_id: number;
+	id: string;
+	name: string;
+	birth_date: string;
+	height?: string;
+	weight?: string;
+	blood_type?: string;
+}
 
 export default function HomeScreen() {
 	const { user, setUser } = useAuth();
-	interface Baby {
-		user_id: number;
-		id: string;
-		name: string;
-		birth_date: string;
-		height?: string;
-		weight?: string;
-		blood_type?: string;
-	}
-
+	const [events, setEvents] = useState<Event[]>();
 	const [baby, setBaby] = useState<Baby | null>(null);
 	const router = useRouter();
 
@@ -52,7 +53,7 @@ export default function HomeScreen() {
 
 				if (userData?.user) {
 					const { user } = userData;
-					setUser({...user});
+					setUser({ ...user });
 
 					const babyResponse = await getBabyByMother(user.id);
 					setBaby(babyResponse);
@@ -71,6 +72,36 @@ export default function HomeScreen() {
 
 		fetchData();
 	}, []);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const eventsData = await getLastEvents(Number(user?.id));
+				setEvents(eventsData);
+			} catch (error) {
+				console.error("Error fetching eventos:", error);
+				setEvents([]);
+			}
+		};
+
+		if (user) {
+			fetchData();
+		}
+	}, [user]);
+
+	function leftDays(eventDate: string): number {
+		const today = new Date();
+		const futureDate = new Date(eventDate);
+
+		today.setHours(0, 0, 0, 0);
+		futureDate.setHours(0, 0, 0, 0);
+
+		const millisecondsDaily = 1000 * 60 * 60 * 24;
+		const rest = futureDate.getTime() - today.getTime();
+		const remainingDays = Math.ceil(rest / millisecondsDaily);
+
+		return remainingDays +1;
+	}
 
 	if (isLoading) {
 		return (
@@ -107,21 +138,28 @@ export default function HomeScreen() {
 				<View style={styles.eventsContainer}>
 					<Text style={styles.sectionTitle}>Próximos Eventos</Text>
 					<View style={styles.events}>
-						<FlatList
-							data={data}
-							horizontal
-							showsHorizontalScrollIndicator={false}
-							renderItem={({ item }) => (
-								<Pressable onPress={() => router.push("/calendar")}>
-									<EventCard
-										text={item.name}
-										days={item.leftDays}
-										typeEvent={item.typeEvent}
-									/>
-								</Pressable>
-							)}
-							keyExtractor={(item) => item.id.toString()}
-						/>
+						{events?.length ? (
+							<FlatList
+								data={events}
+								horizontal
+								showsHorizontalScrollIndicator={false}
+								renderItem={({ item }) => (
+									<Pressable onPress={() => router.push("/calendar")}>
+										<EventCard
+											text={item.event_title}
+											days={leftDays(item.date)}
+											type={item.type}
+										/>
+									</Pressable>
+								)}
+								keyExtractor={(item) => item.id.toString()}
+							/>
+						) : (
+							<View style={styles.loadingContainer}>
+								<ActivityIndicator size="large" color="#f283b5" />
+								<Text style={styles.loadingText}>No hay eventos</Text>
+							</View>
+						)}
 					</View>
 				</View>
 
@@ -153,16 +191,16 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-    loadingContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#fff",
-    },
-    loadingText: {
-        marginTop: 10,
-        color: "#666",
-    },
+	loadingContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#fff",
+	},
+	loadingText: {
+		marginTop: 10,
+		color: "#666",
+	},
 	topView: {
 		backgroundColor: "#f283b5",
 		color: "#fefefe",

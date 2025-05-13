@@ -1,31 +1,63 @@
 import {StyleSheet, Text, View} from "react-native";
-import {CakeIcon, CalendarDaysIcon} from "react-native-heroicons/solid";
-import {ClipboardDocumentCheckIcon} from "react-native-heroicons/outline"
+import {CalendarDaysIcon} from "react-native-heroicons/solid";
+import {ClipboardDocumentCheckIcon, ShieldCheckIcon, ShoppingCartIcon, AcademicCapIcon, PlusCircleIcon, CakeIcon} from "react-native-heroicons/outline"
 
 interface EventCardProps{
     text: string;
     days: number;
-    typeEvent: "vaccine" | "appointment" | "birthday";
+    type: string;
 }
-const EventCard = ({text, days, typeEvent}: EventCardProps) => {
+const EventCard = ({text, days, type}: EventCardProps) => {
 
-    let Icon = CalendarDaysIcon;
+    const typeConfig = {
+			1: {
+				// Vacunación
+				icon: ShieldCheckIcon,
+				color: "#2ECC71", // Verde
+				label: "Vacunación",
+			},
+			2: {
+				// Alimentación
+				icon: ShoppingCartIcon,
+				color: "#E67E22", // Naranja
+				label: "Alimentación",
+			},
+			3: {
+				// Desarrollo
+				icon: AcademicCapIcon,
+				color: "#3498DB", // Azul
+				label: "Desarrollo",
+			},
+			4: {
+				// Cita médica
+				icon: PlusCircleIcon,
+				color: "#E74C3C", // Rojo
+				label: "Cita Médica",
+			},
+			5: {
+				// Cumpleaños
+				icon: CakeIcon,
+				color: "#F392BE", // Rosa
+				label: "Cumpleaños",
+			},
+		};
 
-    if (typeEvent === "birthday") {
-        Icon = CakeIcon
-    } else if (typeEvent === "vaccine") {
-        Icon = ClipboardDocumentCheckIcon
-    }
+		const eventTypeConfig =
+			Object.values(typeConfig).find(
+				(item) => item.label === type
+			) || typeConfig[1];
+		const IconComponent = eventTypeConfig.icon;
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.iconContainer}>
-                    <Icon color="#fefefe" size="24" />
+                    <IconComponent color="#fefefe" size="24" />
                 </View>
                 <Text style={styles.textStyle}>{text}</Text>
             </View>
             <View style={styles.footer}>
-                <Text style={styles.daysStyles}>Agrega eventos al calendario</Text>
+                <Text style={styles.daysStyles}>{`${days} días restantes`}</Text>
             </View>
         </View>
     )
@@ -41,10 +73,21 @@ const styles = StyleSheet.create({
         borderLeftWidth: 2,
         marginHorizontal: 4,
         borderRadius: 4,
-        width: 250,
+        minWidth: 180,
         maxWidth: 250,
         minHeight: 72,
         backgroundColor: "#fff",
+        marginRight: 8,
+        elevation: 2,
+        shadowColor: "#676767",
+        shadowOffset: {
+            width: 2,
+            height: 0,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        overflow: "hidden",
+        marginVertical: 4,
     },
     header: {
         flexDirection: "row",
