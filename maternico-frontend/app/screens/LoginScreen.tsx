@@ -2,9 +2,8 @@ import { View, StyleSheet, Pressable, Text, Image } from "react-native";
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { login } from '../../services/api';
-import FormTextField from "../../components/general/FormTextField";
-import PrimaryButton from "../../components/general/PrimaryButton";
+import { login } from '@/services/api';
+import { FormTextField, PrimaryButton } from "@/components";
 import { Alert } from 'react-native';
 import logo from "../../assets/images/logo/MaternicoLogo.png";
 

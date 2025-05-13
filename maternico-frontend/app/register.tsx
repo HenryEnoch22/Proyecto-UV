@@ -1,7 +1,6 @@
 import { View, StyleSheet, Pressable, Text, ScrollView, Alert } from "react-native";
-import FormTextField from "../components/general/FormTextField";
 import { useState } from "react";
-import PrimaryButton from "../components/general/PrimaryButton";
+import { PrimaryButton, FormTextField } from "@/components";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
 import { register, getProfile } from "@/services/api";

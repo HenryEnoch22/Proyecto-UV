@@ -1,7 +1,6 @@
-import FormTextField from "@/components/general/FormTextField";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
-import PrimaryButton from "@/components/general/PrimaryButton";
+import { PrimaryButton, FormTextField } from "@/components";
 import { createMagazine, createVideo } from "@/services/api";
 import { UserCircleIcon } from "react-native-heroicons/solid";
 import { useRouter } from "expo-router";
