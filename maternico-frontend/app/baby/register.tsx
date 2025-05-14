@@ -6,15 +6,12 @@ import {
 	ScrollView,
 	Alert,
 } from "react-native";
-import FormTextField from "../../components/general/FormTextField";
 import { useState } from "react";
-import PrimaryButton from "../../components/general/PrimaryButton";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
 import { registerBaby, getProfile } from "@/services/api";
-import { Calendar } from "react-native-calendars";
 import { useUser } from "@/hooks/useUser";
-import DatePicker from "@/components/general/DatePicker";
+import { FormTextField, PrimaryButton, DatePicker } from "@/components";
 
 export default function RegisterBaby() {
 	const [formData, setFormData] = useState({

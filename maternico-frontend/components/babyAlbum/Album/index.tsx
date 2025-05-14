@@ -96,8 +96,7 @@ export const Album = ({ babyId }: AlbumProps) => {
                                     style={styles.eventImage}
                                 />
                             </View>
-                            <Pressable 
-                                style={styles.deleteButton}
+                            <Pressable
                                 onPress={() => setSelectedEventId(event.id)}
                             >
                                 <TrashIcon color="#FF4444" size={20} />

@@ -7,7 +7,10 @@ import {
 	CalendarDaysIcon,
 	SignalIcon,
 } from "react-native-heroicons/outline";
-import { ChevronRightIcon } from "react-native-heroicons/solid";
+import {
+	ArrowLongLeftIcon,
+	ChevronRightIcon,
+} from "react-native-heroicons/solid";
 import { useEffect, useState } from "react";
 import { becomePremium, getProfile } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
@@ -49,7 +52,9 @@ const CardData = () => {
 	const getMaskedCardDisplay = (input: string) => {
 		const numeric = input.replace(/[^0-9]/g, "").slice(0, 16);
 		const lastFour = numeric.slice(-4).padStart(4, "•");
-		return input.length >= 13 ? `•••• - •••• - •••• - ${lastFour}` : '•••• - •••• - •••• - 1234';
+		return input.length >= 13
+			? `•••• - •••• - •••• - ${lastFour}`
+			: "•••• - •••• - •••• - 1234";
 	};
 
 	const formatExpiry = (input: string) => {
@@ -63,7 +68,7 @@ const CardData = () => {
 	const handleSubmit = () => {
 		becomePremium(Number(user?.id))
 			.then((response) => {
-                setUser({...response});
+				setUser({ ...response });
 				router.push("/(tabs)/home");
 			})
 			.catch((error) => {
@@ -73,79 +78,98 @@ const CardData = () => {
 
 	return (
 		<View style={styles.container}>
-			<LinearGradient
-				colors={["#f392be", "#f4d18a"]}
-				style={styles.card}
-				start={{ x: 0, y: 0 }}
-				end={{ x: 1, y: 1 }}
-			>
-				<View style={styles.cardHeader}>
-					<CpuChipIcon size={40} color="rgba(255,255,255,0.8)" />
-					<SignalIcon size={40} color="rgba(255,255,255,0.8)" />
-				</View>
-
-				<Text style={styles.cardNumber}>
-					{getMaskedCardDisplay(cardNumber)}
+			<View style={styles.header}>
+				<Pressable onPress={() => router.back()}>
+					<ArrowLongLeftIcon
+						size={30}
+						color="#FEFEFE"
+						style={{ marginRight: 20 }}
+					/>
+				</Pressable>
+				<Text style={{ fontSize: 24, fontWeight: "600", color: "#FEFEFE" }}>
+					Informacion de pago
 				</Text>
-
-				<View style={styles.cardDetails}>
-					<View>
-						<Text style={styles.cardLabel}>Dueño</Text>
-						<Text style={styles.cardHolder}>MÓNICA GARCÍA</Text>
-					</View>
-					<View>
-						<Text style={styles.cardLabel}>Fecha de expiración</Text>
-						<Text style={styles.cardExpiry}>09/27</Text>
-					</View>
-				</View>
-
-				<Text style={styles.bankLogo}>VISA</Text>
-			</LinearGradient>
-
-			<View style={styles.inputContainer}>
-				<Text style={styles.inputLabel}>Número de la tarjeta</Text>
-				<TextInput
-					style={styles.input}
-					placeholder="1234 - 5678 - 9012 - 3456"
-					keyboardType="numeric"
-					maxLength={25}
-					value={formatCardNumber(cardNumber)}
-					onChangeText={(text) => setCardNumber(text.replace(/[^0-9]/g, ""))}
-				/>
-				<CreditCardIcon size={24} style={styles.inputIcon} color="#999" />
 			</View>
 
-			<View style={styles.row}>
-				<View style={[styles.inputContainer, { flex: 2, marginRight: 15 }]}>
-					<Text style={styles.inputLabel}>Fecha de expiración</Text>
+			<View style={{ padding: 20 }}>
+				<LinearGradient
+					colors={["#f392be", "#f4d18a"]}
+					style={styles.card}
+					start={{ x: 0, y: 0 }}
+					end={{ x: 1, y: 1 }}
+				>
+					<View style={styles.cardHeader}>
+						<CpuChipIcon size={40} color="rgba(255,255,255,0.8)" />
+						<SignalIcon size={40} color="rgba(255,255,255,0.8)" />
+					</View>
+
+					<Text style={styles.cardNumber}>
+						{getMaskedCardDisplay(cardNumber)}
+					</Text>
+
+					<View style={styles.cardDetails}>
+						<View>
+							<Text style={styles.cardLabel}>Dueño</Text>
+							<Text style={styles.cardHolder}>MÓNICA GARCÍA</Text>
+						</View>
+						<View>
+							<Text style={styles.cardLabel}>Fecha de expiración</Text>
+							<Text style={styles.cardExpiry}>09/27</Text>
+						</View>
+					</View>
+
+					<Text style={styles.bankLogo}>VISA</Text>
+				</LinearGradient>
+
+				<View style={styles.inputContainer}>
+					<Text style={styles.inputLabel}>Número de la tarjeta</Text>
 					<TextInput
 						style={styles.input}
-						placeholder="MM / YY"
+						placeholder="1234 - 5678 - 9012 - 3456"
 						keyboardType="numeric"
-						maxLength={5}
-						value={formatExpiry(expiry)}
-						onChangeText={(text) => setExpiry(text.replace(/[^0-9]/g, ""))}
+						maxLength={25}
+						value={formatCardNumber(cardNumber)}
+						onChangeText={(text) => setCardNumber(text.replace(/[^0-9]/g, ""))}
 					/>
-					<CalendarDaysIcon size={24} style={styles.inputIcon} color="#999" />
+					<CreditCardIcon size={24} style={styles.inputIcon} color="#999" />
 				</View>
 
-				<View style={[styles.inputContainer, { flex: 1 }]}>
-					<Text style={styles.inputLabel}>CVV</Text>
-					<TextInput
-						style={styles.input}
-						placeholder="•••"
-						keyboardType="numeric"
-						maxLength={4}
-						secureTextEntry
-					/>
-					<LockClosedIcon size={24} style={styles.inputIcon} color="#999" />
+				<View style={styles.row}>
+					<View style={[styles.inputContainer, { flex: 2, marginRight: 15 }]}>
+						<Text style={styles.inputLabel}>Fecha de expiración</Text>
+						<TextInput
+							style={styles.input}
+							placeholder="MM / YY"
+							keyboardType="numeric"
+							maxLength={5}
+							value={formatExpiry(expiry)}
+							onChangeText={(text) => setExpiry(text.replace(/[^0-9]/g, ""))}
+						/>
+						<CalendarDaysIcon size={24} style={styles.inputIcon} color="#999" />
+					</View>
+
+					<View style={[styles.inputContainer, { flex: 1 }]}>
+						<Text style={styles.inputLabel}>CVV</Text>
+						<TextInput
+							style={styles.input}
+							placeholder="•••"
+							keyboardType="numeric"
+							maxLength={4}
+							secureTextEntry
+						/>
+						<LockClosedIcon size={24} style={styles.inputIcon} color="#999" />
+					</View>
 				</View>
+
+				<Pressable style={styles.button} onPress={handleSubmit}>
+					<Text style={styles.buttonText}>Pagar $129.00MXN</Text>
+					<ChevronRightIcon
+						size={20}
+						color="#FEFEFE"
+						style={styles.buttonIcon}
+					/>
+				</Pressable>
 			</View>
-
-			<Pressable style={styles.button} onPress={handleSubmit}>
-				<Text style={styles.buttonText}>Pagar $129.00MXN</Text>
-				<ChevronRightIcon size={20} color="#FEFEFE" style={styles.buttonIcon} />
-			</Pressable>
 		</View>
 	);
 };
@@ -154,7 +178,16 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: "#f5f5f5",
-		padding: 25,
+	},
+	header: {
+		flexDirection: "row",
+		marginBottom: 20,
+		backgroundColor: "#F392BE",
+		paddingHorizontal: 20,
+		paddingTop: "10%",
+		paddingBottom: 15,
+		borderBottomLeftRadius: 20,
+		borderBottomRightRadius: 20,
 	},
 	card: {
 		height: 220,

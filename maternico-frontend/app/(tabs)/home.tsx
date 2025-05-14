@@ -36,7 +36,7 @@ interface Baby {
 
 export default function HomeScreen() {
 	const { user, setUser } = useAuth();
-	const [events, setEvents] = useState<Event[]>();
+	const [events, setEvents] = useState<Event[] | undefined>();
 	const [baby, setBaby] = useState<Baby | null>(null);
 	const router = useRouter();
 
@@ -83,6 +83,8 @@ export default function HomeScreen() {
 
 		if (user) {
 			fetchData();
+		} else {
+			setEvents(undefined);
 		}
 	}, [user]);
 
@@ -97,7 +99,7 @@ export default function HomeScreen() {
 		const rest = futureDate.getTime() - today.getTime();
 		const remainingDays = Math.ceil(rest / millisecondsDaily);
 
-		return remainingDays +1;
+		return remainingDays + 1;
 	}
 
 	if (isLoading) {
@@ -135,7 +137,11 @@ export default function HomeScreen() {
 				<View style={styles.eventsContainer}>
 					<Text style={styles.sectionTitle}>Próximos Eventos</Text>
 					<View style={styles.events}>
-						{events?.length ? (
+						{ events?.length === 0 ? (
+							<View style={styles.noEventsContainer}>
+								<Text style={styles.noEventsText}>No hay próximos eventos</Text>
+							</View>
+						) : (
 							<FlatList
 								data={events}
 								horizontal
@@ -151,11 +157,6 @@ export default function HomeScreen() {
 								)}
 								keyExtractor={(item) => item.id.toString()}
 							/>
-						) : (
-							<View style={styles.loadingContainer}>
-								<ActivityIndicator size="large" color="#f283b5" />
-								<Text style={styles.loadingText}>No hay eventos</Text>
-							</View>
 						)}
 					</View>
 				</View>
@@ -246,4 +247,13 @@ const styles = StyleSheet.create({
 	section: {
 		marginBottom: 40,
 	},
+	noEventsContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        height: 50,
+    },
+    noEventsText: {
+        color: "#666",
+        fontSize: 16,
+    },
 });
