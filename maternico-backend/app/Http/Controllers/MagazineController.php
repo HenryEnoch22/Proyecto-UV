@@ -21,6 +21,32 @@ class MagazineController extends Controller
                     'message' => 'No se encontraron revistas',
                 ], 404);
             }
+            
+            $magazines = $magazines->groupBy('category');
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Revistas obtenidas correctamente',
+                'data' => $magazines], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener las revistas',
+                'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getAllMagazines()
+    {
+        try {
+            $magazines = Magazine::orderBy('created_at', 'desc')->take(5)->get();
+            if ($magazines->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontraron revistas',
+                ], 404);
+            }
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Revistas obtenidas correctamente',

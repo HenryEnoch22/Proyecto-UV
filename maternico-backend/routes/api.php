@@ -70,6 +70,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/magazines/{magazineId}', [MagazineController::class, 'show']);
     Route::post('/magazines', [MagazineController::class, 'store']);
     Route::delete('/magazines/{magazineId}', [MagazineController::class, 'destroy']);
+    Route::get('/all-magazines', [MagazineController::class, 'getAllMagazines']);
     
 
 

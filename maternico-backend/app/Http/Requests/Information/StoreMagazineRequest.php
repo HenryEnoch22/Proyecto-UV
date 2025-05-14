@@ -24,6 +24,7 @@ class StoreMagazineRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'magazine_path' => 'required|string',
+            'category' => 'required|string|max:255',
         ];
     }
 
@@ -35,6 +36,9 @@ class StoreMagazineRequest extends FormRequest
             'title.max' => 'El título no puede tener más de 255 caracteres.',
             'magazine_path.required' => 'La ruta del archivo es obligatoria.',
             'magazine_path.string' => 'La ruta del archivo debe ser una cadena de texto.',
+            'category.string' => 'La categoría debe ser una cadena de texto.',
+            'category.max' => 'La categoría no puede tener más de 255 caracteres.',
+            'category.required' => 'La categoría es obligatoria.',
         ];
     }
 }
