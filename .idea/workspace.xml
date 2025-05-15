@@ -164,7 +164,7 @@
     &quot;PHPUnit.RegisteredUserControllerTest.test_user_can_register_successfully.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;henryy&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/laragon/www/rotomfit-app&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -248,6 +248,10 @@
       <workItem from="1746049044961" duration="16555000" />
       <workItem from="1746124084491" duration="1970000" />
       <workItem from="1746130729270" duration="440000" />
+      <workItem from="1747092917945" duration="1178000" />
+      <workItem from="1747158891667" duration="4351000" />
+      <workItem from="1747244795101" duration="62000" />
+      <workItem from="1747244905660" duration="408000" />
     </task>
     <servers />
   </component>
