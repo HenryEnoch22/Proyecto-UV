@@ -13,6 +13,8 @@ import { BellIcon, UserCircleIcon } from "react-native-heroicons/solid";
 import { CardNoBaby, BabyCard, ResponseCard, EventCard } from "@/components";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import FileManagement from "../admin/file-management";
+import Navbar from "@/components/ui/admin/Navbar";
 
 interface Event {
 	id: number;
@@ -108,6 +110,15 @@ export default function HomeScreen() {
 				<ActivityIndicator size="large" color="#f283b5" />
 				<Text style={styles.loadingText}>Cargando datos...</Text>
 			</View>
+		);
+	}
+
+	if (user?.role_id === 1) {
+		return (
+			<>
+				<FileManagement />
+				<Navbar />
+			</>
 		);
 	}
 

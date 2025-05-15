@@ -59,7 +59,7 @@ export default function RegisterBaby() {
 		}
 
 		try {
-			await registerBaby(
+			const newBaby = await registerBaby(
                 userFetched?.id,
 				formData.name,
 				formData.lastName,
@@ -69,10 +69,15 @@ export default function RegisterBaby() {
 				formData.height,
 				formData.bloodType
 			);
+			console.log("Nuevo bebé registrado:", newBaby);
 
-			const user = await getProfile();
-			setUser(user?.user);
-			router.push("/(tabs)/home");
+			const userData = await getProfile();
+
+			if (userData?.user) {
+				const { user } = userData;
+				setUser({ ...user });
+			}
+			if(newBaby) router.push(`/baby/${newBaby.data.id}`);
 		} catch (e: any) {
 			if (e.response?.status === 422) {
 				setErrors(e.response.data.errors);

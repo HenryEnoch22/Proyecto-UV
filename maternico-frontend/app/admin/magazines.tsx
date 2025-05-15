@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { useEffect, useState } from "react";
-import { getMagazines, deleteMagazine } from "@/services/api";
+import { getAllMagazines, deleteMagazine } from "@/services/api";
 import FileCard from "@/components/ui/admin/FileCard";
 
 interface Magazine {
@@ -18,7 +18,7 @@ const Magazines = () => {
     const fetchMagazines = async () => {
         try {
             setLoading(true);
-            const response = await getMagazines();
+            const response = await getAllMagazines();
             if (response) {
                 setMagazines(response);
                 setError('');

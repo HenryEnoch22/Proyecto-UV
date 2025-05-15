@@ -1,4 +1,8 @@
-import { getHealthCenters, getMagazines, getProfile, getVideos } from "@/services/api";
+import {
+	getHealthCenters,
+	getProfile,
+	getVideos,
+} from "@/services/api";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -13,18 +17,33 @@ import {
 import {
 	ArrowLongLeftIcon,
 	ChevronRightIcon,
+	DocumentTextIcon,
 } from "react-native-heroicons/solid";
 import { useAuth } from "@/contexts/AuthContext";
-import {Loader} from "@/components";
-import { CategoryMagazineCard, HealthCenterCard } from "@/components";
+import { Loader } from "@/components";
+import { HealthCenterCard, VideoCard } from "@/components";
+
+interface Video {
+	id: string;
+	title: string;
+	video_path: string;
+}
+
+interface HealthCenter {
+    id: number;
+    name: string;
+    address: string;
+    phone_number: string;
+    city: string;
+    state: string;
+}
 
 const Info = () => {
-	const [dataHealthCenter, setDataHealthCenter] = useState([]);
-	const [dataMagazine, setDataMagazine] = useState([]);
-	const [dataVideo, setDataVideo] = useState([]);
+	const [dataHealthCenter, setDataHealthCenter] = useState<HealthCenter[]>();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const { user, setUser } = useAuth();
+	const [dataVideo, setDataVideo] = useState<Video[]>();
 
 	useEffect(() => {
 		setError(null);
@@ -34,7 +53,7 @@ const Info = () => {
 
 				if (userData?.user) {
 					const { user } = userData;
-					setUser({...user});
+					setUser({ ...user });
 				}
 			} catch (error) {
 				console.error("Error al cargar el usuario:", error);
@@ -42,49 +61,7 @@ const Info = () => {
 		};
 		fetchUser();
 	}, []);
-	
-	interface Video {
-		id: number;
-		title: string;
-		video_path: string;
-	}
-	
 	const videoCover = require("../../assets/images/logo/MaternicoLogo.png")
-
-	// Para revistas
-	interface MagazineCategory {
-		id: number;
-		title: string;
-		magazine_path: string;
-	}
-
-	const magazineCover = require("../../assets/images/portada.png")
-	interface HealthCenter {
-		id: number;
-		name: string;
-		address: string;
-        city: string;
-        state: string;
-		phone_number: string;
-	}
-
-	// Para revistas
-	useEffect(() => {
-		setError(null);
-		const fetchMagazines = async () => {
-			try {
-				setLoading(true);
-				const magazinesData = await getMagazines();
-				setDataMagazine(magazinesData);
-			} catch (error) {
-				setError("Error al cargar las revistas");
-				console.error("Error cargando revistas:", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-		fetchMagazines();
-	}, []);
 
 	// Para videos
 	useEffect(() => {
@@ -93,7 +70,9 @@ const Info = () => {
 			try {
 				setLoading(true);
 				const videosData = await getVideos();
-				setDataVideo(videosData);
+				if (videosData) {
+					setDataVideo(videosData);
+				}
 			} catch (error) {
 				setError("Error al cargar los videos");
 				console.error("Error cargando videos:", error);
@@ -123,7 +102,7 @@ const Info = () => {
 		};
 
 		fetchHealthCenters();
-		}, []);
+	}, []);
 
 	const router = useRouter();
 
@@ -131,18 +110,16 @@ const Info = () => {
 		setError(null);
 		if (user?.is_premium) {
 			Linking.openURL(url).catch((err) => {
-				console.error("Error al abrir el enlace:", err);
+				console.error("Error al abrir el documento:", err);
 				setError("No se pudo abrir el documento");
 			});
 		} else {
 			setError("Debes ser usuario premium para acceder a este contenido");
 		}
-	};
+	}
 
 	if (loading) {
-		return (
-			<Loader />
-		);
+		return <Loader />;
 	}
 
 	return (
@@ -178,38 +155,34 @@ const Info = () => {
 				)}
 
 				<View style={styles.contentWrapper}>
+					{/* Sección de Revistas */}
 					<View style={styles.section}>
 						<View style={styles.sectionHeader}>
 							<Text style={styles.sectionTitle}>Revistas</Text>
-							<ChevronRightIcon size={24} color="#F392BE" />
 						</View>
-						<View style={styles.listContainer}>
-							<FlatList
-								data={dataMagazine}
-								horizontal
-								showsHorizontalScrollIndicator={false}
-								renderItem={({ item }) => (
-									<Pressable
-										onPress={() => openDocument(item.magazine_path)}
-										style={styles.cardPressable}
-									>
-										<CategoryMagazineCard
-											category={item.title}
-											cover={magazineCover}
-											key={item.id}
-										/>
-									</Pressable>
-								)}
-								keyExtractor={(item) => item.id.toString()}
-								contentContainerStyle={styles.listContent}
-							/>
-						</View>
+						<Pressable
+							onPress={() => router.push("/magazine/index-magazines")}
+							style={styles.card}
+						>
+							<View style={styles.cardContent}>
+								<View style={styles.iconContainer}>
+									<DocumentTextIcon size={24} color="#3B82F6" />
+								</View>
+								<View style={styles.textContainer}>
+									<Text style={styles.cardTitle}>Catálogo de revistas</Text>
+									<Text style={styles.cardSubtitle}>
+										Explora todas las revistas educativas disponibles
+									</Text>
+								</View>
+								<ChevronRightIcon size={20} color="#3B82F6" />
+							</View>
+						</Pressable>
 					</View>
 
+					{/* Sección de Videos */}
 					<View style={styles.section}>
 						<View style={styles.sectionHeader}>
 							<Text style={styles.sectionTitle}>Videos</Text>
-							<ChevronRightIcon size={24} color="#F392BE" />
 						</View>
 						<View style={styles.listContainer}>
 							<FlatList
@@ -219,14 +192,14 @@ const Info = () => {
 								renderItem={({ item }) => (
 									<Pressable onPress={() => openDocument(item.video_path)}
 										style={styles.cardPressable}>
-										<CategoryMagazineCard
-											category={item.title}
+										<VideoCard
+											title={item.title}
 											cover={videoCover}
 											key={item.id}
 										/>
 									</Pressable>
 								)}
-								keyExtractor={(item) => item.id.toString()}
+								keyExtractor={(item) => item.id}
 								contentContainerStyle={styles.listContent}
 							/>
 						</View>
@@ -242,9 +215,7 @@ const Info = () => {
 								data={dataHealthCenter}
 								horizontal
 								showsHorizontalScrollIndicator={false}
-								renderItem={({ item }) => (
-									<HealthCenterCard {...item} />
-								)}
+								renderItem={({ item }) => <HealthCenterCard {...item} />}
 								keyExtractor={(item) => item.id}
 								contentContainerStyle={styles.listContent}
 							/>
@@ -256,7 +227,6 @@ const Info = () => {
 	);
 };
 
-// TODO: refactorizar esta cochinada que estira las cards bien feo
 const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
@@ -288,8 +258,6 @@ const styles = StyleSheet.create({
 		paddingVertical: 20,
 	},
 	section: {
-		flex: 1,
-		marginVertical: 15,
 		paddingHorizontal: 15,
 		maxHeight: "30%",
 		minHeight: 180,
@@ -307,7 +275,7 @@ const styles = StyleSheet.create({
 	},
 	listContainer: {
 		flex: 1,
-		maxHeight: 180,
+		maxHeight: 200,
 	},
 	listContent: {
 		paddingHorizontal: 8,
@@ -315,24 +283,47 @@ const styles = StyleSheet.create({
 	cardPressable: {
 		marginHorizontal: 8,
 	},
-	healthCenterCard: {
-		backgroundColor: "#F392BE",
-		padding: 15,
-		marginHorizontal: 8,
-		borderRadius: 12,
-		width: 160,
-		justifyContent: "center",
+	 card: {
+        backgroundColor: '#f8fafc',
+        borderRadius: 12,
+        padding: 16,
+        marginHorizontal: 8,
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
+    },
+    cardContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    iconContainer: {
+        backgroundColor: '#EFF6FF',
+        borderRadius: 8,
+        padding: 12,
+        marginRight: 16,
+    },
+    textContainer: {
+        flex: 1,
+        marginRight: 10,
+    },
+    cardTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#1e293b',
+        marginBottom: 4,
+    },
+    cardSubtitle: {
+        fontSize: 14,
+        color: '#64748b',
+    },
+	seeMoreButton: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 4,
 	},
-	healthCenterTitle: {
-		color: "#FFF",
-		fontWeight: "600",
-		fontSize: 16,
-	},
-	healthCenterLocation: {
-		color: "#FFF",
-		fontSize: 14,
-		opacity: 0.9,
-		marginTop: 5,
+	seeMoreText: {
+		color: "#F392BE",
+		fontWeight: "500",
 	},
 });
 

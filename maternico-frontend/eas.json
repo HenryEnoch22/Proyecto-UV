@@ -12,12 +12,18 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "API_URL": "https://proyecto-uv-production.up.railway.app/api"
       }
     },
     "production": {
       "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "API_URL": "https://proyecto-uv-production.up.railway.app/api"
       }
     }
   },

@@ -18,6 +18,7 @@ interface Video {
 export const createMagazine = async (
     title: string,
     magazinePath: string,
+	category: string
 ) => {
     try {
         const token = await AsyncStorage.getItem("token");
@@ -29,7 +30,7 @@ export const createMagazine = async (
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({title, magazine_path: magazinePath}),
+            body: JSON.stringify({title, magazine_path: magazinePath, category}),
         });
         if (!response.ok) throw new Error("Error al crear la revista");
 
@@ -83,6 +84,25 @@ export const getMagazine = async (
 		return { magazine: { id: "", title: "", magazine_path: "" } };
 	}
 };
+
+export const getAllMagazines = async () => {
+	try {
+		const token = await AsyncStorage.getItem("token");
+		if (!token) return;
+
+		const response = await fetch(`${API_URL}/all-magazines`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (!response.ok) throw new Error("Error al obtener revistas");
+		const { data } = await response.json();
+		return data;
+	} catch (error) {
+		return [];
+	}
+}
 
 export const deleteMagazine = async (magazineID: number) => {
     try {

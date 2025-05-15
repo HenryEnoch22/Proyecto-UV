@@ -4,12 +4,14 @@ import { PrimaryButton, FormTextField } from "@/components";
 import { createMagazine, createVideo } from "@/services/api";
 import { UserCircleIcon } from "react-native-heroicons/solid";
 import { useRouter } from "expo-router";
+import { Picker } from "@react-native-picker/picker";
 
 const FileManagement = () => {
     const router = useRouter()
     const [magazineData, setMagazineData] = useState({
         title: '',
         magazinePath: '',
+        category: ''
     });
     const [errors, setErrors] = useState<string[]>([])
 
@@ -34,11 +36,16 @@ const FileManagement = () => {
                 setErrors(["Por favor, completa el campo de enlace de la revista."]);
                 return;
             }
-            createMagazine(title, magazinePath)
+            if (!magazineData.category) {
+                setErrors(["Por favor, selecciona una categoría para la revista."]);
+                return;
+            }
+            createMagazine(title, magazinePath, magazineData.category)
                 .then(response => {
                     setMagazineData({
                         title: '',
                         magazinePath: '',
+                        category: ''
                     });
                 })
                 .catch(error => {
@@ -122,6 +129,27 @@ const FileManagement = () => {
                     value={magazineData.magazinePath}
                     onChangeText={(e: string) => setMagazineData({ ...magazineData, magazinePath: e })}
                 />
+            </View>
+
+            <View style={styles.inputContainer}>
+                <Text style={styles.pickerLabel}>Categoría</Text>
+                <View style={styles.pickerContainer}>
+                    <Picker
+                        selectedValue={magazineData.category}
+                        onValueChange={(itemValue) => 
+                            setMagazineData({...magazineData, category: itemValue})
+                        }
+                        style={styles.picker}
+                    >
+                        <Picker.Item label="Selecciona una categoría" value="" />
+                        <Picker.Item label="0 a 1 años" value="0 a 1 años" />
+                        <Picker.Item label="1 año" value="1 año" />
+                        <Picker.Item label="2 años" value="2 años" />
+                        <Picker.Item label="3 años" value="3 años" />
+                        <Picker.Item label="4 años" value="4 años" />
+                        <Picker.Item label="5 años" value="5 años" />
+                    </Picker>
+                </View>
             </View>
 
             <View style={styles.buttonContainer}>
@@ -210,7 +238,23 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         marginTop: 8,
-    }
+    },
+    pickerLabel: {
+        fontSize: 16,
+        color: '#4a5568',
+        marginBottom: 8,
+    },
+    pickerContainer: {
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
+        borderRadius: 8,
+        backgroundColor: 'white',
+    },
+    picker: {
+        height: 52,
+        color: '#4A5568',
+
+    },
 });
 
 export default FileManagement;
