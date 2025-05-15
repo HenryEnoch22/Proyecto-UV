@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('event_title', 64);
             $table->string('description', 255)->nullable();
             $table->date('date');
-//            $table->string('photo_path', 2048)->nullable();
+            $table->string('photo_path', 2048)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
