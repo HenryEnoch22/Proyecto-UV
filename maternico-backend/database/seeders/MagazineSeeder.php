@@ -17,26 +17,32 @@ class MagazineSeeder extends Seeder
             [
                 'title' => 'Revista 0 a 1 Año',
                 'magazine_path' => 'https://uvmx-my.sharepoint.com/:b:/g/personal/zs22017027_estudiantes_uv_mx/EVx_lYTzgHVJjEKI1Bom8vEBksmnAv3MmDRegQjPvsquGw?e=4thEJ2',
+                'category' => '0 a 1 año',
             ],
             [
                 'title' => 'Revista 1 Año',
                 'magazine_path' => 'https://uvmx-my.sharepoint.com/:b:/g/personal/zs22017027_estudiantes_uv_mx/EVRMKMKlRbJOthVWblxPOxQB3vWWrSloAXFvlE2SZOCQ7A?e=JBq7Qw',
+                'category' => '1 año',
             ],
             [
                 'title' => 'Revista 2 Años',
                 'magazine_path' => 'https://uvmx-my.sharepoint.com/:b:/g/personal/zs22017027_estudiantes_uv_mx/EZe-QLg-8sRIqFuO36B2lDcBGyVOQA22YKFJVdyzRbmNag?e=FHRdcC',
+                'category' => '2 años',
             ],
             [
-                'title' => 'Revista 3 Años',
+                'title' => 'Revista 3 años',
                 'magazine_path' => 'https://uvmx-my.sharepoint.com/:b:/g/personal/zs22017027_estudiantes_uv_mx/Ea-8L6WNIPtGuJnZswkcFJMBYTMeNb69wKW8k4oY9487kQ?e=E5V8dQ',
+                'category' => '3 años',
             ],
             [
                 'title' => 'Revista 4 Años',
                 'magazine_path' => 'https://uvmx-my.sharepoint.com/:b:/g/personal/zs22017027_estudiantes_uv_mx/ESyjj58iwv5Nvd4ftOymEw8BTUb5wgozpv0KXPi01Sh-CQ?e=ioLgIY',
+                'category' => '4 años',
             ],
             [
                 'title' => 'Revista 5 Años',
                 'magazine_path' => 'https://uvmx-my.sharepoint.com/:b:/g/personal/zs22017027_estudiantes_uv_mx/EQl-doPGpeFBudEKhCXJH4MBdkieiQsyqDPPBojlqpnqrg?e=8LE29Y',
+                'category' => '5 años',
             ],
         ]);
     }
