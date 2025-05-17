@@ -262,6 +262,7 @@ const CalendarScreen = () => {
 							const date = new Date(item.date);
 							return date.getMonth() + 1 === calendarMonth;
 						})}
+						onEventUpdate={() => loadEvents(calendarYear, calendarMonth)}
 					/>
 				)}
 			</ScrollView>

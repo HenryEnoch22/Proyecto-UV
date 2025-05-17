@@ -24,9 +24,10 @@ interface Event {
 
 interface AgendaProps {
 	events: Event[];
+	onEventUpdate: () => void;
 }
 
-export const Agenda = ({ events }: AgendaProps) => {
+export const Agenda = ({ events, onEventUpdate }: AgendaProps) => {
 	const [showDetailModal, setShowDetailModal] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
@@ -56,6 +57,17 @@ export const Agenda = ({ events }: AgendaProps) => {
 			(a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()
 		);
 	}, [events]);
+
+	if (!events.length) {
+		return (
+			<View style={styles.emptyContainer}>
+				<Text style={styles.emptyTitle}>Mi Agenda</Text>
+				<Text style={styles.emptyText}>
+					No hay eventos registrados este mes
+				</Text>
+			</View>
+		);
+	}
 
 	const renderEvent = (event: Event & { type: 1 | 2 | 3 | 4 | 5 }) => {
 		const typeConfig = {
@@ -129,17 +141,6 @@ export const Agenda = ({ events }: AgendaProps) => {
 		);
 	};
 
-	if (!events.length) {
-		return (
-			<View style={styles.emptyContainer}>
-				<Text style={styles.emptyTitle}>Mi Agenda</Text>
-				<Text style={styles.emptyText}>
-					No hay eventos registrados este mes
-				</Text>
-			</View>
-		);
-	}
-
 	return (
 		<>
 			<ScrollView
@@ -166,6 +167,7 @@ export const Agenda = ({ events }: AgendaProps) => {
 					notifiable: selectedEvent?.notifiable || false,
 					type: selectedEvent?.type || 0
 				}}
+				onDeleteSuccess={onEventUpdate}
 			/>
 		</>
 	);

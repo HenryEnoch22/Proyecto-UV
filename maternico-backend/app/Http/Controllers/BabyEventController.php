@@ -49,6 +49,7 @@ class BabyEventController extends Controller
     public function store(StoreBabyEventRequest $request)
     {
         $data = $request->validated();
+        \Log::info($data);
 
         // 2) si vino un archivo, guárdalo en storage/app/public/album
         if ($request->hasFile('photo_path')) {

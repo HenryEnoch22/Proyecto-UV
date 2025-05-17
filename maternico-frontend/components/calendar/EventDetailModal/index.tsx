@@ -3,7 +3,7 @@ import { View, Text, Modal, StyleSheet, Pressable, Switch, TextInput, Alert } fr
 import { XCircleIcon, TrashIcon } from 'react-native-heroicons/solid';
 import { Picker } from '@react-native-picker/picker';
 import { updateEvent, deleteEvent } from '@/services/api';
-import { DatePicker } from '@/components';
+import { ConfirmDeleteModal, DatePicker } from '@/components';
 
 type EventType = {
     id?: string;
@@ -19,6 +19,7 @@ interface EventDetailModalProps {
     visible: boolean;
     onClose: () => void;
     event: EventType;
+    onDeleteSuccess: () => void;
 }
 
 const types = {
@@ -29,12 +30,13 @@ const types = {
     5: 'Cumpleaños'
 };
 
-export const EventDetailModal = ({ visible, onClose, event }: EventDetailModalProps) => {
+export const EventDetailModal = ({ visible, onClose, event, onDeleteSuccess }: EventDetailModalProps) => {
     const [eventName, setEventName] = useState(event.event_title);
     const [selectedDate, setSelectedDate] = useState(new Date(event.date));
     const [time, setTime] = useState(event.time);
     const [notifiable, setNotifiable] = useState(event.notifiable);
     const [type, setType] = useState<number>(event.type);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     useEffect(() => {
         setEventName(event.event_title);
@@ -72,17 +74,10 @@ export const EventDetailModal = ({ visible, onClose, event }: EventDetailModalPr
     };
 
     const confirmDelete = () => {
-        Alert.alert(
-            'Eliminar Evento',
-            '¿Estás segura de que quieres eliminar este evento?',
-            [
-                { text: 'Cancelar', style: 'cancel' },
-                { text: 'Eliminar', onPress: () => {
-                    deleteEvent(event.id);
-                    onClose();
-                }, style: 'destructive' }
-            ]
-        );
+        deleteEvent(event.id);
+        setShowConfirmModal(false);
+        onClose();
+        onDeleteSuccess();
     };
 
     const formatTime = (text: string) => {
@@ -173,12 +168,21 @@ export const EventDetailModal = ({ visible, onClose, event }: EventDetailModalPr
 
                         <Pressable
                             style={[styles.actionButton, styles.deleteButton]}
-                            onPress={confirmDelete}
+                            onPress={() => setShowConfirmModal(true)}
                         >
                             <TrashIcon size={18} color="#FFF" />
                             <Text style={styles.actionButtonText}>Eliminar Evento</Text>
                         </Pressable>
                     </View>
+
+                    <ConfirmDeleteModal
+                        visible={showConfirmModal}
+                        onClose={() => setShowConfirmModal(false)}
+                        onConfirm={confirmDelete}
+                        title="Eliminar evento"
+                        description="¿Estás segura de eliminar este evento?"
+                    />
+
                 </View>
             </View>
         </Modal>
