@@ -43,7 +43,7 @@ const Profile = () => {
         }
     };
 
-    if (isLoading) {
+    if (isLoading || !user) {
         return (
             <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#f283b5" />

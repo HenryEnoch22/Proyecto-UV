@@ -166,7 +166,7 @@ const Info = () => {
 						>
 							<View style={styles.cardContent}>
 								<View style={styles.iconContainer}>
-									<DocumentTextIcon size={24} color="#3B82F6" />
+									<DocumentTextIcon size={24} color="#F392BE" />
 								</View>
 								<View style={styles.textContainer}>
 									<Text style={styles.cardTitle}>Catálogo de revistas</Text>
@@ -174,7 +174,7 @@ const Info = () => {
 										Explora todas las revistas educativas disponibles
 									</Text>
 								</View>
-								<ChevronRightIcon size={20} color="#3B82F6" />
+								<ChevronRightIcon size={20} color="#F392BE" />
 							</View>
 						</Pressable>
 					</View>
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     iconContainer: {
-        backgroundColor: '#EFF6FF',
+        backgroundColor: '#F392BE30',
         borderRadius: 8,
         padding: 12,
         marginRight: 16,

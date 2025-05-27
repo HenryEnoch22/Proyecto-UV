@@ -29,7 +29,6 @@ class UpdateProfileRequest extends FormRequest
             'email' => ['sometimes', 'string', 'lowercase', 'email', 'max:255'],
             'last_name' => ['sometimes', 'string', 'max:45'],
             'mother_last_name' => ['sometimes', 'string', 'max:45'],
-            'birth_date' => ['nullable', 'date'],
             'profile_photo_path' => ['nullable'],
         ];
     }
@@ -47,7 +46,6 @@ class UpdateProfileRequest extends FormRequest
             'last_name.max' => 'El apellido paterno no puede exceder los 45 caracteres.',
             'mother_last_name.string' => 'El apellido materno debe ser un texto válido.',
             'mother_last_name.max' => 'El apellido materno no puede exceder los 45 caracteres.',
-            'birth_date.date' => 'La fecha de nacimiento debe ser una fecha válida.',
             'profile_photo_path.image' => 'La foto de perfil debe ser una imagen válida.',
         ];
     }

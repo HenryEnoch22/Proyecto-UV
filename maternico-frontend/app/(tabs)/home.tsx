@@ -114,12 +114,7 @@ export default function HomeScreen() {
 	}
 
 	if (user?.role_id === 1) {
-		return (
-			<>
-				<FileManagement />
-				<Navbar />
-			</>
-		);
+		router.push("/admin/file-management");
 	}
 
 	return (

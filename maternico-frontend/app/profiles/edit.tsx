@@ -22,7 +22,6 @@ const EditProfileScreen = () => {
 		last_name: user?.last_name || "",
 		mother_last_name: user?.mother_last_name || "",
 		email: user?.email || "",
-		birth_date: user?.birth_date || "",
 		password: "",
 		profile_photo_path:
 			user?.profile_photo_path
@@ -39,11 +38,9 @@ const EditProfileScreen = () => {
 				last_name: user.last_name || "",
 				mother_last_name: user.mother_last_name || "",
 				email: user.email || "",
-				birth_date: user.birth_date || "",
 				password: "",
 				profile_photo_path:
-					user.profile_photo_path ||
-					"https://randomuser.me/api/portraits/lego/6.jpg",
+					user.profile_photo_path
 			});
 		}
 	}, [user]);
@@ -60,7 +57,6 @@ const EditProfileScreen = () => {
 				formData.last_name,
 				formData.mother_last_name,
 				formData.email,
-				formData.birth_date,
 				formData.password,
 				formData.profile_photo_path
 			);
@@ -157,16 +153,6 @@ const EditProfileScreen = () => {
 					errors={[]}
 				/>
 
-				<FormTextField
-					label="Fecha de nacimiento"
-					placeholder="DD/MM/AAAA"
-					value={formData.birth_date}
-					onChangeText={(text: string) =>
-						setFormData({ ...formData, birth_date: text })
-					}
-					style={styles.input}
-					errors={[]}
-				/>
 				<PrimaryButton
 					text="Guardar cambios"
 					onPress={handleSubmit}

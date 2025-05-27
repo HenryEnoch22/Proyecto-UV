@@ -46,7 +46,6 @@ export const updateUser = async (
 	lastName: string,
 	motherLastName: string,
 	email: string,
-	birthDate: string,
 	password: string,
 	profilePhoto: string | undefined
 ) => {
@@ -62,7 +61,6 @@ export const updateUser = async (
 				last_name: lastName,
 				mother_last_name: motherLastName,
 				email,
-				birth_date: birthDate,
 				password,
 				profile_photo: profilePhoto,
 			}),

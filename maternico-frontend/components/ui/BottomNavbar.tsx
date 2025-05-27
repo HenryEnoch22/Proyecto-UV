@@ -32,7 +32,7 @@ const BottomNavbar = () => {
       <Pressable onPress={() => router.push("/(tabs)/info")} style={styles.navItem}>
         <View style={styles.iconContainer}>
           <InformationCircleIcon size={32} color="#F392BE" />
-          {isActive("/(tabs)/info") && <View style={[styles.activeIndicator, { bottom: -6 }]} />}
+          {isActive("/info") && <View style={[styles.activeIndicator, { bottom: -6 }]} />}
         </View>
       </Pressable>
 
