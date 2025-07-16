@@ -36,23 +36,32 @@ class EventController extends Controller
      */
     public function store(StoreEventRequest $request)
     {
-        $event = $request->validated();
-        $event = Event::create(
-            [
-                'user_id' => $event['user_id'],
-                'event_title' => $event['event_title'],
-                'type' => $event['type'] ,
-                'date' => $event['date'],
-                'time' => $event['time'],
-                'notifiable' => $event['notifiable'] ? 1 : 0,
-            ]
-        );
+        try{
+            $event = $request->validated();
+            $event = Event::create(
+                [
+                    'user_id' => $event['user_id'],
+                    'event_title' => $event['event_title'],
+                    'type' => $event['type'] ,
+                    'date' => $event['date'],
+                    'time' => $event['time'],
+                    'notifiable' => $event['notifiable'] ? 1 : 0,
+                ]
+            );
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Evento creado correctamente',
-            'data' => $event,
-        ], 201);
+            return response()->json([
+                'success' => true,
+                'message' => 'Evento creado correctamente',
+                'data' => $event,
+            ], 201);
+        }catch (Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el evento: ' . $e->getMessage(),
+            ], 500);
+        }
+
+
     }
 
     /**
@@ -126,8 +135,11 @@ class EventController extends Controller
 
     public function getLastEvents($userID) {
         try {
+            $today = Carbon::now();
+            $futureLimit = Carbon::now()->addDays(30)->endOfDay();
             $events = Event::where('user_id', $userID)
-                ->where('date', '>=', Carbon::now())
+//                ->where('date', '>=', Carbon::now())
+                ->whereBetween('date', [$today, $futureLimit])
                 ->orderBy('date', 'desc')
                 ->take(5)
                 ->get();

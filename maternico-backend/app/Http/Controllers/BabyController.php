@@ -40,168 +40,216 @@ class BabyController extends Controller
                         'event_title' => 'Segunda dosis de Hepatitis B recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(1),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Tercera dosis de Hepatitis B recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(6),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Primera dosis de Rotavirus recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(2),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Segunda dosis de Rotavirus recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(4),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Tercera dosis de Rotavirus recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(6),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Primera dosis de la vacuna DTaP (Difteria, Tétanos y Tos Ferina) recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(2),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Segunda dosis de la vacuna DTaP (Difteria, Tétanos y Tos Ferina) recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(4),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Tercera dosis de la vacuna DTaP (Difteria, Tétanos y Tos Ferina) recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(6),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Cuarta dosis de la vacuna DTaP (Difteria, Tétanos y Tos Ferina) recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(15),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Quinta dosis de la vacuna DTaP (Difteria, Tétanos y Tos Ferina) recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(48),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Primera dosis de la vacuna Antipoliomelítica recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(2),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Segunda dosis de la vacuna Antipoliomelítica recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(4),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Tercera dosis de la vacuna Antipoliomelítica recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(6),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Primera dosis de la vacuna Antineumocócica recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(2),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Segunda dosis de la vacuna Antineumocócica recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(4),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Tercera dosis de la vacuna Antineumocócica recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(6),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Cuarta dosis de la vacuna Antineumocócica recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addYear(1),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Primera dosis de Varicela recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addYear(1),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Segunda dosis de Varicela recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addYear(4),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Primera dosis de Hepatitis A recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addYear(1),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Segunda dosis de Hepatitis A recomendada',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(18),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Recomendación: Asegurate de que tu bebé tenga entre 11 y 14 horas de sueño',
                         'type' => 'Desarrollo',
                         'date' => $birthDate->copy()->addYear(2),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Recomendación: Realiza actividades sensoriales con tu bebé',
                         'type' => 'Desarrollo',
                         'date' => $birthDate->copy()->addYear(3),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                     [
                         'user_id' => $request->user_id,
                         'event_title' => 'Recomendación: Vacunación contra la Influenza y COVID-19',
                         'type' => 'Vacunación',
                         'date' => $birthDate->copy()->addMonth(36),
-                        'notifiable' => 1
+                        'notifiable' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ],
                 ]);
 

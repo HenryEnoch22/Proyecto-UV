@@ -149,7 +149,7 @@ export default function HomeScreen() {
 							</View>
 						) : (
 							<FlatList
-								data={events}
+								data={(events || []).filter((event) => leftDays(event.date) <= 30)}
 								horizontal
 								showsHorizontalScrollIndicator={false}
 								renderItem={({ item }) => (
