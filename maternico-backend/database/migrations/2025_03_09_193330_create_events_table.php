@@ -17,7 +17,7 @@ return new class extends Migration
                 $table->string('event_title', 255);
                 $table->string('type', 45);
                 $table->date('date');
-                $table->string('time', 6);
+                $table->string('time', 6)->nullable();
                 $table->string('notifiable', 1);
                 $table->timestamps();
                 $table->softDeletes();

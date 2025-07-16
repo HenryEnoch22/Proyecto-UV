@@ -2,6 +2,7 @@
 
 namespace App\Models\Baby;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Baby extends Model
@@ -20,4 +21,9 @@ class Baby extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

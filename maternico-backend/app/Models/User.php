@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Baby\Baby;
+use App\Models\Event\Event;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -58,5 +59,10 @@ class User extends Authenticatable
     public function baby()
     {
         return $this->hasOne(Baby::class, 'user_id');
+    }
+
+    public function event()
+    {
+        return $this->hasMany(Event::class, 'user_id', 'id');
     }
 }

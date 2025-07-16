@@ -6,6 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="5e788919-54b2-4be2-802b-ab70c5419276" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maternico-backend/app/Http/Controllers/BabyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/app/Http/Controllers/BabyController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maternico-backend/app/Models/Baby/Baby.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/app/Models/Baby/Baby.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maternico-backend/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/app/Models/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maternico-backend/database/migrations/2025_03_09_193330_create_events_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/maternico-backend/database/migrations/2025_03_09_193330_create_events_table.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,8 +168,8 @@
     &quot;PHPUnit.RegisteredUserControllerTest.test_user_can_register_successfully.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/laragon/www/rotomfit-app&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;henryy&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Asus/Desktop/ProyectoUV&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -252,6 +256,9 @@
       <workItem from="1747158891667" duration="4351000" />
       <workItem from="1747244795101" duration="62000" />
       <workItem from="1747244905660" duration="408000" />
+      <workItem from="1752542935458" duration="1209000" />
+      <workItem from="1752614205668" duration="1200000" />
+      <workItem from="1752638232312" duration="4481000" />
     </task>
     <servers />
   </component>
