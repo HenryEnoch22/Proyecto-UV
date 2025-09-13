@@ -6,6 +6,7 @@ import {
 	Pressable,
 	FlatList,
 	ActivityIndicator,
+	Image,
 } from "react-native";
 import { useAuth } from "@/contexts/AuthContext";
 import { getBabyByMother, getLastEvents, getProfile } from "@/services/api";
@@ -14,7 +15,7 @@ import { CardNoBaby, BabyCard, ResponseCard, EventCard } from "@/components";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import FileManagement from "../admin/file-management";
-import Navbar from "@/components/ui/admin/Navbar";
+import { API_URL } from "@/constants/env";
 
 interface Event {
 	id: number;
@@ -41,6 +42,7 @@ export default function HomeScreen() {
 	const [events, setEvents] = useState<Event[] | undefined>();
 	const [baby, setBaby] = useState<Baby | null>(null);
 	const router = useRouter();
+	const LOCAL_API_URL = API_URL?.split("/api")[0];
 
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -114,7 +116,9 @@ export default function HomeScreen() {
 	}
 
 	if (user?.role_id === 1) {
-		router.push("/admin/file-management");
+		return (
+			<FileManagement />
+		);
 	}
 
 	return (
@@ -125,7 +129,16 @@ export default function HomeScreen() {
 						<BellIcon size="32" color="#fefefe" />
 					</Pressable>
 					<Pressable onPress={() => router.push("/profiles/profile")}>
-						<UserCircleIcon size="32" color="#fefefe" />
+						{
+							user?.profile_photo_path ? (
+								<Image
+									source={{ uri: `${LOCAL_API_URL + '/storage/' + user.profile_photo_path}` }}
+									style={{ width: 36, height: 36, borderRadius: 24 }}
+								/>
+							) : (
+								<UserCircleIcon size="32" color="#fefefe" />
+							)
+						}
 					</Pressable>
 				</View>
 				<View style={styles.greetContainer}>
@@ -219,6 +232,7 @@ const styles = StyleSheet.create({
 	iconsContainer: {
 		flexDirection: "row",
 		justifyContent: "space-between",
+		alignItems: "center",
 		marginVertical: 20,
 	},
 	greetContainer: {

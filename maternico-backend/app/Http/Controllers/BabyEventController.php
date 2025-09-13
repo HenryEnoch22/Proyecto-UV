@@ -27,9 +27,9 @@ class BabyEventController extends Controller
             $babyEvents = BabyEvent::where('baby_id', $babyId)->get();
             if ($babyEvents->isEmpty()) {
                 return response()->json([
-                    'success' => false,
+                    'success' => true,
                     'message' => 'No se encontraron eventos para este bebé',
-                ], 404);
+                ], 200);
             }
             return response()->json([
                 'success' => true,
@@ -49,7 +49,6 @@ class BabyEventController extends Controller
     public function store(StoreBabyEventRequest $request)
     {
         $data = $request->validated();
-        \Log::info($data);
 
         // 2) si vino un archivo, guárdalo en storage/app/public/album
         if ($request->hasFile('photo_path')) {
@@ -76,7 +75,7 @@ class BabyEventController extends Controller
     public function show($babyId)
     {
         try{
-            $babyEvents = BabyEvent::findORFail($babyId);
+            $babyEvents = BabyEvent::findOrFail($babyId);
             return response()->json([
                 'success' => true,
                 'message' => 'Eventos del bebé obtenidos correctamente',

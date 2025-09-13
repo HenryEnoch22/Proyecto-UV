@@ -16,15 +16,38 @@ const LoginScreen = () => {
     const handleLogin = async () => {
         try {
             setErrors({});
+            const newErrors: { email?: string[]; password?: string[] } = {};
+
+            // Validar correo
+            if (!email.trim()) {
+                newErrors.email = ["Por favor ingresa tu correo electrónico"];
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                newErrors.email = ["El correo electrónico no es válido"];
+            }
+
+            // Validar contraseña
+            if (!password) {
+                newErrors.password = ["Por favor ingresa tu contraseña"];
+            } else if (password.length < 8) {
+                newErrors.password = ["La contraseña debe tener al menos 8 caracteres"];
+            }
+
+            // Mostrar errores y evitar envío si existen
+            if (Object.keys(newErrors).length > 0) {
+                setErrors(newErrors);
+                return;
+            }
             
             const userData = await login(email, password);
             
             await AsyncStorage.setItem("token", userData.token);
             router.replace('/home');
-        } catch (error: Error | any) {
+        } catch (error: any) {
             console.error("Error en login:", error);
-            if (error.response?.status === 422) {
-                setErrors(error.response.data.errors);
+            if (error.status === 422) {
+                setErrors(error.errors || {});
+            } else if (error.status === 401) {
+                setErrors({ email: ["Credenciales incorrectas"] });
             } else {
                 Alert.alert("Error", "No se pudo iniciar sesión");
             }

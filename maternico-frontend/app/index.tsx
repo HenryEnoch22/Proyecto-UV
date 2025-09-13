@@ -7,7 +7,6 @@ import { getProfile } from "@/services/api";
 import BottomNavbar from "@/components/ui/BottomNavbar";
 import { UserResponse } from "../services/api";
 import FileManagement from "./admin/file-management";
-import Navbar from "@/components/ui/admin/Navbar";
 
 export default function Index() {
 	const { user, setUser } = useAuth();
@@ -44,7 +43,7 @@ export default function Index() {
 	) : user.role_id == 1 ? (
 		<>
       <FileManagement />
-      <Navbar />
+      <BottomNavbar />
     </>
 	) : (
 		<>

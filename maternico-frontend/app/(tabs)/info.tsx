@@ -208,7 +208,11 @@ const Info = () => {
 					<View style={styles.section}>
 						<View style={styles.sectionHeader}>
 							<Text style={styles.sectionTitle}>Centros de salud</Text>
-							<ChevronRightIcon size={24} color="#F392BE" />
+							<Pressable
+								onPress={() => router.push("/healthCenters")}
+							>
+								<ChevronRightIcon size={24} color="#F392BE" />
+							</Pressable>
 						</View>
 						<View style={[styles.listContainer, { height: "20%" }]}>
 							<FlatList

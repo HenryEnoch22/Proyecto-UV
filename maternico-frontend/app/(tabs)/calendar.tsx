@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import {
@@ -6,10 +6,16 @@ import {
 	CalendarIcon,
 } from "react-native-heroicons/outline";
 import { useNavigation } from "@react-navigation/native";
-import { PrimaryButton, CustomCalendarHeader, AddEventModal, Agenda } from "@/components";
+import {
+	PrimaryButton,
+	CustomCalendarHeader,
+	AddEventModal,
+	Agenda,
+} from "@/components";
 import { createEvent, getEvents, getProfile } from "@/services/api";
 import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { scheduleNotification } from "@/utils/notifications";
 
 const CalendarScreen = () => {
 	interface Event {
@@ -28,6 +34,7 @@ const CalendarScreen = () => {
 	const [events, setEvents] = useState<Event[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
+	const isFirstRender = useRef(true);
 
 	const loadEvents = async (year: number, month: number) => {
 		try {
@@ -72,6 +79,11 @@ const CalendarScreen = () => {
 	}, []);
 
 	useEffect(() => {
+		if (isFirstRender.current) {
+			isFirstRender.current = false;
+			return;
+		}
+
 		if (calendarYear && calendarMonth) {
 			loadEvents(calendarYear, calendarMonth);
 		}
@@ -79,13 +91,41 @@ const CalendarScreen = () => {
 
 	LocaleConfig.locales["es"] = {
 		monthNames: [
-			"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+			"Enero",
+			"Febrero",
+			"Marzo",
+			"Abril",
+			"Mayo",
+			"Junio",
+			"Julio",
+			"Agosto",
+			"Septiembre",
+			"Octubre",
+			"Noviembre",
+			"Diciembre",
 		],
 		monthNamesShort: [
-			"Ene", "Feb", "Mar", "Abril", "Mayo", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
+			"Ene",
+			"Feb",
+			"Mar",
+			"Abril",
+			"Mayo",
+			"Jun",
+			"Jul",
+			"Ago",
+			"Sep",
+			"Oct",
+			"Nov",
+			"Dic",
 		],
 		dayNames: [
-			"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado",
+			"Domingo",
+			"Lunes",
+			"Martes",
+			"Miercoles",
+			"Jueves",
+			"Viernes",
+			"Sabado",
 		],
 		dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
 		today: "Hoy",
@@ -140,6 +180,34 @@ const CalendarScreen = () => {
 				eventData.type
 			);
 
+			if (eventData.notify && eventData.time) {
+				const [hours, minutes] = eventData.time.split(":").map(Number);
+
+				const eventDate = new Date(eventData.date);
+				eventDate.setHours(hours, minutes, 0, 0);
+
+				const oneHourBefore = new Date(eventDate.getTime() - 60 * 60 * 1000); //60 minutos × 60 segundos × 1000 milisegundos
+				const oneDayBefore = new Date(
+					eventDate.getTime() - 24 * 60 * 60 * 1000 // 24 horas × 60 minutos × 60 segundos × 1000 milisegundos
+				);
+
+				if (oneDayBefore > new Date()) {
+					await scheduleNotification(
+						"¡No te olvides!",
+						`Mañana tienes "${eventData.name}" a las ${eventData.time}`,
+						oneDayBefore
+					);
+				}
+
+				if (oneHourBefore > new Date()) {
+					await scheduleNotification(
+						"¡Que no se te pase!",
+						`Tienes "${eventData.name}" a las ${eventData.time}h`,
+						oneHourBefore
+					);
+				}
+			}
+
 			await loadEvents(calendarYear, calendarMonth);
 
 			setShowModal(false);
@@ -160,8 +228,10 @@ const CalendarScreen = () => {
 			<View style={{ paddingHorizontal: 16 }}>
 				<View style={styles.instructionBox}>
 					<CalendarIcon size={20} color="#9061F9" />
-					{/* TODO: Cortar el texto para evitar que se vea amontonado */}
-					<Text style={styles.instructionText}>
+					<Text
+						numberOfLines={2}
+						style={[styles.instructionText, { flexShrink: 1 }]}
+					>
 						Toca en cualquier día para ver tus recordatorios registrados
 					</Text>
 				</View>
@@ -182,8 +252,8 @@ const CalendarScreen = () => {
 						selectedDotColor: "#FEFEFE",
 						textMonthFontWeight: "600",
 					}}
-					onMonthChange={(month: { month: number }) => {
-						setCalendarYear(month.dateString.split("-")[0]);
+					onMonthChange={(month: { month: number; year: number }) => {
+						setCalendarYear(month.year);
 						setCalendarMonth(month.month);
 					}}
 					customHeader={(props: any) => {
@@ -303,7 +373,7 @@ const styles = StyleSheet.create({
 	},
 	instructionText: {
 		marginLeft: 8,
-		fontSize: 16,
+		fontSize: 20,
 		color: "#4A5568",
 	},
 	legendContainer: {

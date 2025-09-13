@@ -21,7 +21,7 @@ export const getAlbumEvents = async (babyID: number) => {
 	}
 };
 
-async function uriToBlob(uri: string): Promise<Blob> {
+export async function uriToBlob(uri: string): Promise<Blob> {
     // En web, usa fetch para data: o http: URIs
     if (uri.startsWith("data:") || uri.startsWith("http")) {
         const resp = await fetch(uri);
@@ -76,7 +76,9 @@ export const createAlbumEvent = async (
         const token = await AsyncStorage.getItem("token");
         const res = await fetch(`${API_URL}/baby-events`, {
             method: "POST",
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { 
+                Authorization: `Bearer ${token}` 
+            },
             body: formData,
         });
 

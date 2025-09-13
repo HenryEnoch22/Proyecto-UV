@@ -162,7 +162,7 @@ const CardData = () => {
 				</View>
 
 				<Pressable style={styles.button} onPress={handleSubmit}>
-					<Text style={styles.buttonText}>Pagar $129.00MXN</Text>
+					<Text style={styles.buttonText}>Pagar $43.10MXN</Text>
 					<ChevronRightIcon
 						size={20}
 						color="#FEFEFE"

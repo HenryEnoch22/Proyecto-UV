@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, Pressable, Modal, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
-import { createForum, getForums } from "@/services/api";
+import { createForum, getForum, getForums } from "@/services/api";
 import { PrimaryButton, FormTextField } from "@/components";
 import { router } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
@@ -43,16 +43,18 @@ const Forum = () => {
 
   const handleSubmitForum = async () => {
     try {
+      setShowTitleModal(false);
+      if (!user) {
+        setError("Usuario no autenticado");
+        return;
+      }
       await createForum(user.id, forumTitle, inputText);
       
       const updatedForums = await getForums();
       setForums(updatedForums.forums);
-      
       setInputText("");
       setForumTitle("");
-      setShowTitleModal(false);
     } catch (err) {
-      console.error("Error al crear foro:", err);
       setError("Error al publicar el foro");
     }
   };

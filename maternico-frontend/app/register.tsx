@@ -21,11 +21,42 @@ export default function RegisterScreen() {
     const handleRegister = async () => {
         setErrors({});
         const newErrors: Record<string, string[]> = {};
-        if (!name) newErrors.name = ["Por favor ingresa tu nombre"];
-        if (!lastName) newErrors.last_name = ["Por favor ingresa tu apellido paterno"];
-        if (!email) newErrors.email = ["Por favor ingresa tu correo electrónico"];
-        if (!password) newErrors.password = ["Por favor crea una contraseña"];
-        if (password !== confirmPassword) newErrors.password_confirmation = ["Las contraseñas no coinciden"];
+        if (!name.trim()) {
+            newErrors.name = ["Por favor ingresa tu nombre"];
+        } else if (!/^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/.test(name)) {
+            newErrors.name = ["El nombre solo debe contener letras"];
+        }
+
+        if (!lastName.trim()) {
+            newErrors.last_name = ["Por favor ingresa tu apellido paterno"];
+        } else if (!/^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/.test(lastName)) {
+            newErrors.last_name = ["El apellido solo debe contener letras"];
+        }
+
+        if (motherLastName && !/^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/.test(motherLastName)) {
+            newErrors.mother_last_name = ["El apellido materno solo debe contener letras"];
+        }
+
+        if (!email.trim()) {
+            newErrors.email = ["Por favor ingresa tu correo electrónico"];
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            newErrors.email = ["Ingresa un correo electrónico válido"];
+        }
+
+        if (!password) {
+            newErrors.password = ["Por favor crea una contraseña"];
+        } else {
+            if (password.length < 8) {
+                newErrors.password = ["La contraseña debe tener al menos 8 caracteres"];
+            }
+            if (!/[0-9]/.test(password) || !/[A-Za-z]/.test(password)) {
+                newErrors.password = [...(newErrors.password || []), "Debe contener letras y números"];
+            }
+        }
+
+        if (password !== confirmPassword) {
+            newErrors.password_confirmation = ["Las contraseñas no coinciden"];
+        }
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -43,9 +74,13 @@ export default function RegisterScreen() {
             );
 
             const user = await getProfile();
-            setUser(user?.user);
-            Alert.alert("¡Bienvenida a MaterniCo!", "Tu cuenta ha sido creada con éxito.");
-            router.push("/(tabs)/home");
+            if (user?.user)  {
+                setUser(user.user);
+                Alert.alert("¡Bienvenida a MaterniCo!", "Tu cuenta ha sido creada con éxito.");
+                router.push("/(tabs)/home");
+            } else {
+                Alert.alert("Error", "No se pudo obtener el perfil del usuario. Por favor, intenta más tarde.");
+            }
         } catch (e: any) {
             if (e.response?.status === 422) {
                 setErrors(e.response.data.errors);

@@ -14,6 +14,9 @@ use App\Http\Controllers\ProfileController;
 //Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //    return $request->user();
 //});
+
+Route::get('/health', fn () => response()->json(['isAlive' => "Servidor de maternico funcionando"]));
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/user', function (Request $request) {
@@ -74,7 +77,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
 
 
-    Route::patch('/profile/{userId}', [ProfileController::class, 'update']);
+    Route::post('/profile/{userId}', [ProfileController::class, 'update']);
 
 });
 

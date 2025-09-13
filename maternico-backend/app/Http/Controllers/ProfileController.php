@@ -6,6 +6,7 @@ use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -26,25 +27,41 @@ class ProfileController extends Controller
     }
 
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateProfileRequest $request, $userId)
     {
-        try{
+        try {
             $user = User::findOrFail($userId);
-            $user->update($request->validated());
+            $data = $request->validated();
+
+            // Si vino foto nueva, guárdala y actualiza path
+                if ($request->hasFile('profile_photo')) {
+                    if (!empty($user->profile_photo_path)) {
+                        Storage::disk('public')->delete($user->profile_photo_path);
+                    }
+                    $path = $request->file('profile_photo')->store('profile', 'public');
+                    $data['profile_photo'] = $path;
+                }
+
+            $user->update([
+                'name' => $data['name'] ?? $user->name,
+                'email' => $data['email'] ?? $user->email,
+                'last_name' => $data['last_name'] ?? $user->last_name,
+                'mother_last_name' => $data['mother_last_name'] ?? $user->mother_last_name,
+                'profile_photo_path' => $data['profile_photo'],
+            ]);
             $user->load('baby');
+            $user->refresh();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Perfil actualizado correctamente',
-                'data' => $user,
+                'data'    => $user,
             ]);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar el perfil',
-                'error' => $e->getMessage(),
+                'message' => 'Error al actualizar el perfil: ' . $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

@@ -6,12 +6,39 @@ import {
   InformationCircleIcon, 
   ChatBubbleBottomCenterTextIcon 
 } from "react-native-heroicons/outline";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { getProfile } from "@/services/api";
+import Navbar from "./admin/Navbar";
 
 const BottomNavbar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
   const isActive = (routePath: string) => pathname === routePath;
+  const { user, setUser } = useAuth();
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const userData = await getProfile();
+        if (userData?.user) {
+          setUser({ ...userData.user });
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Error checking authentication status:", error);
+        setUser(null);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  if (user?.role_id === 1) {
+    return <Navbar />;
+  }
 
   return (
     <View style={styles.container}>

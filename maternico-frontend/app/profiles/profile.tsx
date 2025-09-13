@@ -4,10 +4,12 @@ import { ArrowLongLeftIcon, PencilIcon } from "react-native-heroicons/solid";
 import { useRouter } from "expo-router";
 import { getProfile, logout, UserResponse } from "@/services/api";
 import { useEffect, useState } from "react";
+import { API_URL } from "@/constants/env";
 
 const Profile = () => {
     const { user, setUser } = useAuth();
     const router = useRouter();
+    const photoUrl = user?.profile_photo_path ? `${API_URL.split('/api')[0]}/storage/${user.profile_photo_path}` : undefined;
     
     const [isLoading, setIsLoading] = useState(true);
 
@@ -61,11 +63,10 @@ const Profile = () => {
                 >
                     <ArrowLongLeftIcon size={24} color="#FEFEFE" />
                 </Pressable>
-                
                 <Image
-                    source={{ uri: "https://randomuser.me/api/portraits/lego/6.jpg" }}
+                    source={{ uri: photoUrl }}
                     style={styles.profileImage}
-                />
+                    />
                 
                 <Pressable 
                     style={styles.editIcon}

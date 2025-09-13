@@ -24,34 +24,59 @@ export default function RegisterBaby() {
 		bloodType: "",
 	});
 	const [errors, setErrors] = useState<Record<string, string[]>>({});
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(new Date());
+	const [showDatePicker, setShowDatePicker] = useState(false);
+	const [selectedDate, setSelectedDate] = useState(new Date());
 
 	const { user, setUser } = useAuth();
-    const {user: userFetched} = useUser();
+	const { user: userFetched } = useUser();
 	const router = useRouter();
 
 	const handleRegister = async () => {
 		setErrors({});
 		const newErrors: Record<string, string[]> = {};
-		if (!formData.name) newErrors.name = ["Por favor ingresa tu nombre"];
-		if (!formData.lastName)
-			newErrors.last_name = ["Por favor ingresa su apellido paterno"];
+		if (!formData.name || formData.name.trim() === "")
+			newErrors.name = ["Por favor ingresa el nombre de tu bebé"];
+		if (!formData.lastName || formData.lastName.trim() === "")
+			newErrors.lastName = [
+				"Por favor ingresa el apellido paterno de tu bebé",
+			];
 		if (!formData.motherLastName)
-			newErrors.motherLastName = ["Por favor ingresa su apellido materno"];
+			newErrors.motherLastName = [
+				"Por favor ingresa el apellido materno de tu bebé",
+			];
 		if (!formData.birthDate)
-			newErrors.birthDate = ["Por favor selecciona su fecha de nacimiento"];
-		if (!formData.weight) newErrors.weight = ["Por favor ingresa su peso"];
-		if (!formData.height) newErrors.height = ["Por favor ingresa su altura"];
+			newErrors.birthDate = [
+				"Por favor selecciona la fecha de nacimiento de tu bebé",
+			];
 		if (!formData.bloodType)
-			newErrors.bloodType = ["Por favor ingresa su tipo de sangre"];
+			newErrors.bloodType = ["Por favor ingresa el tipo de sangre de tu bebé"];
+		if (
+			!formData.weight ||
+			isNaN(+formData.weight) ||
+			+formData.weight <= 0 ||
+			+formData.weight > 10
+		) {
+			newErrors.weight = ["El peso debe ser un número entre 0.1 y 10 kg"];
+		}
+		if (
+			!formData.height ||
+			isNaN(+formData.height) ||
+			+formData.height <= 0 ||
+			+formData.height > 70
+		) {
+			newErrors.height = ["La altura debe ser un número entre 30 y 70 cm"];
+		}
 
-        if (selectedDate) {
-            setFormData(prev => ({
-                ...prev,
-                birthDate: selectedDate.toISOString().split('T')[0]
-            }));
-        }
+		if (!/^(A|B|AB|O)[+-]$/.test(formData.bloodType.toUpperCase())) {
+			newErrors.bloodType = ["Tipo de sangre inválido. Ejemplo: A+, O-"];
+		}
+
+		if (selectedDate) {
+			setFormData((prev) => ({
+				...prev,
+				birthDate: selectedDate.toISOString().split("T")[0],
+			}));
+		}
 
 		if (Object.keys(newErrors).length > 0) {
 			setErrors(newErrors);
@@ -60,7 +85,7 @@ export default function RegisterBaby() {
 
 		try {
 			const newBaby = await registerBaby(
-                userFetched?.id,
+				userFetched?.id,
 				formData.name,
 				formData.lastName,
 				formData.motherLastName,
@@ -69,7 +94,6 @@ export default function RegisterBaby() {
 				formData.height,
 				formData.bloodType
 			);
-			console.log("Nuevo bebé registrado:", newBaby);
 
 			const userData = await getProfile();
 
@@ -77,7 +101,7 @@ export default function RegisterBaby() {
 				const { user } = userData;
 				setUser({ ...user });
 			}
-			if(newBaby) router.push(`/baby/${newBaby.data.id}`);
+			if (newBaby) router.push(`/baby/${newBaby.data.id}`);
 		} catch (e: any) {
 			if (e.response?.status === 422) {
 				setErrors(e.response.data.errors);
@@ -138,7 +162,7 @@ export default function RegisterBaby() {
 						style={styles.customInput}
 						placeholder="Moreno"
 					/>
-					
+
 					<DatePicker
 						label="Fecha de nacimiento"
 						value={selectedDate}
@@ -287,23 +311,23 @@ const styles = StyleSheet.create({
 	bottomSpacing: {
 		height: 50,
 	},
-    calendar: {
-        marginBottom: 16,
-        borderRadius: 12,
-        overflow: 'hidden',
-    },
-    dateInput: {
-        height: 48,
-        borderColor: '#E2E8F0',
-        borderWidth: 1,
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 16,
-        justifyContent: 'center',
-        backgroundColor: '#F8FAFC',
-    },
-    dateText: {
-        color: '#4A5568',
-        fontSize: 16,
-    },
+	calendar: {
+		marginBottom: 16,
+		borderRadius: 12,
+		overflow: "hidden",
+	},
+	dateInput: {
+		height: 48,
+		borderColor: "#E2E8F0",
+		borderWidth: 1,
+		borderRadius: 8,
+		padding: 12,
+		marginBottom: 16,
+		justifyContent: "center",
+		backgroundColor: "#F8FAFC",
+	},
+	dateText: {
+		color: "#4A5568",
+		fontSize: 16,
+	},
 });

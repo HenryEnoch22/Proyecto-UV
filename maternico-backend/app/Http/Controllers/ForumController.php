@@ -137,18 +137,15 @@ class ForumController extends Controller
         
         if ($forums->isEmpty()) {
             return response()->json([
-                'success' => false,
-                'message' => 'No hay foros para el usuario',
+                'success' => true,
+                'message' => 'El usuario no tiene foros',
                 'data' => 0,
-            ], 404);
+            ], 200);
         }
 
         $responses = 0;
         foreach ($forums as $forum) {
             $forum->load('comments');
-            if ($forum->comments->isEmpty()) {
-                $responses = 0;
-            }
             foreach ($forum->comments as $comment) {
                 if ($comment->seen == 0) {
                     $responses++;
@@ -170,16 +167,15 @@ class ForumController extends Controller
      */
     public function markCommentsViewed($userID, $forumID)
     {
-        \Log::info(Carbon::now());
         $comments = Comment::where('forum_id', $forumID)
             ->where('created_at', '<=', Carbon::now())
             ->get();
 
         if ($comments->isEmpty()) {
             return response()->json([
-                'success' => false,
+                'success' => true,
                 'message' => 'No hay comentarios para marcar como vistos',
-            ], 404);
+            ], 200);
         }
 
         foreach ($comments as $comment) {

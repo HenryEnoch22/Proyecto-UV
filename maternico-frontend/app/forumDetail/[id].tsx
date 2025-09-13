@@ -1,9 +1,33 @@
 import { useLocalSearchParams } from "expo-router";
 import { useRef, useState, useEffect } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, Dimensions,} from "react-native";
-import { ArrowLongLeftIcon, EllipsisVerticalIcon,} from "react-native-heroicons/solid";
-import { createComment, deleteComment, deleteForum, getForumComments, markCommentsAsRead, updateForum,} from "@/services/api";
-import { FormTextField, PrimaryButton, ForumEditModal, ForumOptionsMenu, CommentsList } from "@/components";
+import {
+	ActivityIndicator,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
+	Dimensions,
+} from "react-native";
+import {
+	ArrowLongLeftIcon,
+	EllipsisVerticalIcon,
+} from "react-native-heroicons/solid";
+import {
+	createComment,
+	deleteComment,
+	deleteForum,
+	getForumComments,
+	markCommentsAsRead,
+	updateForum,
+} from "@/services/api";
+import {
+	FormTextField,
+	PrimaryButton,
+	ForumEditModal,
+	ForumOptionsMenu,
+	CommentsList,
+} from "@/components";
 import { useRouter } from "expo-router";
 import { useUser } from "@/hooks/useUser";
 import { useForum } from "@/hooks/useForum";
@@ -11,12 +35,16 @@ import { useForum } from "@/hooks/useForum";
 const ForumDetail = () => {
 	const { id } = useLocalSearchParams();
 	const { user, loading: userLoading, error: userError } = useUser();
-	const { comments, fetchForum, forum, loading, setComments } = useForum(Number(id));
+	const { comments, fetchForum, forum, loading, setComments } = useForum(
+		Number(id)
+	);
 	const [inputText, setInputText] = useState("");
 	const [showInput, setShowInput] = useState(false);
 	const [showEditModal, setShowEditModal] = useState(false);
-	const [editedTitle, setEditedTitle] = useState("");
-	const [editedText, setEditedText] = useState("");
+	const [forumData, setForumData] = useState({
+		title: "",
+		text: "",
+	});
 	const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 	const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
 	const ellipsisIconRef = useRef(null);
@@ -31,23 +59,48 @@ const ForumDetail = () => {
 		const loadData = async () => {
 			try {
 				await fetchForum();
-
-				if (forum) {
-					setEditedTitle(forum.title);
-					setEditedText(forum.text);
-				}
 			} catch (error) {
 				setError("Error al cargar el foro");
 			}
 		};
 
 		loadData();
-
-		return () => {
-			setEditedTitle("");
-			setEditedText("");
-		};
 	}, [id, user?.id]);
+
+	useEffect(() => {
+		if (forum) {
+			setForumData({
+				title: forum.title,
+				text: forum.text,
+			});
+		}
+	}, [forum]);
+
+	const handleUpdateForum = async () => {
+		if (!forumData.title.trim() || !forumData.text.trim()) {
+			setError("Ambos campos son requeridos");
+			return;
+		}
+
+		try {
+			if (forum?.id) {
+				await updateForum(forum.id, forumData.title, forumData.text);
+				setShowEditModal(false);
+				setError(null);
+				await fetchForum();
+			}
+		} catch (error) {
+			setError("Error al actualizar el foro");
+		}
+	};
+
+	const handleTitleChange = (text: string) => {
+		setForumData((prev) => ({ ...prev, title: text }));
+	};
+
+	const handleTextChange = (text: string) => {
+		setForumData((prev) => ({ ...prev, text: text }));
+	};
 
 	useEffect(() => {
 		if (isForumOwner && forum && user) {
@@ -108,24 +161,6 @@ const ForumDetail = () => {
 			}
 		} catch (error) {
 			setError("Error al enviar el comentario");
-		}
-	};
-
-	const handleUpdateForum = async () => {
-		if (!editedTitle.trim() || !editedText.trim()) {
-			setError("Ambos campos son requeridos");
-			return;
-		}
-
-		try {
-			if (forum?.id) {
-				await updateForum(forum.id, editedTitle, editedText);
-				setShowEditModal(false);
-				setError(null);
-				await fetchForum();
-			}
-		} catch (error) {
-			setError("Error al actualizar el foro");
 		}
 	};
 
@@ -237,10 +272,10 @@ const ForumDetail = () => {
 			<ForumEditModal
 				visible={showEditModal}
 				onClose={() => setShowEditModal(false)}
-				editedTitle={editedTitle}
-				editedText={editedText}
-				onTitleChange={setEditedTitle}
-				onTextChange={setEditedText}
+				editedTitle={forumData.title}
+				editedText={forumData.text}
+				onTitleChange={handleTitleChange}
+				onTextChange={handleTextChange}
 				onSave={handleUpdateForum}
 				error={error || undefined}
 			/>

@@ -20,7 +20,7 @@ type User = {
     last_name: string;
     mother_last_name: string;
     birth_date: string;
-    profile_photo_path: string;
+    profile_photo: string;
     is_premium: number;
 } | null;
 

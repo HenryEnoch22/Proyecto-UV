@@ -1,5 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/constants/env";
+import { Platform } from "react-native";
+import { uriToBlob } from "../album";
+import * as ImagePicker from "expo-image-picker";
 
 type User = {
 	id: number;
@@ -41,40 +44,61 @@ export const getProfile = async (): Promise<UserResponse | null> => {
 };
 
 export const updateUser = async (
-	userID: string,
-	name: string,
-	lastName: string,
-	motherLastName: string,
-	email: string,
-	password: string,
-	profilePhoto: string | undefined
+  userID: string,
+  name: string,
+  lastName: string,
+  motherLastName: string,
+  email: string,
+  password: string,
+  profilePhoto?: ImagePicker.ImagePickerAsset,
 ) => {
-	try {
-		const response = await fetch(`${API_URL}/profile/${userID}`, {
-			method: "PATCH",
-			headers: {
-				Authorization: `Bearer ${await AsyncStorage.getItem("token")}`,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				name,
-				last_name: lastName,
-				mother_last_name: motherLastName,
-				email,
-				password,
-				profile_photo: profilePhoto,
-			}),
-		});
+  try {
+	const formData = new FormData();
+	formData.append("name", name);
+	formData.append("last_name", lastName);
+	formData.append("mother_last_name", motherLastName);
+	formData.append("email", email);
+	if (password) formData.append("password", password);
 
-		if (!response.ok) throw new Error("Error al actualizar el usuario");
+	console.log("URI de la foto de perfil:", profilePhoto?.uri);
+	if (profilePhoto?.uri) {
+		const uri = profilePhoto.uri;
+		const filename = uri.split("/").pop()!;
+		const ext = filename.split(".").pop()!.toLowerCase();
+		const mime = ext === "png" ? "image/png" : "image/jpeg";
 
-		const data = await response.json();
-		return data;
-	} catch (error) {
-		console.error("Error actualizando usuario:", error);
-		return [];
+		// Manejo diferente para web y móvil
+		if (Platform.OS === "web") {
+			const blob = await uriToBlob(uri);
+			formData.append("profile_photo", blob, filename);
+		} else {
+			// En React Native, adjunta el objeto de archivo directamente
+			formData.append("profile_photo", {
+				uri: uri,
+				name: filename,
+				type: mime,
+			} as unknown as Blob); // Cast necesario por diferencias en FormData
+		}
 	}
-};
+
+    const token = await AsyncStorage.getItem("token");
+	const res = await fetch(`${API_URL}/profile/${userID}`, {
+	  method: "POST",
+	  headers: {
+		Authorization: `Bearer ${token}`,
+	  },
+	  body: formData,
+	});
+	const json = await res.json();
+	console.log("Respuesta de actualización de usuario:", json);
+	if (!res.ok) throw new Error(json.message || "Error actualizando usuario");
+	return json;
+  } catch (e) {
+	console.error("Error actualizando usuario:", e);
+	return null;
+  }
+}
+
 
 export const becomePremium = async (userID: number) => {
 	try {
