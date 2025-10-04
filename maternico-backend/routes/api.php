@@ -10,12 +10,16 @@ use App\Http\Controllers\BabyController;
 use App\Http\Controllers\MagazineController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LocalityController;
 
 //Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //    return $request->user();
 //});
 
 Route::get('/health', fn () => response()->json(['isAlive' => "Servidor de maternico funcionando"]));
+Route::get('/states', [LocalityController::class, 'getStates']);
+Route::get('/{state}/{municipality}/localities', [LocalityController::class, 'getLocalitiesByMunicipality']);
+Route::get('/municipalities/{state}', [LocalityController::class, 'getMunicipalitiesByState']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -75,10 +79,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/magazines/{magazineId}', [MagazineController::class, 'destroy']);
     Route::get('/all-magazines', [MagazineController::class, 'getAllMagazines']);
     
-
-
     Route::post('/profile/{userId}', [ProfileController::class, 'update']);
 
+    Route::get('/validate-location/{userLat}/{userLng}/{localityId}', [LocalityController::class, 'validateUserLocation']);
 });
 
 require __DIR__.'/auth.php';

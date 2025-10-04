@@ -25,11 +25,12 @@ class User extends Authenticatable
         'name',
         'last_name',
         'mother_last_name',
-        'birth_date',
+        // 'birth_date',
         'email',
         'password',
         'profile_photo_path',
         'is_premium',
+        'locality_id',
     ];
 
     /**

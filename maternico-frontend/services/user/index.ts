@@ -11,7 +11,6 @@ type User = {
 	email: string;
 	last_name: string;
 	mother_last_name: string;
-	birth_date: string;
 	profile_photo_path: string;
 	is_premium: number;
 };
@@ -119,3 +118,59 @@ export const becomePremium = async (userID: number) => {
 		return [];
 	}
 }
+
+export const getStates = async () => {
+	try {
+		const url = `${API_URL}/states`;
+		console.log("Fetching states from URL:", url);
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (!response.ok) throw new Error("Error al obtener estados");
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error obteniendo estados:", error);
+		return [];
+	}
+};
+
+export const getMunicipalitiesByState = async (state: string) => {
+	try {
+		const response = await fetch(`${API_URL}/municipalities/${state}`, {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (!response.ok) throw new Error("Error al obtener municipios");
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error obteniendo municipios:", error);
+		return [];
+	}
+};
+
+export const getLocalitiesByMunicipality = async (state: string, municipality: string) => {
+	try {
+		const response = await fetch(`${API_URL}/${state}/${municipality}/localities`, {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (!response.ok) throw new Error("Error al obtener localidades");
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error obteniendo localidades:", error);
+		return [];
+	}
+};

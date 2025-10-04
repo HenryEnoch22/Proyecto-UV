@@ -1,39 +1,64 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@/constants/env";
 
-export const register = async (
-	name: string,
-	lastName: string,
-	motherLastName: string,
-	email: string,
-	password: string,
-	confirmPassword: string
-) => {
+const validateUserLocation = async (userLat: number, userLng: number, localityId: number): Promise<boolean> => {
 	try {
-		const response = await fetch(`${API_URL}/register`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				name,
-				last_name: lastName,
-				mother_last_name: motherLastName,
-				email,
-				password,
-				password_confirmation: confirmPassword,
-			}),
+		const response = await fetch(`${API_URL}/validate-location/${userLat}/${userLng}/${localityId}`, {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${await AsyncStorage.getItem("token")}`,
+				"Content-Type": "application/json",
+			},
 		});
 
-		if (!response.ok) throw new Error("Error en el registro");
+		if (!response.ok) throw new Error("Error al validar ubicación");
 
 		const data = await response.json();
-		if (!data.token) throw new Error("No se recibió el token");
-
-		await AsyncStorage.setItem("token", data.token);
+		console.log("validateUserLocation response:", data);
 		return data;
 	} catch (error) {
-		console.error("Error en registro:", error);
+		console.error("Error en validateUserLocation:", error);
 		throw error;
 	}
+};
+
+export const register = async (data: {
+    name: string;
+    last_name: string;
+    mother_last_name: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+    is_rural: boolean;
+    user_lat: number;
+    user_lng: number;
+    locality_state?: string;
+    locality_municipality?: string;
+    locality_name?: string;
+}) => {
+    try {
+		console.log("register data:", data);
+        const response = await fetch(`${API_URL}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+		console.log("register response status:", response);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Error en el registro");
+        }
+
+        const responseData = await response.json();
+        if (!responseData.token) throw new Error("No se recibió el token");
+
+        await AsyncStorage.setItem("token", responseData.token);
+        return responseData;
+    } catch (error) {
+        console.error("Error en registro:", error);
+        throw error;
+    }
 };
 
 export const login = async (email: string, password: string) => {
