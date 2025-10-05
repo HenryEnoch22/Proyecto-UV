@@ -103,6 +103,7 @@ export const updateBaby = async (
 	height: number
 ) => {
 	try {
+		console.log("Updating baby with ID:", birthDate);
 		const response = await fetch(`${API_URL}/babies/${babyID}`, {
 			method: "PATCH",
 			headers: {

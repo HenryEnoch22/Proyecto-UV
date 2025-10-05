@@ -1,5 +1,5 @@
 import { getBaby, updateBaby } from "@/services/api";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable, Alert } from "react-native";
@@ -27,8 +27,7 @@ const Baby = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
+    const fetchData = async () => {
             try {
                 const response = await getBaby(Number(id));
                 setData(response.data);
@@ -38,7 +37,7 @@ const Baby = () => {
                 setIsLoading(false);
             }
         };
-
+    useEffect(() => {
         fetchData();
     }, [id]);
 
@@ -55,7 +54,7 @@ const Baby = () => {
         try {
             if (!data) return;
     
-            await updateBaby(
+            const updatedBaby = await updateBaby(
                 data.id.toString(),
                 updatedData.name,
                 updatedData.lastName,
@@ -66,16 +65,12 @@ const Baby = () => {
                 updatedData.height
             );
     
-            setData(prev => prev ? {
-                ...prev,
-                name: updatedData.name,
-                last_name: updatedData.lastName,
-                mother_last_name: updatedData.motherLastName,
-                birth_date: updatedData.birthDate,
-                blood_type: updatedData.bloodType,
-                weight: updatedData.weight,
-                height: updatedData.height
-            } : null);
+            if (!updatedBaby) {
+                Alert.alert("Error", "No se pudo actualizar la información del bebé");
+                return;
+            }
+            fetchData();
+            Alert.alert("Éxito", "Información del bebé actualizada correctamente");
     
             setShowModal(false);
         } catch (error) {
@@ -106,7 +101,7 @@ const Baby = () => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
-                <Pressable onPress={() => navigation.goBack()}>
+                <Pressable onPress={() => router.push("/home")}>
                     <ArrowLongLeftIcon size={32} color="#fff" />
                 </Pressable>
                 <Text style={[styles.title, { flex: 1 }]}>{babyFullName || "Sin nombre"}</Text>

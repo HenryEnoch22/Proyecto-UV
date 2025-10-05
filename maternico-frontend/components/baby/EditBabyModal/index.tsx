@@ -117,7 +117,7 @@ export const EditBabyModal = ({
 							label="Fecha de nacimiento"
 							value={new Date(babyData.birthDate)}
 							onChange={(date: Date) =>
-								handleChange("birthDate", date.toISOString())
+								handleChange("birthDate", date.toISOString().split("T")[0])
 							}
 						/>
 

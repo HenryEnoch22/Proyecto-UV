@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	View,
 	Text,
@@ -36,6 +36,37 @@ export const AlbumEventModal = ({
 	const [imagePickerText, setImagePickerText] =
 		useState<string>("Seleccionar imagen");
 
+	// Función para obtener la fecha actual en formato YYYY-MM-DD en horario de México
+	const getTodayInMexico = (): string => {
+		const now = new Date();
+		
+		// México tiene diferentes zonas horarias, pero la mayoría usa UTC-6 o UTC-5
+		// Para asegurarnos, usamos toLocaleDateString con la zona horaria de México
+		const options: Intl.DateTimeFormatOptions = {
+			timeZone: 'America/Mexico_City',
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit'
+		};
+		
+		const formatter = new Intl.DateTimeFormat('es-MX', options);
+		const parts = formatter.formatToParts(now);
+		
+		const year = parts.find(part => part.type === 'year')?.value;
+		const month = parts.find(part => part.type === 'month')?.value;
+		const day = parts.find(part => part.type === 'day')?.value;
+		
+		return `${year}-${month}-${day}`;
+	};
+
+	// Efecto para establecer la fecha actual cuando el modal se abre
+	useEffect(() => {
+		if (visible) {
+			const today = getTodayInMexico();
+			setSelectedDate(today);
+		}
+	}, [visible]);
+
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -71,12 +102,17 @@ export const AlbumEventModal = ({
 			photo_path: image,
 		});
 
+		// No resetear la fecha aquí para mantenerla cuando se reabra el modal
 		setEventTitle("");
 		setDescription("");
-		setSelectedDate("");
 		setImage(null);
 		setImagePickerText("Seleccionar imagen");
 
+		onClose();
+	};
+
+	const handleClose = () => {
+		// Al cerrar, mantenemos la fecha actual para la próxima vez que se abra
 		onClose();
 	};
 
@@ -85,11 +121,11 @@ export const AlbumEventModal = ({
 			animationType="slide"
 			transparent={true}
 			visible={visible}
-			onRequestClose={onClose}
+			onRequestClose={handleClose}
 		>
 			<View style={styles.modalContainer}>
 				<View style={styles.modalContent}>
-					<Pressable style={styles.closeIcon} onPress={onClose}>
+					<Pressable style={styles.closeIcon} onPress={handleClose}>
 						<XCircleIcon size={24} color="#F392BE" />
 					</Pressable>
 
