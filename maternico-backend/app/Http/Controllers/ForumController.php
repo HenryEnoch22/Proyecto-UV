@@ -33,12 +33,20 @@ class ForumController extends Controller
      */
     public function store(StoreForumRequest $request)
     {
-        $forum = Forum::create($request->validated());
-        return response()->json([
-           'success' => true,
-            'message' => 'Foro creado correctamente',
-            'data' => $forum,
-        ]);
+        try {
+            $forum = Forum::create($request->validated());
+
+            return response()->json([
+            'success' => true,
+                'message' => 'Foro creado correctamente',
+                'data' => $forum,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el foro: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

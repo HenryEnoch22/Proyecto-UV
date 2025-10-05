@@ -48,25 +48,33 @@ class BabyEventController extends Controller
      */
     public function store(StoreBabyEventRequest $request)
     {
-        $data = $request->validated();
+        try {
+            $data = $request->validated();
 
-        // 2) si vino un archivo, guárdalo en storage/app/public/album
-        if ($request->hasFile('photo_path')) {
-            $path = $request
-                    ->file('photo_path')
-                    ->store('album', 'public');  
-            // $path === "album/1683356789_nombre.jpg"
-            $data['photo_path'] = $path;
+            // 2) si vino un archivo, guárdalo en storage/app/public/album
+            if ($request->hasFile('photo_path')) {
+                $path = $request
+                        ->file('photo_path')
+                        ->store('album', 'public');  
+                // $path === "album/1683356789_nombre.jpg"
+                $data['photo_path'] = $path;
+            }
+
+            // 3) crea el evento con la ruta correcta
+            $babyEvent = BabyEvent::create($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Evento creado correctamente',
+                'data'    => $babyEvent
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el evento',
+                'error'   => $e->getMessage()
+            ], 500);
         }
-
-        // 3) crea el evento con la ruta correcta
-        $babyEvent = BabyEvent::create($data);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Evento creado correctamente',
-            'data'    => $babyEvent
-        ], 201);
     }
 
     /**

@@ -26,7 +26,7 @@ class StoreForumRequest extends FormRequest
         return [
             'user_id' => ['required', 'exists:users,id'],
             'title'   => ['required', 'string', 'max:255'],
-            'text'    => ['required', 'string', 'min:10', 'max:1000'], // `MEDIUMTEXT` permite hasta 16,777,215 caracteres
+            'text'    => ['required', 'string', 'min:4', 'max:1000'], // `MEDIUMTEXT` permite hasta 16,777,215 caracteres
         ];
     }
 
