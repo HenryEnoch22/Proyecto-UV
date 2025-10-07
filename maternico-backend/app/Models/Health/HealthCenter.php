@@ -12,5 +12,8 @@ class HealthCenter extends Model
         'city',
         'state',
         'phone_number',
+        'type',
+        'latitude',
+        'longitude',
     ];
 }

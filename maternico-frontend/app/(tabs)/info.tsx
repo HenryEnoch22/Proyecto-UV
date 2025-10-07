@@ -235,6 +235,7 @@ const styles = StyleSheet.create({
 	scrollContainer: {
 		flexGrow: 1,
 		minHeight: "90%",
+		paddingBottom: 30,
 	},
 	container: {
 		flex: 1,

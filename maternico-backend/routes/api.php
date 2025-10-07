@@ -11,6 +11,7 @@ use App\Http\Controllers\MagazineController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LocalityController;
+use App\Http\Controllers\HealthCenterController;
 
 //Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //    return $request->user();
@@ -50,13 +51,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/comments', [CommentController::class, 'store']);
     Route::delete('/comments/{commentId}', [CommentController::class, 'destroy']);
 
-    Route::get('/health-centers', function (){
-        return response()->json([
-            'success' => true,
-            'message' => 'Centros de salud obtenidos correctamente',
-            'data' => \App\Models\Health\HealthCenter::all(),
-        ]);
-    });
+    Route::get('/health-centers', [HealthCenterController::class, 'index']);
+    Route::get('/health-centers/nearby', [HealthCenterController::class, 'getNearbyHealthCenters']);
+    
     Route::post('/babies', [BabyController::class, 'store']);
     Route::get('/babies/{babyId}', [BabyController::class, 'show']);
     Route::get('/baby-mother/{mother}', [BabyController::class, 'getBabyByMother']);
